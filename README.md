@@ -70,7 +70,8 @@ Thank you for considering and taking the time to contribute! Before contributing
 
 ## Potential Maintainers
 
-📌 [Valentin Colin](https://github.com/ValentinColin)
+📌 [Valentin Colin](https://github.com/ValentinColin)  
+📌 [Marc Partensky](https://github.com/MarcPartensky)
 
 ## Credits
 
