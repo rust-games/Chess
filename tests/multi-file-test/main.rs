@@ -1,4 +1,4 @@
-use rust_template_project::add;
+use chess::add;
 
 mod test_module;
 use crate::test_module::setup;

@@ -1,4 +1,4 @@
-use rust_template_project::add;
+use chess::add;
 
 #[test]
 fn test_add() {

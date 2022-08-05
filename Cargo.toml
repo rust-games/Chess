@@ -1,19 +1,21 @@
 [package]
-name = "rust-template-project"
+name = "chess"
 version = "0.1.0"
-authors = ["Valentin Colin <valentin.colin78@gmail.com>"]
+authors = ["Valentin Colin <valentin.colin78@gmail.com>", "Marc Partensky <marc.partensky@gmail.com>"]
 edition = "2021"
-description = "This project serves as the basis for future new projects"
-readme = "README.md"
-homepage = "https://github.com/ValentinColin/rust-template-project.git"
-repository = "https://github.com/ValentinColin/rust-template-project.git"
+description = "Game Chess with graphical interface"
+homepage = "https://github.com/rust-games/chess.git"
+repository = "https://github.com/rust-games/chess.git"
 license = "MIT"
 # licence-file = "LICENSE"
-keywords = ["template"]
+keywords = ["game"]
 
 [dependencies]
-clippy = {version = "0.0.21", optional = true}
+ggez = "0.7.0"
+grid = "0.6.0"
+glam = { version = "0.20", features = ["mint"] }
+# Has to be the same version of mint that our math lib uses here.
+mint = "0.5"
+log = "0.4.17"
+env_logger = "0.9.0"
 
-[features]
-default = []
-dev = ["clippy"]

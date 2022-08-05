@@ -1,43 +1,21 @@
-# Welcome on a template project
-## Task to do for configure this template
-
-| Required                                           | Recommended                                            | Optional                         |
-|:--------------------------------------------------:|:------------------------------------------------------:|:--------------------------------:|
-| Configure the [Cargo.toml](Cargo.toml) file        | Change [.github/FUNDING.yml](.github/FUNDING.yml) file | Change the [LICENCE](LICENCE)    |
-| Change the [README.md](README.md) file             |                                                        |                                  |
-| Change the [ci.yml](.github/workflows/ci.yml) file |                                                        |                                  |
-| :tada: Have fun !!! :tada:                         | :books: Learn :books:                                  | :star: Like this template :star: |
-
-## Description of directories
-
-| Directory             | Description                                    | Used by ...               |
-|-----------------------|------------------------------------------------|---------------------------|
-| [src/](src)           | The main directory containing the project code | `Cargo`                   |
-| [tests/](tests)       | The integration test directory                 | `Cargo`                   |
-| [benches/](benches)   | The benches directory                          | `Cargo` (nightly channel) |
-| [examples/](examples) | The example directory                          | `Cargo`                   |
-| [.github/](.github)   | The special github directory                   | `Github`                  |
-
-> delete everything before this
-
 <h1 align="center">
-    ✨ Project's Title ✨
+    ✨ Chess ✨
 </h1>
 
 <div align="center">
-    
- <!-- see https://shields.io/ -->
 
-![Issues tag](https://img.shields.io/github/issues/ValentinColin/rust-template-project)
-![Forks tag](https://img.shields.io/github/forks/ValentinColin/rust-template-project)
-![Stars](https://img.shields.io/github/stars/ValentinColin/rust-template-project?style=social)
-![Licence](https://img.shields.io/github/license/ValentinColin/rust-template-project)
+<!-- see https://shields.io/ -->
+
+![Issues tag](https://img.shields.io/github/issues/rust-games/chess)
+![Forks tag](https://img.shields.io/github/forks/rust-games/chess)
+![Stars](https://img.shields.io/github/stars/rust-games/chess?style=social)
+![Licence](https://img.shields.io/github/license/rust-games/chess)
 
 </div>
 
 ## Project Description
 
-This project is awesome
+A simple game of chess write in [Rust](https://www.rust-lang.org/fr/).
 
 ## Table of Contents
 
@@ -63,23 +41,25 @@ This project is awesome
 ### Manual installation
 
 ```bash
-# https or ssh
-git clone https://github.com/ValentinColin/rust-template-project.git
-git clone git@github.com:ValentinColin/rust-template-project.git
+# https
+git clone https://github.com/rust-games/chess.git
+# or 
+# ssh
+git clone git@github.com:rust-games/chess.git
 
 cargo build --release
-```
-
-## Usage
-
-```bash
-cargo run --release
 ```
 
 ## Tests
 
 ```bash
 cargo test
+```
+
+## Usage
+
+```bash
+cargo run --release
 ```
 
 <!--
@@ -90,7 +70,7 @@ Thank you for considering and taking the time to contribute! Before contributing
 
 ## Potential Maintainers
 
-:pushpin: [Valentin Colin](https://github.com/ValentinColin)
+📌 [Valentin Colin](https://github.com/ValentinColin)
 
 ## Credits
 
