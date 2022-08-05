@@ -18,5 +18,7 @@ pub const SCREEN_SIZE: (u32, u32) = (BOARD_SIZE.0 + SIDE_SCREEN_SIZE.0, BOARD_SI
 pub const GRID_SIZE: (i16, i16) = (8, 8);
 
 /// Here we calculate the size of a cell (in pixel) in the grid
-pub const GRID_CELL_SIZE: (i16, i16) = (BOARD_SIZE.0 as i16 / GRID_SIZE.0,
-                                        BOARD_SIZE.1 as i16 / GRID_SIZE.1);
+pub const GRID_CELL_SIZE: (i16, i16) = (
+    BOARD_SIZE.0 as i16 / GRID_SIZE.0,
+    BOARD_SIZE.1 as i16 / GRID_SIZE.1,
+);
