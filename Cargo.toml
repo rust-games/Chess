@@ -1,0 +1,19 @@
+[package]
+name = "rust-template-project"
+version = "0.1.0"
+authors = ["Valentin Colin <valentin.colin78@gmail.com>"]
+edition = "2021"
+description = "This project serves as the basis for future new projects"
+readme = "README.md"
+homepage = "https://github.com/ValentinColin/rust-template-project.git"
+repository = "https://github.com/ValentinColin/rust-template-project.git"
+license = "MIT"
+# licence-file = "LICENSE"
+keywords = ["template"]
+
+[dependencies]
+clippy = {version = "0.0.21", optional = true}
+
+[features]
+default = []
+dev = ["clippy"]
