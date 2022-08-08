@@ -1,10 +1,12 @@
 use std::fmt;
 use std::str::FromStr;
-use super::Error;
+
 use super::Color;
+use super::Error;
 
 /// Describe position in the chess board.
 ///
+/// ```txt
 ///  H  |   |   |   |   |   |   |   |   |
 ///  G  |   |   |   |   |   |   |   |   |
 ///  F  |   |   |   |   |   |   |   |   |
@@ -14,6 +16,7 @@ use super::Color;
 ///  B  |   |   |   |   |   |   |   |   |
 ///  A  |   |   |   |   |   |   |   |   |
 ///       1   2   3   4   5   6   7   8
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ChessPosition {
     x: u8,
@@ -111,11 +114,11 @@ impl FromStr for ChessPosition {
         }
         let ch: Vec<char> = s.chars().collect();
         match ch[0] {
-            'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' => {},
+            'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' => {}
             _ => return Err(Error::InvalidGridPosition),
         }
         match ch[1] {
-            '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' => {},
+            '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' => {}
             _ => return Err(Error::InvalidGridPosition),
         }
         Ok(ChessPosition::new(

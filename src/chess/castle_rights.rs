@@ -6,8 +6,8 @@ use crate::chess::Color;
 #[derive(Debug, Clone, Copy, PartialOrd, PartialEq, Eq)]
 pub enum CastleRights {
     NoRights,
-    KingSide,   // little Castle
-    QueenSide,  // Big Castle
+    KingSide,  // little Castle
+    QueenSide, // Big Castle
     Both,
 }
 

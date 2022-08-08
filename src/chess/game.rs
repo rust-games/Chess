@@ -13,9 +13,9 @@ pub enum Action {
 /// What was the result of this game?
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 pub enum GameState {
-    Checkmates(Color),  // Color has loose
-    Resigns(Color),     // Color resigns
-    Stalemate,          // Draw by situation
-    DrawAccepted,       // Draw by request
-    DrawDeclared,       // Draw request (waiting an answer) -> don't stop the timer
+    Checkmates(Color), // Color has loose
+    Resigns(Color),    // Color resigns
+    Stalemate,         // Draw by situation
+    DrawAccepted,      // Draw by request
+    DrawDeclared,      // Draw request (waiting an answer) -> don't stop the timer
 }
