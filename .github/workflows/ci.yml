@@ -34,10 +34,7 @@ jobs:
           override: true
 
       - name: cargo fmt -- --check
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+        run: cargo fmt --all -- --check
 
   test:
     name: Test
@@ -55,20 +52,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install rust
+      - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.toolchain }}
           profile: minimal
           override: true
+      
+      - name: Install alsa
+        if: ${{ runner.os == 'Linux' }}
+        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev
+
+      - name: Install udev
+        if: ${{ runner.os == 'Linux' }}
+        run: sudo apt-get update; sudo apt-get install --no-install-recommends libudev-dev
 
       - name: Build debug
         run: cargo build --verbose
 
-      - name: Tests
+      - name: Run Tests
         run: cargo test --verbose
 
-      - name: Benches
+      - name: Run Benches
         if: matrix.benches
         run: cargo bench
 
