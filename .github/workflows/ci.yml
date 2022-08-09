@@ -3,7 +3,7 @@ name: Cargo Build & Test
 on:
   push:
     branches:
-      - master
+      - "*"
     paths-ignore:
       - '.github/**'
       - 'docs/**'
