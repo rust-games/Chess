@@ -23,8 +23,9 @@ A simple game of chess write in [Rust](https://www.rust-lang.org/fr/).
     * [System requirement](#system-requirement)
     * [Software requirement](#software-requirement)
     * [Manual installation](#manual-installation)
-* [Usage](#usage)
 * [Tests](#tests)
+* [Usage](#usage)
+* [Chess Notation](#chess-notation)
 * [Potential Maintainers](#potential-maintainers)
 * [Credits](#credits)
 
