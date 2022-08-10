@@ -62,6 +62,11 @@ cargo test
 cargo run --release
 ```
 
+## Chess Notation
+### [Forsyth-Edwards Notation (FEN)](https://www.chess.com/terms/fen-chess)
+
+### [Standard Algebraic Notation (SAN)](https://www.chess.com/article/view/chess-notation)
+
 <!--
 ## How to Contribute
 
