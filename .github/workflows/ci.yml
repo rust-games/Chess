@@ -2,14 +2,14 @@ name: Cargo Build & Test
 
 on:
   push:
-    branches:
-      - "*"
+    branches-ignore:
+      - gh-pages
     paths-ignore:
       - '.github/**'
       - 'docs/**'
   pull_request:
-    branches:
-      - master
+    branches-ignore:
+      - gh-pages
     paths-ignore:
       - '.github/**'
       - 'docs/**'
