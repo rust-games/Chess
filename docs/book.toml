@@ -15,3 +15,7 @@ site-url = "/rust-template-project/" # required to ensure navigation links and s
 # If the option "editable" is set to "true", the "line-numbers" should also be set to "true" for editable blocks.
 editable = false
 line-numbers = false
+
+[output.html.fold]
+enable = true
+level = 2
