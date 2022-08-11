@@ -76,7 +76,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User Guide</li><li class="chapter-item expanded "><a href="user-guide/installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="user-guide/basics.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="user-guide/configuration.html"><strong aria-hidden="true">3.</strong> Configuration</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="misc/contributors.html">Contributors</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User Guide</li><li class="chapter-item expanded "><a href="user-guide/installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="user-guide/basics.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="user-guide/configuration.html"><strong aria-hidden="true">3.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="chess/index.html"><strong aria-hidden="true">4.</strong> Chess</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chess/rules/index.html"><strong aria-hidden="true">4.1.</strong> Rules</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="chess/rules/initial-setup.html"><strong aria-hidden="true">4.1.1.</strong> Initial Setup</a></li><li class="chapter-item "><a href="chess/rules/gameplay/index.html"><strong aria-hidden="true">4.1.2.</strong> Gameplay</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="chess/rules/gameplay/movement/index.html"><strong aria-hidden="true">4.1.2.1.</strong> Movement</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="chess/rules/gameplay/movement/basic-moves.html"><strong aria-hidden="true">4.1.2.1.1.</strong> Basic moves</a></li><li class="chapter-item "><a href="chess/rules/gameplay/movement/castling.html"><strong aria-hidden="true">4.1.2.1.2.</strong> Castling</a></li><li class="chapter-item "><a href="chess/rules/gameplay/movement/en-passant.html"><strong aria-hidden="true">4.1.2.1.3.</strong> En passant</a></li><li class="chapter-item "><a href="chess/rules/gameplay/movement/promotion.html"><strong aria-hidden="true">4.1.2.1.4.</strong> Promotion</a></li><li class="chapter-item "><a href="chess/rules/gameplay/movement/specific-rules/index.html"><strong aria-hidden="true">4.1.2.1.5.</strong> Specific rules</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="chess/rules/gameplay/movement/specific-rules/fifty-move-rule.html"><strong aria-hidden="true">4.1.2.1.5.1.</strong> Fifty-move rule</a></li></ol></li></ol></li><li class="chapter-item "><a href="chess/rules/gameplay/check.html"><strong aria-hidden="true">4.1.2.2.</strong> Check</a></li><li class="chapter-item "><a href="chess/rules/gameplay/end-of-the-game/index.html"><strong aria-hidden="true">4.1.2.3.</strong> End of the game</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="chess/rules/gameplay/end-of-the-game/checkmate.html"><strong aria-hidden="true">4.1.2.3.1.</strong> Checkmate</a></li><li class="chapter-item "><a href="chess/rules/gameplay/end-of-the-game/resigning.html"><strong aria-hidden="true">4.1.2.3.2.</strong> Resigning</a></li><li class="chapter-item "><a href="chess/rules/gameplay/end-of-the-game/draws/index.html"><strong aria-hidden="true">4.1.2.3.3.</strong> Draws</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="chess/rules/gameplay/end-of-the-game/draws/dead-position.html"><strong aria-hidden="true">4.1.2.3.3.1.</strong> Dead position</a></li></ol></li><li class="chapter-item "><a href="chess/rules/gameplay/end-of-the-game/flag-fall.html"><strong aria-hidden="true">4.1.2.3.4.</strong> Flag-fall</a></li></ol></li></ol></li></ol></li><li class="chapter-item expanded "><a href="chess/notation/index.html"><strong aria-hidden="true">4.2.</strong> Notation</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="chess/notation/fen.html"><strong aria-hidden="true">4.2.1.</strong> FEN</a></li><li class="chapter-item "><a href="chess/notation/san.html"><strong aria-hidden="true">4.2.2.</strong> SAN</a></li><li class="spacer"></li></ol></li></ol></li><li class="chapter-item expanded "><a href="misc/contributors.html">Contributors</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -138,8 +138,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>This is a book that describe how to use the doc-book of this template</p>
-<p>See this <a href="https://rust-lang.github.io/rustup/index.html">tuto</a></p>
+                        <p>This is a book that describe our game chess.</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="system-requirement"><a class="header" href="#system-requirement">System requirement</a></h2>
 <ol>
 <li>Any system with basic configuration.</li>
@@ -168,9 +167,326 @@ cargo build --release
 <div style="break-before: page; page-break-before: always;"></div><blockquote>
 <p>Use this page in order to help users to configure your project.</p>
 </blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="chess"><a class="header" href="#chess">Chess</a></h1>
+<p>Chess is a board game played between two players. 
+It is sometimes called Western chess or international chess to distinguish 
+it from related games such as <a href="https://en.wikipedia.org/wiki/Xiangqi">xiangqi</a> and <a href="https://en.wikipedia.org/wiki/Shogi">shogi</a>. The current form of the game 
+emerged in Spain and the rest of Southern Europe during 
+the second half of the 15th century after evolving from chaturanga, 
+a similar but much older game of Indian origin. 
+Today, chess is one of the world's most popular games, 
+played by millions of people worldwide.</p>
+<p>Chess is an abstract strategy game and involves no hidden information. 
+It is played on a square chessboard with 64 squares arranged in an eight-by-eight grid. 
+At the start, each player (one controlling the white pieces, 
+the other controlling the black pieces) controls sixteen pieces: 
+one king, one queen, two rooks, two bishops, two knights, and eight pawns. 
+The object of the game is to checkmate the opponent's king, 
+whereby the king is under immediate attack (in &quot;<a href="chess/rules/gameplay/check.html">check</a>&quot;) and there is no way for it to escape. 
+There are also several ways a game can end in a draw.</p>
+<p>Organized chess arose in the 19th century. 
+Chess competition today is governed internationally by <a href="https://en.wikipedia.org/wiki/FIDE">FIDE</a> (International Chess Federation). 
+The first universally recognized World Chess Champion, Wilhelm Steinitz, 
+claimed his title in 1886; <a href="https://en.wikipedia.org/wiki/Magnus_Carlsen">Magnus Carlsen</a> is the current World Champion. 
+A huge body of chess theory has developed since the game's inception. 
+Aspects of art are found in chess composition, and chess in its turn influenced Western culture 
+and art and has connections with other fields such as 
+mathematics, computer science, and psychology.</p>
+<p>One of the goals of early computer scientists was to create a chess-playing machine. 
+In 1997, <a href="https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)">Deep Blue</a> became the first computer to beat the reigning World Champion 
+in a match when it defeated <a href="https://en.wikipedia.org/wiki/Garry_Kasparov">Garry Kasparov</a>. 
+Today's chess engines are significantly stronger than the best human players, 
+and have deeply influenced the development of chess theory. </p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rules"><a class="header" href="#rules">Rules</a></h1>
+<p>The rules of chess (also known as the laws of chess) govern the play of the 
+game of chess. While the exact origins of chess are unclear, modern rules first 
+took form during the Middle Ages. The rules continued to be slightly modified 
+until the early 19th century, when they reached essentially their current form. 
+The rules also varied somewhat from place to place. Today, the standard rules 
+are set by <a href="https://en.wikipedia.org/wiki/FIDE">FIDE</a> (Fédération Internationale des Échecs), the international 
+governing body for chess. Slight modifications are made by some national 
+organizations for their own purposes. There are variations of the rules for 
+<a href="https://en.wikipedia.org/wiki/Fast_chess">fast chess</a>, <a href="https://en.wikipedia.org/wiki/Correspondence_chess">correspondence chess</a>, <a href="https://en.wikipedia.org/wiki/Online_chess">online chess</a>, and <a href="https://en.wikipedia.org/wiki/Chess960">Chess960</a>.</p>
+<p>Chess is a two-player board game using a chessboard and sixteen pieces of six 
+types for each player. Each type of piece moves in a distinct way. 
+The object of the game is to checkmate (threaten with inescapable capture) 
+the opponent's king. Games do not necessarily end in <a href="chess/rules/gameplay/end-of-the-game/checkmate.html">checkmate</a>; a player who 
+expects to lose may <a href="chess/rules/gameplay/end-of-the-game/resigning.html">resign</a>. A game can also end in a <a href="chess/rules/gameplay/end-of-the-game/draws">draw</a> in several ways.</p>
+<p>Besides, the basic moves of the pieces, rules also govern the equipment used, 
+time control, conduct and ethics of players, accommodations for physically 
+challenged players, and recording of moves using chess <a href="chess/rules/../notation">notation</a>. Procedures for 
+resolving irregularities that can occur during a game are provided as well. </p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="initial-setup"><a class="header" href="#initial-setup">Initial Setup</a></h1>
+<p>Chess is played on a chessboard, a square board divided into 64 squares (eight-by-eight) 
+of alternating color, which is similar to that used in draughts (checkers).
+No matter what the actual colors of the board, the lighter-colored squares are called 
+&quot;light&quot; or &quot;white&quot;, and the darker-colored squares are called &quot;dark&quot; or &quot;black&quot;. 
+Sixteen &quot;white&quot; and sixteen &quot;black&quot; pieces are placed on the board at the beginning of the game. 
+The board is placed so that a white square is in each player's near-right corner. 
+Horizontal rows are called ranks and vertical rows are called files.</p>
+<p>Each player controls sixteen pieces: </p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">Piece</th><th style="text-align: center">King</th><th style="text-align: center">Queen</th><th style="text-align: center">Rook</th><th style="text-align: center">Bishop</th><th style="text-align: center">Knight</th><th style="text-align: center">Pawn</th></tr></thead><tbody>
+<tr><td style="text-align: center">Number of Pieces</td><td style="text-align: center">1</td><td style="text-align: center">1</td><td style="text-align: center">2</td><td style="text-align: center">2</td><td style="text-align: center">2</td><td style="text-align: center">8</td></tr>
+<tr><td style="text-align: center">Symbols White</td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/king_white.png" alt="king_w" /></td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/queen_white.png" alt="queen_w" /></td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/rook_white.png" alt="rook_w" /></td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/bishop_white.png" alt="bishop_w" /></td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/knight_white.png" alt="knight_w" /></td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/pawn_white.png" alt="pawn_w" /></td></tr>
+<tr><td style="text-align: center">Symbols Black</td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/king_black.png" alt="king_b" /></td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/queen_black.png" alt="queen_b" /></td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/rook_black.png" alt="rook_b" /></td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/bishop_black.png" alt="bishop_b" /></td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/knight_black.png" alt="knight_b" /></td><td style="text-align: center"><img src="chess/rules//resources/images/pieces/pawn_black.png" alt="pawn_b" /></td></tr>
+</tbody></table>
+</div>
+<p>At the beginning of the game, the pieces are arranged as shown in the diagram: 
+for each side one king, one queen, two rooks, two bishops, two knights, and eight pawns. </p>
+<p>The pieces are placed, one on a square, as follows:</p>
+<ul>
+<li>The rooks are placed on the outside corners, right and left edge.</li>
+<li>The knights are placed immediately inside the rooks.</li>
+<li>The bishops are placed immediately inside the knights.</li>
+<li>The queen is placed on the central square of the same color of that of the player: 
+white queen on the white square and black queen on the black square.</li>
+<li>The king takes the vacant spot next to the queen.</li>
+<li>The pawns are placed one square in front of all the other pieces.</li>
+</ul>
+<p>Popular mnemonics used to remember the setup are &quot;queen on her own color&quot; and &quot;white on right&quot;. 
+The latter refers to setting up the board so that the square closest to each player's right 
+is white.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="gameplay"><a class="header" href="#gameplay">Gameplay</a></h1>
+<p>The player controlling the white pieces is named &quot;White&quot;; 
+the player controlling the black pieces is named &quot;Black&quot;. 
+White moves first, then players alternate moves. 
+Making a move is required; it is not legal to skip a move, 
+even when having to move is detrimental. 
+Play continues until a king is checkmated, a player resigns, 
+or a draw is declared, as explained below. In addition, 
+if the game is being played under a time control, 
+a player who exceeds the time limit loses the game unless 
+they cannot be checkmated.</p>
+<p>The official chess rules do not include a procedure for determining who plays White. 
+Instead, this decision is left open to tournament-specific rules 
+(e.g. a Swiss system tournament or round-robin tournament) or, 
+in the case of non-competitive play, mutual agreement, 
+in which case some kind of random choice is often employed.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="movement"><a class="header" href="#movement">Movement</a></h1>
+<ul>
+<li><a href="chess/rules/gameplay/movement/basic-moves.html">Basic moves</a>
+<ul>
+<li><a href="chess/rules/gameplay/movement/castling.html">Castling</a></li>
+<li><a href="chess/rules/gameplay/movement/en-passant.html">En passant</a></li>
+<li><a href="chess/rules/gameplay/movement/promotion.html">Promotion</a></li>
+<li><a href="chess/rules/gameplay/movement/specific-rules/index.html">Specific rules</a>
+<ul>
+<li><a href="chess/rules/gameplay/movement/specific-rules/fifty-move-rule.html">Fifty-move rule</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="basic-moves"><a class="header" href="#basic-moves">Basic Moves</a></h1>
+<p>Each type of chess piece has its own method of movement. 
+A piece moves to a vacant square except when capturing an opponent's piece.</p>
+<p>Except for any move of the knight and castling, pieces cannot jump over other pieces. 
+A piece is captured (or taken) when an attacking enemy piece replaces 
+it on its square except in the case of en passant. 
+The captured piece is thereby permanently removed from the game.
+The king can be put in check but cannot be captured (see below).</p>
+<ul>
+<li>
+<p>The king moves exactly one square horizontally, vertically, or diagonally. 
+A special move with the king known as castling is allowed only once per player, 
+per game (see below).</p>
+</li>
+<li>
+<p>A rook moves any number of vacant squares horizontally or vertically.
+It also is moved when castling.</p>
+</li>
+<li>
+<p>A bishop moves any number of vacant squares diagonally.</p>
+</li>
+<li>
+<p>The queen moves any number of vacant squares horizontally, vertically, or diagonally.</p>
+</li>
+<li>
+<p>A knight moves to one of the nearest squares not on the same rank, file, or diagonal. 
+(This can be thought of as moving two squares horizontally then one square vertically, 
+or moving one square horizontally then two squares vertically—i.e. in an &quot;L&quot; pattern.) 
+The knight is not blocked by other pieces; it jumps to the new location.</p>
+</li>
+<li>
+<p>Pawns have the most complex rules of movement:</p>
+<ul>
+<li>A pawn moves straight forward one square, if that square is vacant. 
+If it has not yet moved, a pawn also has the option of moving two squares straight forward, 
+provided both squares are vacant. Pawns cannot move backwards.</li>
+<li>A pawn, unlike other pieces, captures differently from how it moves. 
+A pawn can capture an enemy piece on either of the two squares diagonally in front of the pawn. 
+It cannot move to those squares when vacant except when capturing en passant.</li>
+</ul>
+<p>The pawn is also involved in the two special moves <a href="chess/rules/gameplay/movement/en-passant.html">en passant</a> and <a href="chess/rules/gameplay/movement/promotion.html">promotion</a>.</p>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="castling"><a class="header" href="#castling">Castling</a></h1>
+<p>Castling consists of moving the king two squares towards a rook, 
+then placing the rook on the other side of the king, adjacent to it. 
+Castling is only permissible if all the following conditions hold:</p>
+<ul>
+<li>The king and rook involved in castling must not have previously moved</li>
+<li>There must be no pieces between the king and the rook</li>
+<li>The king may not currently be under attack, nor may the king pass through or 
+end up in a square that is under attack by an enemy piece (though the rook is permitted 
+to be under attack and to pass over an attacked square)</li>
+<li>The castling must be <a href="https://computerchessonline.net/castling/">kingside</a> (blue) or <a href="https://computerchessonline.net/castling/">queenside</a> (red).</li>
+</ul>
+<p><img src="chess/rules/gameplay/movement//resources/images/king-and-queen-side-diagram.png" alt="king and queen side diagram" /></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="en-passant"><a class="header" href="#en-passant">En Passant</a></h1>
+<p>When a pawn advances two squares from its original square and ends the turn
+adjacent to a pawn of the opponent's on the same rank, it may be captured by
+that pawn of the opponent's, as if it had moved only one square forward. This
+capture is only legal on the opponent's next move immediately following the
+first pawn's advance. The diagrams below demonstrate an instance of this:
+if the white pawn moves from a2 to a4, the black pawn on b4 can capture it en passant,
+moving from b4 to a3 while the white pawn on a4 is removed from the board. </p>
+<p><img src="chess/rules/gameplay/movement//resources/images/en-passant.png" alt="en passant image" /></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="promotion"><a class="header" href="#promotion">Promotion</a></h1>
+<p>If a player advances a pawn to its eighth rank, the pawn is then promoted (converted)
+to a queen, rook, bishop, or knight of the same color at the choice of the player 
+(a queen is usually chosen). The choice is not limited to previously captured pieces. 
+Hence, it is theoretically possible for a player to have up to nine queens or 
+up to ten rooks, bishops, or knights if all of their pawns are promoted.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="specific-rules"><a class="header" href="#specific-rules">Specific Rules</a></h1>
+<ul>
+<li><a href="chess/rules/gameplay/movement/specific-rules/fifty-move-rule.html">Fifty-move rule</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="fifty-move-rule"><a class="header" href="#fifty-move-rule">Fifty-move Rule</a></h1>
+<p>The fifty-move rule in chess states that a player can claim a draw
+if no capture has been made and no pawn has been moved in the last fifty moves
+(for this purpose a &quot;move&quot; consists of a player completing a turn followed by
+the opponent completing a turn). The purpose of this rule is to prevent a player
+with no chance of winning from obstinately continuing to play indefinitely or
+seeking to win by tiring the opponent.</p>
+<p>Chess positions with only a very few pieces can be &quot;solved&quot;, that is,
+the outcome of best play for both sides can be determined by exhaustive analysis;
+and if the outcome is a win for one side or the other (rather than a draw),
+it is of interest to know whether the defending side can hold out long enough
+to invoke the fifty-move rule. The simplest common endings, called the basic checkmates,
+such as king and queen versus king, can all be won in well under 50 moves.
+However, in the 20th century it was discovered that certain endgame positions
+are winnable but require more than 50 moves (without a capture or a pawn move).
+The rule was therefore changed to allow certain exceptions in which 100 moves
+were allowed with particular material combinations.
+However, winnable positions that required even more moves were later discovered,
+and in 1992, FIDE abolished all such exceptions and reinstated the strict 50-move rule. </p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="check"><a class="header" href="#check">Check</a></h1>
+<p>A king is in check when it is under attack by at least one enemy piece. 
+A piece unable to move because it would place its own king in check 
+(it is pinned against its own king) may still deliver check to the opposing player.</p>
+<p>It is illegal to make a move that places or leaves one's king in check. 
+The possible ways to get out of check are:</p>
+<ul>
+<li>Move the king to a square where it is not in check.</li>
+<li>Capture the checking piece (possibly with the king).</li>
+<li>Block the check by placing a piece between the king and the opponent's threatening piece.</li>
+</ul>
+<p>If it is not possible to get out of check, the king is <a href="chess/rules/gameplay/end-of-the-game/checkmate.html">checkmated</a> and the game is over 
+(see the next section).</p>
+<p>In informal games, it is customary to announce &quot;check&quot; when making a move that puts 
+the opponent's king in check. However, in formal competitions, check is rarely announced.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="end-of-the-game"><a class="header" href="#end-of-the-game">End of the Game</a></h1>
+<ul>
+<li><a href="chess/rules/gameplay/end-of-the-game/checkmate.html">Checkmate</a></li>
+<li><a href="chess/rules/gameplay/end-of-the-game/resigning.html">Resigning</a></li>
+<li><a href="chess/rules/gameplay/end-of-the-game/draws/index.html">Draws</a>
+<ul>
+<li><a href="chess/rules/gameplay/end-of-the-game/draws/dead-position.html">Dead position</a></li>
+</ul>
+</li>
+<li><a href="chess/rules/gameplay/end-of-the-game/flag-fall.html">Flag-fall</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="checkmate"><a class="header" href="#checkmate">Checkmate</a></h1>
+<p>If a player's king is placed in check and there is no legal move that player 
+can make to escape check, then the king is said to be checkmated, the game ends, 
+and that player loses. Unlike other pieces, the king is never captured.</p>
+<p>The diagram shows an example checkmate position. The white king is threatened 
+by the black queen; the empty square to which the king could move is also threatened; 
+and the king cannot capture the queen, because it would then be in check by the rook. </p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="resigning"><a class="header" href="#resigning">Resigning</a></h1>
+<p>Either player may resign at any time, conceding the game to the opponent. 
+A player may resign by saying it verbally or by indicating it on the scoresheet 
+in any of three ways: (1) by writing &quot;resigns&quot;, (2) by circling the result of the game, 
+or (3) by writing &quot;1–0&quot; if Black resigns or &quot;0–1&quot; if White resigns. 
+Tipping over the king also indicates resignation, but it should be distinguished 
+from accidentally knocking the king over. Stopping both clocks is not an indication 
+of resigning, since clocks can be stopped to call the arbiter. An offer of a 
+handshake is sometimes used, but it could be mistaken for a draw offer.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="draws"><a class="header" href="#draws">Draws</a></h1>
+<p>The game ends in a draw if any of these conditions occur:</p>
+<ul>
+<li>The player to move is not in check and has no legal move. 
+This situation is called a stalemate. An example of such a position is shown 
+in the diagram below. <img src="chess/rules/gameplay/end-of-the-game/draws//resources/images/stalemate.png" alt="stalemate example" />
+<blockquote>
+<p>Black to move is in stalemate, since Black's king has no legal move, 
+and is not in check. The game is drawn.</p>
+</blockquote>
+</li>
+<li>The game reaches a dead position.</li>
+<li>Both players agree to a draw after one of the players makes such an offer.</li>
+<li>The player having the move claims a draw by correctly declaring that one of 
+the following conditions exists, or by correctly declaring an intention to 
+make a move which will bring about one of these conditions:
+<ul>
+<li>The same board position has occurred three times with the same player to move 
+and all pieces having the same rights to move, including the right to castle 
+or capture en passant (see threefold repetition rule).</li>
+<li>There has been no capture or pawn move in the last fifty moves by each player, 
+if the last move was not a checkmate (see fifty-move rule).</li>
+</ul>
+</li>
+<li>The arbiter intervenes to declare a draw, without a draw request necessary:
+<ul>
+<li>When the same board position has occurred five times (see fivefold repetition rule).</li>
+<li>When the moves without capture or pawn move extend up to seventy-five.</li>
+</ul>
+</li>
+</ul>
+<p>At one time, if a player was able to check the opposing king continually (perpetual check) and the player indicated their intention to do so, the game was drawn. This rule is no longer in effect; however, players will usually agree to a draw in such a situation, since either the rule on threefold repetition or the fifty-move rule will eventually be applicable.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="dead-position"><a class="header" href="#dead-position">Dead Position</a></h1>
+<p>A dead position is defined as a position where neither player can checkmate 
+their opponent's king by any sequence of legal moves.</p>
+<ul>
+<li>Any positions with only the following pieces are dead positions, 
+and are known as draws by insufficient material:
+<ul>
+<li>king against king</li>
+<li>king against king and bishop</li>
+<li>king against king and knight</li>
+<li>king and bishop against king and bishop, with both bishops on squares 
+of the same color (see King and two bishops).</li>
+</ul>
+</li>
+<li>However, insufficient material is not the only condition for a dead position. 
+There are positions in which checkmate is impossible but the pieces on the board 
+would be sufficient to mate if arranged otherwise. 
+This usually occurs in blocked king and pawn endings where it is impossible 
+for either king to capture the pawns. See the diagram below.
+<img src="chess/rules/gameplay/end-of-the-game/draws//resources/images/dead_position.png" title="dead position example" width="380"/></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="flag-fall"><a class="header" href="#flag-fall">Flag-Fall</a></h1>
+<p>A game played under time control will end as a loss for a player who uses up 
+all the time allotted on the player's clock, which is called flag-fall, unless 
+the opponent has no possibility of effecting checkmate. 
+There are different types of time control. 
+A player may have a fixed amount of time for the entire game, 
+or may have to make a certain number of moves within a specified time. 
+Also, a small increment of time may be added for each move made. </p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="notations"><a class="header" href="#notations">Notations</a></h1>
+<ul>
+<li><a href="chess/notation/fen.html">Forsyth-Edwards Notation (FEN)</a></li>
+<li><a href="chess/notation/san.html">Standard Algebraic Notation (SAN)</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="forsyth-edwards-notation-fen"><a class="header" href="#forsyth-edwards-notation-fen">Forsyth-Edwards Notation (FEN)</a></h1>
+<p>see <a href="https://www.chess.com/terms/fen-chess">here</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="standard-algebraic-notation-san"><a class="header" href="#standard-algebraic-notation-san">Standard Algebraic Notation (SAN)</a></h1>
+<p>see <a href="https://www.chess.com/article/view/chess-notation">here</a></p>
 <div style="break-before: page; page-break-before: always;"></div><p>Here is a list of the contributors who have helped improving this project. Big shout-out to them!</p>
 <ul>
 <li><a href="https://github.com/ValentinColin">Valentin Colin</a></li>
+<li><a href="https://github.com/MarcPartensky">Marc Partensky</a></li>
 </ul>
 <p>If you feel you're missing from this list, feel free to add yourself in a PR.</p>
 
