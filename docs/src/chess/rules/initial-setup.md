@@ -17,17 +17,17 @@ Each player controls sixteen pieces:
 |  Symbols Black   | ![king_b] | ![queen_b] | ![rook_b] | ![bishop_b] | ![knight_b] | ![pawn_b] |
 
 [king_w]: ../../resources/images/pieces/king_white.png
-[queen_w]: /../resources/images/pieces/queen_white.png
-[rook_w]: ../resources/images/pieces/rook_white.png
-[bishop_w]: /../../resources/images/pieces/bishop_white.png
-[knight_w]: /../../resources/images/pieces/knight_white.png
-[pawn_w]: /../../resources/images/pieces/pawn_white.png
-[king_b]: /../../resources/images/pieces/king_black.png
-[queen_b]: /../../resources/images/pieces/queen_black.png
-[rook_b]: /../../resources/images/pieces/rook_black.png
-[bishop_b]: /../../resources/images/pieces/bishop_black.png
-[knight_b]: /../../resources/images/pieces/knight_black.png
-[pawn_b]: /../../resources/images/pieces/pawn_black.png
+[queen_w]: ../../resources/images/pieces/queen_white.png
+[rook_w]: ../../resources/images/pieces/rook_white.png
+[bishop_w]: ../../resources/images/pieces/bishop_white.png
+[knight_w]: ../../resources/images/pieces/knight_white.png
+[pawn_w]: ../../resources/images/pieces/pawn_white.png
+[king_b]: ../../resources/images/pieces/king_black.png
+[queen_b]: ../../resources/images/pieces/queen_black.png
+[rook_b]: ../../resources/images/pieces/rook_black.png
+[bishop_b]: ../../resources/images/pieces/bishop_black.png
+[knight_b]: ../../resources/images/pieces/knight_black.png
+[pawn_b]: ../../resources/images/pieces/pawn_black.png
 
 At the beginning of the game, the pieces are arranged as shown in the diagram: 
 for each side one king, one queen, two rooks, two bishops, two knights, and eight pawns. 
