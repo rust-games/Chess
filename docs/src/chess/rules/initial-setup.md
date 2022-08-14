@@ -16,9 +16,9 @@ Each player controls sixteen pieces:
 |  Symbols White   | ![king_w] | ![queen_w] | ![rook_w] | ![bishop_w] | ![knight_w] | ![pawn_w] |
 |  Symbols Black   | ![king_b] | ![queen_b] | ![rook_b] | ![bishop_b] | ![knight_b] | ![pawn_b] |
 
-[king_w]: /../../resources/images/pieces/king_white.png
-[queen_w]: /../../resources/images/pieces/queen_white.png
-[rook_w]: /../../resources/images/pieces/rook_white.png
+[king_w]: ../../resources/images/pieces/king_white.png
+[queen_w]: /../resources/images/pieces/queen_white.png
+[rook_w]: ../resources/images/pieces/rook_white.png
 [bishop_w]: /../../resources/images/pieces/bishop_white.png
 [knight_w]: /../../resources/images/pieces/knight_white.png
 [pawn_w]: /../../resources/images/pieces/pawn_white.png
