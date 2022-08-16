@@ -14,7 +14,7 @@ pub enum CastleRights {
 impl CastleRights {
     /// Convert `CastleRights` to `usize` for table lookups
     pub fn to_index(&self) -> usize {
-        self as usize
+        *self as usize
     }
 
     /// Convert `usize` to `CastleRights`.  Panic if invalid number.

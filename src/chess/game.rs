@@ -1,7 +1,7 @@
-use super::Color;
+use crate::{ChessMove, Color};
 
 /// Contains all actions supported within the game
-#[derive(Debug, Clone, Copy, PartialOrd, PartialEq, Eq)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum Action {
     MakeMove(ChessMove),
     OfferDraw(Color),
@@ -11,7 +11,14 @@ pub enum Action {
 }
 
 /// What was the result of this game?
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
+///
+/// ```
+/// use chess::{Color, GameState}
+///
+/// let state = GameState::Checkmates(Color::Black);
+/// assert!("The winner is: White", state.winner())
+/// ```
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GameState {
     Checkmates(Color), // Color has loose
     Resigns(Color),    // Color resigns

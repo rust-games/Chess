@@ -1,13 +1,4 @@
 //! chess game executable
-// Careful to the syntax:
-//
-// | Documentation | Inner              | Outer              |
-// |---------------|:------------------:|:------------------:|
-// | Line          | //! doc comment    | /// doc comment    |
-// | Block         | /*! doc comment */ | /** doc comment */ |
-//
-// - Inner attribute: #![allow(missing_docs)] (of the entire file)
-// - Outer attribute: #[test] (consider the function bellow as a test)
 
 // Good practice: use these attributes
 #![deny(
@@ -22,8 +13,6 @@
     unused_qualifications
 )]
 
-extern crate core;
-
 use std::env;
 use std::path::PathBuf;
 
@@ -33,7 +22,7 @@ use ggez::{event, GameResult};
 mod chess;
 use chess::*;
 
-fn main() -> GameResult {
+fn main() {
     // Init the logger
     env_logger::init();
 
@@ -62,8 +51,8 @@ fn main() -> GameResult {
             .expect("Failed to build ggez context");
 
     // Next we create a new instance of our Game struct, which implements EventHandler
-    let state = Chess::new();
+    //let state = Chess::new();
 
     // And finally we actually run our game, passing in our context, event_loop and state.
-    event::run(ctx, event_loop, state)
+    //event::run(ctx, event_loop, state)
 }

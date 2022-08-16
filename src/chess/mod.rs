@@ -24,3 +24,15 @@ pub use crate::chess::error::*;
 
 mod config;
 pub use crate::chess::config::*;
+
+mod square;
+pub use crate::chess::square::*;
+
+mod rank;
+pub use crate::chess::rank::*;
+
+mod file;
+pub use crate::chess::file::*;
+
+mod chess_move;
+pub use crate::chess::chess_move::*;
