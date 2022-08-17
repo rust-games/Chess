@@ -17,9 +17,8 @@ use std::env;
 use std::path::PathBuf;
 
 use env_logger;
-use ggez::{event, GameResult};
+use ggez::event;
 
-mod chess;
 use chess::*;
 
 fn main() {
@@ -43,7 +42,7 @@ fn main() {
             // which we use our SCREEN_SIZE constant from earlier to help with
             .window_mode(
                 ggez::conf::WindowMode::default()
-                    .dimensions(SCREEN_SIZE.0 as f32, SCREEN_SIZE.1 as f32),
+                    .dimensions(SCREEN_PX_SIZE.0 as f32, SCREEN_PX_SIZE.1 as f32),
             )
             // And finally we attempt to build the context and create the window.
             // If it fails, we panic with the message "Failed to build ggez context"
@@ -51,8 +50,8 @@ fn main() {
             .expect("Failed to build ggez context");
 
     // Next we create a new instance of our Game struct, which implements EventHandler
-    //let state = Chess::new();
+    let state = Chess::new();
 
     // And finally we actually run our game, passing in our context, event_loop and state.
-    //event::run(ctx, event_loop, state)
+    event::run(ctx, event_loop, state)
 }

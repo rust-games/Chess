@@ -1,8 +1,9 @@
 use std::fmt;
 use std::str::FromStr;
 
-use crate::{Error, File, Rank, GRID_SIZE, NUM_FILES, NUM_RANKS};
+use crate::{Error, File, Rank, BOARD_SIZE, NUM_FILES, NUM_RANKS};
 
+/// Represent a square on the chess board.
 #[rustfmt::skip]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
@@ -17,10 +18,10 @@ pub enum Square {
     A8, B8, C8, D8, E8, F8, G8, H8,
 }
 
-/// How many files are there?
-pub const NUM_SQUARES: usize = (GRID_SIZE.0 * GRID_SIZE.1) as usize;
+/// How many squares are there?
+pub const NUM_SQUARES: usize = (BOARD_SIZE.0 * BOARD_SIZE.1) as usize;
 
-/// Enumerate all files
+/// Enumerate all files.
 #[rustfmt::skip]
 pub const ALL_SQUARES: [Square; NUM_SQUARES] = [
     Square::A1, Square::B1, Square::C1, Square::D1, Square::E1, Square::F1, Square::G1, Square::H1,
@@ -34,7 +35,7 @@ pub const ALL_SQUARES: [Square; NUM_SQUARES] = [
 ];
 
 impl Square {
-    /// Create a new square, from an index.
+    /// Create a new [`Square`], from an index.
     /// > Note: It is invalid, but allowed, to pass in a number >= 64. Doing so will crash stuff.
     ///
     /// ```
@@ -48,13 +49,13 @@ impl Square {
         ALL_SQUARES[index % NUM_SQUARES]
     }
 
-    /// Convert this `Square` into a `usize` from 0 to 63 inclusive.
+    /// Convert this [`Square`] into a [`usize`] from 0 to 63 inclusive.
     #[inline]
     pub fn to_index(&self) -> usize {
         *self as usize
     }
 
-    /// Make a square from file and rank
+    /// Make a square from [`File`] and [`Rank`].
     ///
     /// # Examples
     ///
@@ -62,35 +63,35 @@ impl Square {
     /// use chess::{File, Rank, Square};
     ///
     /// // Make the A1 square
-    /// let square = Square::make_square(Rank::First, File::A);
+    /// let square = Square::make_square(File::A, Rank::First);
     /// ```
     #[inline]
     pub fn make_square(file: File, rank: Rank) -> Square {
-        Square::new(file.to_index() + rank.to_index() * GRID_SIZE.0 as usize)
+        Square::new(file.to_index() + rank.to_index() * BOARD_SIZE.0 as usize)
     }
 
-    /// Return the file of this square.
+    /// Return the [`File`] of this square.
     ///
     /// ```
     /// use chess::{File, Rank, Square};
     ///
-    /// let sq = Square::make_square(Rank::Seventh, File::D);
+    /// let square = Square::make_square(File::D, Rank::Seventh);
     ///
-    /// assert_eq!(sq.get_file(), File::D);
+    /// assert_eq!(square.file(), File::D);
     /// ```
     #[inline]
     pub fn file(&self) -> File {
         File::new(self.to_index() % NUM_FILES)
     }
 
-    /// Return the rank of this square.
+    /// Return the [`Rank`] of this square.
     ///
     /// ```
     /// use chess::{File, Rank, Square};
     ///
-    /// let sq = Square::make_square(Rank::Seventh, File::D);
+    /// let square = Square::make_square(File::D, Rank::Seventh);
     ///
-    /// assert_eq!(sq.get_rank(), Rank::Seventh);
+    /// assert_eq!(square.rank(), Rank::Seventh);
     /// ```
     #[inline]
     pub fn rank(&self) -> Rank {
@@ -119,15 +120,11 @@ impl FromStr for Square {
         let ch: Vec<char> = s.chars().collect();
         match ch[0] {
             'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' => {}
-            _ => {
-                return Err(Error::InvalidSquare);
-            }
+            _ => return Err(Error::InvalidSquare),
         }
         match ch[1] {
             '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' => {}
-            _ => {
-                return Err(Error::InvalidSquare);
-            }
+            _ => return Err(Error::InvalidSquare),
         }
         Ok(Square::make_square(
             File::new((ch[0] as usize) - ('a' as usize)),

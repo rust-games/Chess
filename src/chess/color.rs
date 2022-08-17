@@ -1,6 +1,6 @@
 use std::ops::Not;
 
-/// Represent a color.
+/// Represent a color in Chess game.
 #[derive(Debug, PartialOrd, PartialEq, Eq, Clone, Copy)]
 pub enum Color {
     White,
@@ -10,11 +10,11 @@ pub enum Color {
 /// How many colors are there?
 pub const NUM_COLORS: usize = 2;
 
-/// List all colors
+/// List all colors.
 pub const ALL_COLORS: [Color; NUM_COLORS] = [Color::White, Color::Black];
 
 impl Color {
-    /// Convert the `Color` to a `usize` for table lookups.
+    /// Convert the [`Color`] to a [`usize`] for table lookups.
     #[inline]
     pub fn to_index(&self) -> usize {
         *self as usize

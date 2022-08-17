@@ -2,7 +2,7 @@ use std::fmt;
 
 use super::Color;
 
-/// Represent a chess piece as a very simple enum
+/// Represent a chess piece as a very simple enum.
 #[derive(Debug, Clone, Copy, PartialOrd, PartialEq, Eq)]
 pub enum Piece {
     Pawn,
@@ -33,14 +33,15 @@ pub const ALL_PIECES: [Piece; NUM_PIECES] = [
 // pub const PROMOTION_PIECES: [Piece; 4] = [Piece::Queen, Piece::Knight, Piece::Rook, Piece::Bishop];
 
 impl Piece {
-    /// Convert the `Piece` to a `usize` for table lookups.
+    /// Convert the [`Piece`] to a [`usize`] for table lookups.
     #[inline]
     pub fn to_index(&self) -> usize {
         *self as usize
     }
 
-    /// Convert a piece with a color to a string.
-    /// White pieces are uppercase, black pieces are lowercase.
+    /// Convert a piece with a [`Color`] to a string.
+    ///
+    /// > **Note**: White pieces are uppercase, black pieces are lowercase.
     ///
     /// ```
     /// use chess::{Piece, Color};
