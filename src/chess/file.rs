@@ -16,7 +16,7 @@ pub enum File {
     H,
 }
 
-/// How many files are there?
+/// Numbers of [`File`]
 pub const NUM_FILES: usize = BOARD_SIZE.1 as usize;
 
 /// Enumerate all files.

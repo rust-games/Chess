@@ -1,7 +1,8 @@
 use std::fmt;
 use std::str::FromStr;
+use log::trace;
 
-use crate::{Error, File, Rank, BOARD_SIZE, NUM_FILES, NUM_RANKS};
+use crate::{Error, File, Rank, BOARD_SIZE, NUM_FILES, NUM_RANKS, BOARD_CELL_PX_SIZE};
 
 /// Represent a square on the chess board.
 #[rustfmt::skip]
@@ -18,10 +19,10 @@ pub enum Square {
     A8, B8, C8, D8, E8, F8, G8, H8,
 }
 
-/// How many squares are there?
+/// Numbers of [`Square`].
 pub const NUM_SQUARES: usize = (BOARD_SIZE.0 * BOARD_SIZE.1) as usize;
 
-/// Enumerate all files.
+/// Enumerate all [`Square`].
 #[rustfmt::skip]
 pub const ALL_SQUARES: [Square; NUM_SQUARES] = [
     Square::A1, Square::B1, Square::C1, Square::D1, Square::E1, Square::F1, Square::G1, Square::H1,
@@ -68,6 +69,45 @@ impl Square {
     #[inline]
     pub fn make_square(file: File, rank: Rank) -> Square {
         Square::new(file.to_index() + rank.to_index() * BOARD_SIZE.0 as usize)
+    }
+
+    /// Transform a screen coordinate into a [`Square`].
+    ///
+    /// > **Reciprocal**: see [`to_screen`]
+    ///
+    /// The result depend of:
+    /// - [`BOARD_SIZE`]
+    /// - [`BOARD_CELL_PX_SIZE`]
+    #[inline]
+    pub fn from_screen(x: f32, y: f32) -> Square {
+        // Transpose to grid space
+        let x = x / BOARD_CELL_PX_SIZE.0 as f32;
+        let y = y / BOARD_CELL_PX_SIZE.1 as f32;
+
+        // transpose to Square (return the y-axis)
+        let y = BOARD_SIZE.1 - y as i16 - 1;
+        let square = Square::make_square(File::new(x as usize), Rank::new(y as usize));
+        square
+    }
+
+    /// Transform a [`Square`] into a screen coordinate.
+    ///
+    /// > **Reciprocal**: see [`from_screen`]
+    ///
+    /// The result depend of:
+    /// - [`BOARD_SIZE`]
+    /// - [`BOARD_CELL_PX_SIZE`]
+    #[inline]
+    pub fn to_screen(&self) -> (f32, f32) {
+        // transpose to grid space (return the y-axis)
+        let x = self.file().to_index() as f32;
+        let y = (BOARD_SIZE.1 as usize - self.rank().to_index() - 1) as f32;
+        trace!("to_screen(square: {self}) -> (x: {x}, y: {y})");
+
+        // Transpose to screen space
+        let x = x * BOARD_CELL_PX_SIZE.0 as f32;
+        let y = y * BOARD_CELL_PX_SIZE.1 as f32;
+        (x, y)
     }
 
     /// Return the [`File`] of this square.

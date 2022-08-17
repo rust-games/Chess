@@ -1,16 +1,16 @@
 use std::ops::Not;
 
 /// Represent a color in Chess game.
-#[derive(Debug, PartialOrd, PartialEq, Eq, Clone, Copy)]
+#[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Debug)]
 pub enum Color {
     White,
     Black,
 }
 
-/// How many colors are there?
+/// Numbers of [`Color`] in chess game.
 pub const NUM_COLORS: usize = 2;
 
-/// List all colors.
+/// List all [`colors`][Color].
 pub const ALL_COLORS: [Color; NUM_COLORS] = [Color::White, Color::Black];
 
 impl Color {

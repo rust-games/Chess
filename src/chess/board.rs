@@ -4,9 +4,49 @@ use std::fmt;
 use std::ops::{Index, IndexMut};
 use std::str::FromStr;
 
-use crate::{CastleRights, ChessMove, Color, Error, File, Piece, Rank, Square, NUM_COLORS, NUM_SQUARES, ALL_RANKS, ALL_FILES};
+use crate::{
+    CastleRights, ChessMove, Color, Error, File, Piece, Rank, Square, ALL_FILES, ALL_RANKS,
+    NUM_COLORS, NUM_SQUARES,
+};
 
 /// A representation of a chess board.
+///
+/// # Examples
+///
+/// ```
+/// use chess::{Square, Board, Color, Piece, ChessMove};
+///
+/// let mut board = Board::default();
+/// // 8 | r n b q k b n r
+/// // 7 | p p p p p p p p
+/// // 6 | . . . . . . . .
+/// // 5 | . . . . . . . .
+/// // 4 | . . . . . . . .
+/// // 3 | . . . . . . . .
+/// // 2 | P P P P P P P P
+/// // 1 | R N B Q K B N R
+/// //   +----------------
+/// //     A B C D E F G H
+///
+/// assert_eq!(board.on(Square::E8), Some((Piece::King, Color::Black)));
+///
+/// // White move the pawn from E2 to E4
+/// let m = ChessMove::new(Square::E2, Square::E4);
+/// board.update(m)?;
+/// // 8 | r n b q k b n r
+/// // 7 | p p p p p p p p
+/// // 6 | . . . . . . . .
+/// // 5 | . . . . . . . .
+/// // 4 | . . . . P . . .
+/// // 3 | . . . . . . . .
+/// // 2 | P P P P . P P P
+/// // 1 | R N B Q K B N R
+/// //   +----------------
+/// //     A B C D E F G H
+///
+/// assert_eq!(board.on(Square::E4), Some((Piece::Pawn, Color::White)));
+/// assert_eq!(board.side_to_move(), Color::Black);
+/// ```
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub struct Board {
     squares: [Option<(Piece, Color)>; NUM_SQUARES],
@@ -21,19 +61,6 @@ impl Board {
     /// Create a new empty board.
     ///
     /// Consider using the [`Default`] trait to initialize the board.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::str::FromStr;
-    /// use chess::Board;
-    ///
-    /// // Bad
-    /// let board = Board::from_str("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")?;
-    ///
-    /// // Good
-    /// let board = Board::default();
-    /// ```
     pub fn new() -> Self {
         Board {
             squares: [None; NUM_SQUARES],
@@ -45,9 +72,29 @@ impl Board {
         }
     }
 
-    ///
+    /// Get the [`Color`] of the player who has to play.
+    pub fn side_to_move(&self) -> Color {
+        self.side_to_move
+    }
+
+    /// Get the [`CastleRights`] for a given side.
+    pub fn castle_rights(&self, color: Color) -> CastleRights {
+        self.castle_rights[color.to_index()]
+    }
+
+    /// Get the [`Square`] (if exist) of the En Passant.
     pub fn en_passant(&self) -> Option<Square> {
         self.en_passant
+    }
+
+    /// Get the halfmoves number.
+    pub fn halfmoves(&self) -> u64 {
+        self.halfmoves
+    }
+
+    /// Get the fullmoves number.
+    pub fn fullmoves(&self) -> u64 {
+        self.fullmoves
     }
 
     /// Check if the [`Move`][ChessMove] is legal.
@@ -104,6 +151,14 @@ impl Board {
     pub fn color_on(&self, square: Square) -> Option<Color> {
         match self.squares[square.to_index()] {
             Some((_, color)) => Some(color),
+            None => None,
+        }
+    }
+
+    /// Get the [`Color`] at a given [`Square`].
+    pub fn on(&self, square: Square) -> Option<(Piece, Color)> {
+        match self.squares[square.to_index()] {
+            Some((piece, color)) => Some((piece, color)),
             None => None,
         }
     }

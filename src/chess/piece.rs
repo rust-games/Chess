@@ -13,10 +13,10 @@ pub enum Piece {
     King,
 }
 
-/// How many piece types are there?
+/// Numbers of [`Piece`]
 pub const NUM_PIECES: usize = 6;
 
-/// An array representing each piece type, in order of ascending value.
+/// An array representing each [`Piece`] type, in order of ascending value.
 pub const ALL_PIECES: [Piece; NUM_PIECES] = [
     Piece::Pawn,
     Piece::Knight,

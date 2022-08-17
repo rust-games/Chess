@@ -2,7 +2,9 @@
 
 use ggez::graphics::Color;
 
-pub const DEFAULT_THEME: Theme = Theme {
+use crate::NUM_COLORS;
+
+pub const THEME_DEFAULT: Theme = Theme {
     board_color: [
         Color::new(0.4375, 0.3984, 0.4648, 1.0),
         Color::new(0.7969, 0.7148, 0.6797, 1.0),
@@ -31,52 +33,53 @@ pub const DEFAULT_THEME: Theme = Theme {
     font_scale: 15.0,
 };
 
-pub const CORAL_THEME: Theme = Theme {
+pub const THEME_CORAL: Theme = Theme {
     board_color: [
         Color::new(112.0 / 256.0, 162.0 / 256.0, 163.0 / 256.0, 1.0),
         Color::new(177.0 / 256.0, 228.0 / 256.0, 185.0 / 256.0, 1.0),
     ],
-    ..DEFAULT_THEME
+    ..THEME_DEFAULT
 };
 
-pub const DUST_THEME: Theme = DEFAULT_THEME;
+pub const THEME_DUST: Theme = THEME_DEFAULT;
 
-pub const MARINE_THEME: Theme = Theme {
+pub const THEME_MARINE: Theme = Theme {
     board_color: [
         Color::new(111.0 / 256.0, 115.0 / 256.0, 210.0 / 256.0, 1.0),
         Color::new(157.0 / 256.0, 172.0 / 256.0, 255.0 / 256.0, 1.0),
     ],
-    ..DEFAULT_THEME
+    ..THEME_DEFAULT
 };
 
-pub const WHEAT_THEME: Theme = Theme {
+pub const THEME_WHEAT: Theme = Theme {
     board_color: [
         Color::new(187.0 / 256.0, 190.0 / 256.0, 100.0 / 256.0, 1.0),
         Color::new(234.0 / 256.0, 240.0 / 256.0, 206.0 / 256.0, 1.0),
     ],
-    ..DEFAULT_THEME
+    ..THEME_DEFAULT
 };
 
-pub const EMERALD_THEME: Theme = Theme {
+pub const THEME_EMERALD: Theme = Theme {
     board_color: [
         Color::new(111.0 / 256.0, 143.0 / 256.0, 114.0 / 256.0, 1.0),
         Color::new(173.0 / 256.0, 189.0 / 256.0, 143.0 / 256.0, 1.0),
     ],
-    ..DEFAULT_THEME
+    ..THEME_DEFAULT
 };
 
-pub const SANDCASTLE_THEME: Theme = Theme {
+pub const THEME_SANDCASTLE: Theme = Theme {
     board_color: [
         Color::new(184.0 / 256.0, 139.0 / 256.0, 74.0 / 256.0, 1.0),
         Color::new(227.0 / 256.0, 193.0 / 256.0, 111.0 / 256.0, 1.0),
     ],
-    ..DEFAULT_THEME
+    ..THEME_DEFAULT
 };
 
+/// Describe the theme of the chess game (GUI).
 #[derive(Debug, Clone, Copy)]
 pub struct Theme {
     // [dark, light]
-    pub board_color: [Color; 2],
+    pub board_color: [Color; NUM_COLORS],
     pub piece_path: PieceRolePath,
     pub valid_moves_color: Option<Color>,
     pub background_color: Color,
@@ -88,12 +91,14 @@ pub struct Theme {
     pub font_scale: f32,
 }
 
+#[doc(hidden)]
 #[derive(Debug, Clone, Copy)]
 pub struct PieceRolePath {
     pub white: PiecePath,
     pub black: PiecePath,
 }
 
+#[doc(hidden)]
 #[derive(Debug, Clone, Copy)]
 pub struct PiecePath {
     pub pawn: &'static str,
