@@ -65,6 +65,12 @@ impl Rank {
     pub fn up(&self) -> Self {
         Rank::new(self.to_index() + 1)
     }
+
+    /// Distance between two [`Rank`].
+    #[inline]
+    pub fn distance(&self, other: Rank) -> u32 {
+        self.to_index().abs_diff(other.to_index()) as u32
+    }
 }
 
 impl FromStr for Rank {

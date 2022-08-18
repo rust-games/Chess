@@ -61,6 +61,12 @@ impl File {
     pub fn right(&self) -> Self {
         File::new(self.to_index() + 1)
     }
+
+    /// Distance between two [`File`].
+    #[inline]
+    pub fn distance(&self, other: File) -> u32 {
+        self.to_index().abs_diff(other.to_index()) as u32
+    }
 }
 
 impl FromStr for File {

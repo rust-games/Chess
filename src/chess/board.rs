@@ -99,7 +99,8 @@ impl Board {
 
     /// Check if the [`Move`][ChessMove] is legal.
     pub fn is_legal(&self, m: ChessMove) -> bool {
-        todo!()
+        // todo
+        true
     }
 
     /// Update the chessboard according to the chess rules.
@@ -126,14 +127,64 @@ impl Board {
             });
         }
 
-        todo!();
-        // manage normal, castle, en-passant move and promotion
-        // ...
+        let piece_from = self.piece_on(m.from).unwrap();
+        let side = self.side_to_move;
+        let mut new_en_passant = false;
 
-        self.halfmoves += 1;
+        match piece_from {
+            // Pawn: En Passant, promotion
+            Piece::Pawn => {
+                self[m.from] = None;
+                self[m.to] = Some((piece_from, side));
+                // if En Passant: capture the pawn
+                if self.en_passant == Some(m.to) {
+                    match side {
+                        Color::White => self[m.to.down()] = None,
+                        Color::Black => self[m.to.up()] = None,
+                    }
+                }
+                // Set self.en_passant
+                if m.distance() == 2 {
+                    self.en_passant = match side {
+                        Color::White => Some(m.to.down()),
+                        Color::Black => Some(m.to.up()),
+                    };
+                    new_en_passant = true;
+                } else {
+                    self.en_passant = None;
+                }
+
+                // Promotion
+                if m.to.rank() == Rank::First || m.to.rank() == Rank::Eighth {
+                    self[m.to] = Some((Piece::Queen, side));
+                }
+            }
+            // king: Castle
+            Piece::King => {
+                // King
+                self[m.from] = None;
+                self[m.to] = Some((piece_from, side));
+                // if Castle: move Rook
+                if self.on(m.to.right()) == Some((Piece::Rook, side)) {
+                    self[m.to.right()] = None;
+                    self[m.to.left()] = Some((Piece::Rook, side));
+                } else if self.on(m.to.left().left()) == Some((Piece::Rook, side)) {
+                    self[m.to.left().left()] = None;
+                    self[m.to.right()] = Some((Piece::Rook, side));
+                }
+            }
+            _ => {
+                self[m.from] = None;
+                self[m.to] = Some((piece_from, side));
+            }
+        }
+
         self.side_to_move = !self.side_to_move;
-        self.en_passant = None;
-        if self.side_to_move == Color::Black {
+        if !new_en_passant {
+            self.en_passant = None;
+        }
+        self.halfmoves += 1;
+        if self.side_to_move == Color::White {
             self.fullmoves += 1;
         }
         Ok(())
@@ -189,8 +240,8 @@ impl FromStr for Board {
         let side = tokens[1];
         let castles = tokens[2];
         let ep = tokens[3];
-        let halfmoves = tokens[4]; // increment each time a piece move (ie. a player play) => at 100 100 the game is a draw
-        let fullmoves = tokens[5]; // increment each time black piece move (ie. black player play)
+        let halfmoves = tokens[4];
+        let fullmoves = tokens[5];
 
         // Piece Placement
         for x in pieces.chars() {

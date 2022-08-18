@@ -1,7 +1,6 @@
 use std::fmt;
-use std::str::FromStr;
 
-use crate::{Board, Error, File, Piece, Rank, Square};
+use crate::{Square};
 
 /// Represent a ChessMove in memory.
 #[derive(Clone, Copy, Eq, PartialEq, Debug)]
@@ -17,9 +16,10 @@ impl ChessMove {
         ChessMove { from, to }
     }
 
+    /*
     /// Convert a SAN (Standard Algebraic Notation) move into a [`ChessMove`].
     ///
-    /// TODO: I'm not sure if this method work well I need to implement some unittest.
+    /// TODO
     ///
     /// ```
     /// use chess::{Board, ChessMove, Square};
@@ -33,7 +33,10 @@ impl ChessMove {
     pub fn from_san(board: &Board, move_text: &str) -> Result<ChessMove, Error> {
         // Castles first...
         if move_text == "O-O" || move_text == "O-O-O" {
-            let rank = board.side_to_move().to_my_backrank();
+            let rank = match board.side_to_move() {
+                Color::White => Rank::First,
+                Color::Black => Rank::Eighth,
+            };
             let source_file = File::E;
             let dest_file = if move_text == "O-O" { File::G } else { File::C };
 
@@ -41,11 +44,11 @@ impl ChessMove {
                 Square::make_square(source_file, rank),
                 Square::make_square(dest_file, rank),
             );
-            if MoveGen::new_legal(&board).any(|l| l == m) {
-                return Ok(m);
+            return if board.is_legal(m) {
+                Ok(m)
             } else {
-                return Err(Error::InvalidSanMove);
-            }
+                Err(Error::InvalidSanMove)
+            };
         }
 
         // forms of SAN moves
@@ -257,6 +260,8 @@ impl ChessMove {
         // moveing_piece, source_rank, source_file, taks, dest, promotion, maybe_check_or_mate, and
         // ep
 
+        todo!()
+        /*
         let mut found_move: Option<ChessMove> = None;
         for m in &mut MoveGen::new_legal(board) {
             // check that the move has the properties specified
@@ -305,6 +310,21 @@ impl ChessMove {
         }
 
         found_move.ok_or(error.clone())
+
+        */
+    } */
+
+    /// The distance between the two [`Square`] of the move.
+    ///
+    /// ```
+    /// use chess::{ChessMove, Square};
+    ///
+    /// let m = ChessMove::new(Square::A1, Square::H8);
+    ///
+    /// assert_eq!(m.distance(), 7);
+    /// ```
+    pub fn distance(&self) -> u32 {
+        self.from.distance(self.to)
     }
 }
 

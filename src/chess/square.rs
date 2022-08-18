@@ -1,8 +1,10 @@
+use std::cmp::max;
 use std::fmt;
 use std::str::FromStr;
+
 use log::trace;
 
-use crate::{Error, File, Rank, BOARD_SIZE, NUM_FILES, NUM_RANKS, BOARD_CELL_PX_SIZE};
+use crate::{Color, Error, File, Rank, BOARD_CELL_PX_SIZE, BOARD_SIZE, NUM_FILES, NUM_RANKS};
 
 /// Represent a square on the chess board.
 #[rustfmt::skip]
@@ -136,6 +138,165 @@ impl Square {
     #[inline]
     pub fn rank(&self) -> Rank {
         Rank::new(self.to_index() / NUM_RANKS)
+    }
+
+    /// Go one rank up.
+    ///
+    /// > **Note**: If impossible, wrap around.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::Square;
+    ///
+    /// assert_eq!(Square::B2.up(), Square::B3);
+    /// ```
+    #[inline]
+    pub fn up(&self) -> Self {
+        Square::make_square(self.file(), self.rank().up())
+    }
+
+    /// Go one [`Square`] forward according to the side.
+    ///
+    /// > **Note**: If impossible, wrap around.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::B2.forward(Color::White), Square::B3);
+    /// assert_eq!(Square::B2.forward(Color::Black), Square::B1);
+    /// ```
+    #[inline]
+    pub fn forward(&self, color: Color) -> Self {
+        match color {
+            Color::White => Square::make_square(self.file(), self.rank().up()),
+            Color::Black => Square::make_square(self.file(), self.rank().down()),
+        }
+    }
+
+    /// Go one rank down.
+    ///
+    /// > **Note**: If impossible, wrap around.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::Square;
+    ///
+    /// assert_eq!(Square::B2.down(), Square::B1);
+    /// ```
+    #[inline]
+    pub fn down(&self) -> Self {
+        Square::make_square(self.file(), self.rank().down())
+    }
+
+    /// Go one [`Square`] backward according to the side.
+    ///
+    /// > **Note**: If impossible, wrap around.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::B2.backward(Color::White), Square::B1);
+    /// assert_eq!(Square::B2.backward(Color::Black), Square::B3);
+    /// ```
+    #[inline]
+    pub fn backward(&self, color: Color) -> Self {
+        match color {
+            Color::White => Square::make_square(self.file(), self.rank().down()),
+            Color::Black => Square::make_square(self.file(), self.rank().up()),
+        }
+    }
+
+    /// Go one file to the right.
+    ///
+    /// > **Note**: If impossible, wrap around.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::Square;
+    ///
+    /// assert_eq!(Square::B2.right(), Square::C2);
+    /// ```
+    #[inline]
+    pub fn right(&self) -> Self {
+        Square::make_square(self.file().right(), self.rank())
+    }
+
+    /// Go one file right according to the side.
+    ///
+    /// > **Note**: If impossible, wrap around.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::B2.right_for(Color::White), Square::C2);
+    /// assert_eq!(Square::B2.right_for(Color::Black), Square::A2);
+    /// ```
+    #[inline]
+    pub fn right_for(&self, color: Color) -> Self {
+        match color {
+            Color::White => Square::make_square(self.file().right(), self.rank()),
+            Color::Black => Square::make_square(self.file().left(), self.rank()),
+        }
+    }
+
+    /// Go one file to the left.
+    ///
+    /// > **Note**: If impossible, wrap around.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::Square;
+    ///
+    /// assert_eq!(Square::B2.left(), Square::A2);
+    /// ```
+    #[inline]
+    pub fn left(&self) -> Self {
+        Square::make_square(self.file().left(), self.rank())
+    }
+
+    /// Go one file left according to the side.
+    ///
+    /// > **Note**: If impossible, wrap around.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::B2.left_for(Color::White), Square::A2);
+    /// assert_eq!(Square::B2.left_for(Color::Black), Square::C2);
+    /// ```
+    #[inline]
+    pub fn left_for(&self, color: Color) -> Self {
+        match color {
+            Color::White => Square::make_square(self.file().left(), self.rank()),
+            Color::Black => Square::make_square(self.file().right(), self.rank()),
+        }
+    }
+
+    /// The distance between the two squares, i.e. the number of king steps
+    /// to get from one square to the other.
+    ///
+    /// ```
+    /// use chess::Square;
+    ///
+    /// assert_eq!(Square::A2.distance(Square::B5), 3);
+    /// ```
+    pub fn distance(&self, other: Square) -> u32 {
+        max(
+            self.file().distance(other.file()),
+            self.rank().distance(other.rank()),
+        )
     }
 }
 

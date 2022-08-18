@@ -2,15 +2,14 @@ use ggez::event::{self, KeyCode, MouseButton};
 use ggez::{graphics, Context, GameError};
 use log::{debug, info};
 
-use crate::{Board, ChessMove, Color, File, Rank, Square, Theme, BOARD_PX_SIZE, THEME_DEFAULT};
+use crate::{Board, ChessMove, Color, Square, Theme, BOARD_PX_SIZE, THEME_DEFAULT};
 
 /// Contains all actions supported within the game.
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum Action {
-    MakeMove(ChessMove),
+pub enum DrawAction {
     OfferDraw(Color),
     AcceptDraw,
-    DeclareDraw,
+    RefuseDraw,
     Resign(Color),
 }
 
@@ -22,27 +21,30 @@ pub enum Action {
 /// use chess::{Color, GameState};
 ///
 /// let state = GameState::Checkmates(Color::Black);
-/// assert!("The winner is: White", state.winner())
+/// assert!(Some(Color::White), state.winner())
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GameState {
+    /// The game is still ongoing.
+    Ongoing,
     /// Checkmates for the given [`Color`] (ie. the looser).
     Checkmates(Color),
-    /// The [`Color`] has resigns.
-    Resigns(Color),
     /// Draw by Stalemate.
     Stalemate,
     /// Draw by request (ie. Mutual Agreement).
     DrawByRequest,
+    /// The [`Color`] has resigns.
+    Resigns(Color),
 }
 
 impl GameState {
     pub fn winner(&self) -> Option<Color> {
         match *self {
+            GameState::Ongoing => None,
             GameState::Checkmates(color) => Some(!color),
-            GameState::Resigns(color) => Some(!color),
             GameState::Stalemate => None,
             GameState::DrawByRequest => None,
+            GameState::Resigns(color) => Some(!color),
         }
     }
 }
@@ -117,7 +119,12 @@ impl Chess {
 
     /// Base function to call when a user click on the screen.
     pub fn play(&mut self, from: Square, to: Square) {
-        debug!("The player {:?} play {} to {}", self.board.side_to_move(), from, to);
+        debug!(
+            "The player {:?} play {} to {}",
+            self.board.side_to_move(),
+            from,
+            to
+        );
         let m = ChessMove::new(from, to);
         if self.board.is_legal(m) {
             self.board.update(m).expect("valid move");
