@@ -237,13 +237,13 @@ impl Chess {
     }
 
     /// Draw the [`Piece`] that are pinned (i.e. can't move).
-    fn draw_pinned_piece(&self, ctx: &mut Context) -> GameResult {
+    fn draw_pinned_piece(&self, _ctx: &mut Context) -> GameResult {
         warn!("draw_pinned_piece(): NotImplementedYet");
         Ok(())
     }
 
     /// Draw a window with winner, score?, stats?
-    pub fn draw_winner(&self, ctx: &mut Context, winner: String) -> GameResult {
+    pub fn draw_winner(&self, _ctx: &mut Context, winner: String) -> GameResult {
         warn!("NotImplementedYet: draw_winner()");
         trace!("The winner is {}", winner);
         Ok(())

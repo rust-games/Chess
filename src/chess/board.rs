@@ -223,6 +223,16 @@ impl Board {
         }
     }
 
+    /// Get the [`Square`] of the [`King`][Piece::King] of the given [`Color`].
+    pub fn king_of(&self, color: Color) -> Square {
+        for square in ALL_SQUARES {
+            if self.on(square) == Some((Piece::King, color)) {
+                return square;
+            }
+        }
+        panic!("King square of {color:?} not found")
+    }
+
     /// Verify if the [`Square`] is empty (i.e. not occupied).
     pub fn is_empty(&self, square: Square) -> bool {
         self.squares[square.to_index()].is_none()
@@ -233,11 +243,17 @@ impl Board {
         self.squares[square.to_index()].is_some()
     }
 
+    /// Verify if a [`Square`] can be taken by the given [`Color`].
+    pub fn is_targeted(&self, square: Square, color: Color) -> bool {
+        todo!()
+    }
+
     /// Compute and return all the valid moves for a [`Piece`] (if exist) at a given [`Square`].
     pub fn get_valid_moves(&self, from: Square) -> Option<Vec<Square>> {
         warn!("get_valid_moves(): NotImplementedYet");
-        // todo: verify if the piece is pinned
-        // TODO: WIP
+        /* Todo: Verify if the piece is pinned (for all piece)
+         *  WIP: add knight move
+         */
 
         let mut valid_moves = Vec::new();
         match self.on(from) {
@@ -274,6 +290,7 @@ impl Board {
                         for direction in ALL_DIAGONAL {
                             current_square = from.follow_direction(direction);
                             while self.is_empty(current_square) {
+                                valid_moves.push(current_square);
                                 current_square = current_square.follow_direction(direction);
                             }
                             if self.color_on_is(current_square, !side) {
@@ -286,6 +303,7 @@ impl Board {
                         for direction in ALL_LINE {
                             current_square = from.follow_direction(direction);
                             while self.is_empty(current_square) {
+                                valid_moves.push(current_square);
                                 current_square = current_square.follow_direction(direction);
                             }
                             if self.color_on_is(current_square, !side) {
@@ -298,6 +316,7 @@ impl Board {
                         for direction in ALL_DIRECTION {
                             current_square = from.follow_direction(direction);
                             while self.is_empty(current_square) {
+                                valid_moves.push(current_square);
                                 current_square = current_square.follow_direction(direction);
                             }
                             if self.color_on_is(current_square, !side) {
@@ -305,13 +324,22 @@ impl Board {
                             }
                         }
                     }
-                    Piece::King => {}
+                    Piece::King => {
+                        let mut destination;
+                        for direction in ALL_DIRECTION {
+                            destination = from.follow_direction(direction);
+                            if !self.color_on_is(destination, side) &&
+                                !self.is_targeted(destination, !side)
+                            {
+                                valid_moves.push(destination);
+                            }
+                        }
+                    }
                 }
             }
             None => return None,
         }
         Some(valid_moves)
-        //Some(Vec::from(ALL_SQUARES))
     }
 
     /// Construct a [`vector`][Vec] of [`Square`] from a [`Square`] (exclusive) to the first [`Piece`]
@@ -346,7 +374,7 @@ impl Board {
         let mut current_square = from.follow_direction(direction);
         while self.is_empty(current_square) {
             line.push(current_square);
-            current_square.follow_direction(direction);
+            current_square = current_square.follow_direction(direction);
         }
         line.push(current_square);
         line
