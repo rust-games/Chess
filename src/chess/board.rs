@@ -5,10 +5,7 @@ use std::fmt;
 use std::ops::{Index, IndexMut};
 use std::str::FromStr;
 
-use crate::{
-    CastleRights, ChessMove, Color, Error, File, Piece, Rank, Square, ALL_FILES, ALL_RANKS,
-    ALL_SQUARES, NUM_COLORS, NUM_SQUARES,
-};
+use crate::{CastleRights, ChessMove, Color, Error, File, Piece, Rank, Square, ALL_FILES, ALL_RANKS, ALL_SQUARES, NUM_COLORS, NUM_SQUARES, Direction, ALL_LINE, ALL_DIAGONAL, ALL_DIRECTION};
 
 /// A representation of a chess board.
 ///
@@ -240,6 +237,7 @@ impl Board {
     pub fn get_valid_moves(&self, from: Square) -> Option<Vec<Square>> {
         warn!("get_valid_moves(): NotImplementedYet");
         // todo: verify if the piece is pinned
+        // TODO: WIP
 
         let mut valid_moves = Vec::new();
         match self.on(from) {
@@ -271,18 +269,42 @@ impl Board {
                         }
                     }
                     Piece::Knight => {}
-                    Piece::Bishop => {}
-                    Piece::Rook => {
-                        let mut current_square = from.up();
-                        while self.is_empty(current_square) {
-                            valid_moves.push(current_square);
-                            current_square = current_square.up();
-                        }
-                        if self.color_on_is(current_square, !side) {
-                            valid_moves.push(current_square);
+                    Piece::Bishop => {
+                        let mut current_square;
+                        for direction in ALL_DIAGONAL {
+                            current_square = from.follow_direction(direction);
+                            while self.is_empty(current_square) {
+                                current_square = current_square.follow_direction(direction);
+                            }
+                            if self.color_on_is(current_square, !side) {
+                                valid_moves.push(current_square);
+                            }
                         }
                     }
-                    Piece::Queen => {}
+                    Piece::Rook => {
+                        let mut current_square;
+                        for direction in ALL_LINE {
+                            current_square = from.follow_direction(direction);
+                            while self.is_empty(current_square) {
+                                current_square = current_square.follow_direction(direction);
+                            }
+                            if self.color_on_is(current_square, !side) {
+                                valid_moves.push(current_square);
+                            }
+                        }
+                    }
+                    Piece::Queen => {
+                        let mut current_square;
+                        for direction in ALL_DIRECTION {
+                            current_square = from.follow_direction(direction);
+                            while self.is_empty(current_square) {
+                                current_square = current_square.follow_direction(direction);
+                            }
+                            if self.color_on_is(current_square, !side) {
+                                valid_moves.push(current_square);
+                            }
+                        }
+                    }
                     Piece::King => {}
                 }
             }
@@ -290,6 +312,44 @@ impl Board {
         }
         Some(valid_moves)
         //Some(Vec::from(ALL_SQUARES))
+    }
+
+    /// Construct a [`vector`][Vec] of [`Square`] from a [`Square`] (exclusive) to the first [`Piece`]
+    /// (inclusive) with a given direction.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Board, ChessMove, Direction, Square};
+    ///
+    /// let mut board = Board::default();
+    /// board.update(ChessMove::new(Square::D2, Square::D3)).expect("");
+    /// board.update(ChessMove::new(Square::G7, Square::G5)).expect("");
+    /// // 8 | r n b q k b n r
+    /// // 7 | p p p p p p . p
+    /// // 6 | . . . . . . . .
+    /// // 5 | . . . . . . p .
+    /// // 4 | . . . . . . . .
+    /// // 3 | . . . P . . . .
+    /// // 2 | P P P . P P P P
+    /// // 1 | R N B Q K B N R
+    /// //   +----------------
+    /// //     A B C D E F G H
+    ///
+    /// assert_eq!(
+    ///     board.get_line(Square::C1, Direction::UpRight),
+    ///     vec![Square::D2, Square::E3, Square::F4, Square::G5]
+    /// )
+    /// ```
+    pub fn get_line(&self, from: Square, direction: Direction) -> Vec<Square> {
+        let mut line = Vec::with_capacity(7);
+        let mut current_square = from.follow_direction(direction);
+        while self.is_empty(current_square) {
+            line.push(current_square);
+            current_square.follow_direction(direction);
+        }
+        line.push(current_square);
+        line
     }
 }
 

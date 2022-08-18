@@ -43,3 +43,6 @@ pub use crate::chess_move::*;
 
 mod theme;
 pub use crate::theme::*;
+
+mod direction;
+pub use crate::direction::*;

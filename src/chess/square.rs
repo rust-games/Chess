@@ -2,7 +2,7 @@ use std::cmp::max;
 use std::fmt;
 use std::str::FromStr;
 
-use crate::{Color, Error, File, Rank, BOARD_CELL_PX_SIZE, BOARD_SIZE, NUM_FILES, NUM_RANKS};
+use crate::{Color, Error, File, Rank, BOARD_CELL_PX_SIZE, BOARD_SIZE, NUM_FILES, NUM_RANKS, Direction};
 
 /// Represent a square on the chess board.
 #[rustfmt::skip]
@@ -442,6 +442,30 @@ impl Square {
             square = square.left_for(color);
         }
         square
+    }
+
+    /// Go one [`Square`] in the given direction.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Direction, Square};
+    ///
+    /// assert_eq!(Square::B2.follow_direction(Direction::Up), Square::B3);
+    /// assert_eq!(Square::B2.follow_direction(Direction::DownRight), Square::C1);
+    /// ```
+    #[inline]
+    pub fn follow_direction(&self, direction: Direction) -> Self {
+        match direction {
+            Direction::Up => self.up(),
+            Direction::UpRight => self.up().right(),
+            Direction::Right => self.right(),
+            Direction::DownRight => self.down().right(),
+            Direction::Down => self.down(),
+            Direction::DownLeft => self.down().left(),
+            Direction::Left => self.left(),
+            Direction::UpLeft => self.up().left(),
+        }
     }
 
     /// The distance between the two squares, i.e. the number of king steps

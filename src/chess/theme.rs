@@ -4,7 +4,9 @@ use ggez::graphics::Color;
 
 use crate::{NUM_COLORS, NUM_PIECES};
 
-pub const THEME_DEFAULT: Theme = Theme {
+pub const THEME_DEFAULT: Theme = THEME_DUST;
+
+pub const THEME_DUST: Theme = Theme {
     board_color: [
         Color::new(0.7969, 0.7148, 0.6797, 1.0),
         Color::new(0.4375, 0.3984, 0.4648, 1.0),
@@ -27,7 +29,7 @@ pub const THEME_DEFAULT: Theme = Theme {
             "/images/pieces/black_king.png",
         ],
     ],
-    valid_moves_color: Some(Color::RED),
+    valid_moves_color: Some(Color::new(0.75, 0.25, 0.25, 0.5)),
     background_color: Color::new(0.5, 0.5, 0.5, 1.0),
     font_path: "/fonts/LiberationMono-Regular.ttf",
     font_scale: 15.0,
@@ -40,8 +42,6 @@ pub const THEME_CORAL: Theme = Theme {
     ],
     ..THEME_DEFAULT
 };
-
-pub const THEME_DUST: Theme = THEME_DEFAULT;
 
 pub const THEME_MARINE: Theme = Theme {
     board_color: [

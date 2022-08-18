@@ -119,10 +119,13 @@ impl Chess {
         match self.square_focused {
             Some(square_selected) => self.play(square_selected, current_square),
             None => {
-                if self.board.color_on_is(current_square, self.board.side_to_move()) {
+                if self
+                    .board
+                    .color_on_is(current_square, self.board.side_to_move())
+                {
                     self.square_focused = Some(current_square);
                 }
-            },
+            }
         }
     }
 
@@ -190,7 +193,6 @@ impl Chess {
 
     /// Draw pieces.
     fn draw_content_board(&self, ctx: &mut Context) -> GameResult {
-        // todo: draw_content_board()
         let mut path;
         let mut image;
         for square in ALL_SQUARES {
