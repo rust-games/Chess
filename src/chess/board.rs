@@ -284,10 +284,9 @@ impl Board {
 
     /// Compute and return all the valid moves for a [`Piece`] (if exist) at a given [`Square`].
     pub fn get_valid_moves(&self, from: Square) -> Vec<Square> {
+        // Todo: Verify if the piece is pinned (for all piece)
+        //       Caution: a piece can partially move if he can protect the king
         warn!("get_valid_moves(): Pinned feature is not implemented");
-        /* Todo: Verify if the piece is pinned (for all piece)
-         *  WIP: add knight move
-         */
 
         let mut valid_moves = Vec::new();
         if let Some((piece_from, side)) = self.on(from) {
