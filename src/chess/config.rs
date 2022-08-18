@@ -9,7 +9,7 @@
 pub const BOARD_PX_SIZE: (u32, u32) = (800, 800);
 
 /// The pixel-size of the side screen.
-pub const SIDE_SCREEN_PX_SIZE: (u32, u32) = (200, BOARD_PX_SIZE.1);
+pub const SIDE_SCREEN_PX_SIZE: (u32, u32) = (300, BOARD_PX_SIZE.1);
 
 /// The pixel-size of the screen.
 pub const SCREEN_PX_SIZE: (u32, u32) = (BOARD_PX_SIZE.0 + SIDE_SCREEN_PX_SIZE.0, BOARD_PX_SIZE.1);

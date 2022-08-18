@@ -2,8 +2,6 @@ use std::cmp::max;
 use std::fmt;
 use std::str::FromStr;
 
-use log::trace;
-
 use crate::{Color, Error, File, Rank, BOARD_CELL_PX_SIZE, BOARD_SIZE, NUM_FILES, NUM_RANKS};
 
 /// Represent a square on the chess board.
@@ -39,7 +37,12 @@ pub const ALL_SQUARES: [Square; NUM_SQUARES] = [
 
 impl Square {
     /// Create a new [`Square`], from an index.
-    /// > Note: It is invalid, but allowed, to pass in a number >= 64. Doing so will crash stuff.
+    ///
+    /// # Panics
+    ///
+    /// Panic if the index is not in the range 0..=63.
+    ///
+    /// # Examples
     ///
     /// ```
     /// use chess::Square;
@@ -49,7 +52,7 @@ impl Square {
     /// ```
     #[inline]
     pub fn new(index: usize) -> Self {
-        ALL_SQUARES[index % NUM_SQUARES]
+        ALL_SQUARES[index]
     }
 
     /// Convert this [`Square`] into a [`usize`] from 0 to 63 inclusive.
@@ -104,7 +107,6 @@ impl Square {
         // transpose to grid space (return the y-axis)
         let x = self.file().to_index() as f32;
         let y = (BOARD_SIZE.1 as usize - self.rank().to_index() - 1) as f32;
-        trace!("to_screen(square: {self}) -> (x: {x}, y: {y})");
 
         // Transpose to screen space
         let x = x * BOARD_CELL_PX_SIZE.0 as f32;
@@ -113,6 +115,8 @@ impl Square {
     }
 
     /// Return the [`File`] of this square.
+    ///
+    /// # Examples
     ///
     /// ```
     /// use chess::{File, Rank, Square};
@@ -128,6 +132,8 @@ impl Square {
 
     /// Return the [`Rank`] of this square.
     ///
+    /// # Examples
+    ///
     /// ```
     /// use chess::{File, Rank, Square};
     ///
@@ -140,9 +146,29 @@ impl Square {
         Rank::new(self.to_index() / NUM_RANKS)
     }
 
-    /// Go one rank up.
+    /// Return the "relative" [`Rank`] of this square according the side.
+    /// (i.e. return ranks for black)
     ///
-    /// > **Note**: If impossible, wrap around.
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Rank, Square};
+    ///
+    /// assert_eq!(Square::E1.rank_for(Color::White), Rank::First);
+    /// assert_eq!(Square::E8.rank_for(Color::White), Rank::Eighth);
+    /// assert_eq!(Square::E2.rank_for(Color::Black), Rank::Seventh);
+    /// assert_eq!(Square::E7.rank_for(Color::Black), Rank::Second);
+    /// ```
+    #[inline]
+    pub fn rank_for(&self, color: Color) -> Rank {
+        let rank = self.rank();
+        match color {
+            Color::White => rank,
+            Color::Black => Rank::new(NUM_RANKS - rank.to_index() - 1),
+        }
+    }
+
+    /// Go one [`Rank`] up.
     ///
     /// # Examples
     ///
@@ -156,9 +182,25 @@ impl Square {
         Square::make_square(self.file(), self.rank().up())
     }
 
-    /// Go one [`Square`] forward according to the side.
+    /// Go *n* [`Rank`] up.
     ///
-    /// > **Note**: If impossible, wrap around.
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::Square;
+    ///
+    /// assert_eq!(Square::B2.n_up(3), Square::B5);
+    /// ```
+    #[inline]
+    pub fn n_up(&self, n: usize) -> Self {
+        let mut square = *self;
+        for _ in 0..n {
+            square = square.up();
+        }
+        square
+    }
+
+    /// Go one [`Rank`] forward according to the side.
     ///
     /// # Examples
     ///
@@ -176,9 +218,26 @@ impl Square {
         }
     }
 
-    /// Go one rank down.
+    /// Go *n* [`Rank`] forward according to the side.
     ///
-    /// > **Note**: If impossible, wrap around.
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::B2.n_forward(Color::White, 2), Square::B4);
+    /// assert_eq!(Square::B8.n_forward(Color::Black, 5), Square::B3);
+    /// ```
+    #[inline]
+    pub fn n_forward(&self, color: Color, n: usize) -> Self {
+        let mut square = *self;
+        for _ in 0..n {
+            square = square.forward(color);
+        }
+        square
+    }
+
+    /// Go one [`Rank`] down.
     ///
     /// # Examples
     ///
@@ -192,9 +251,25 @@ impl Square {
         Square::make_square(self.file(), self.rank().down())
     }
 
-    /// Go one [`Square`] backward according to the side.
+    /// Go *n* [`Rank`] down.
     ///
-    /// > **Note**: If impossible, wrap around.
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::B4.n_down(2), Square::B2);
+    /// ```
+    #[inline]
+    pub fn n_down(&self, n: usize) -> Self {
+        let mut square = *self;
+        for _ in 0..n {
+            square = square.down();
+        }
+        square
+    }
+
+    /// Go one [`Rank`] backward according to the side.
     ///
     /// # Examples
     ///
@@ -212,9 +287,26 @@ impl Square {
         }
     }
 
-    /// Go one file to the right.
+    /// Go *n* [`Rank`] backward according to the side.
     ///
-    /// > **Note**: If impossible, wrap around.
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::B4.n_backward(Color::White, 2), Square::B2);
+    /// assert_eq!(Square::B3.n_backward(Color::Black, 5), Square::B8);
+    /// ```
+    #[inline]
+    pub fn n_backward(&self, color: Color, n: usize) -> Self {
+        let mut square = *self;
+        for _ in 0..n {
+            square = square.backward(color);
+        }
+        square
+    }
+
+    /// Go one [`File`] to the right.
     ///
     /// # Examples
     ///
@@ -228,9 +320,25 @@ impl Square {
         Square::make_square(self.file().right(), self.rank())
     }
 
-    /// Go one file right according to the side.
+    /// Go *n* [`File`] to the right.
     ///
-    /// > **Note**: If impossible, wrap around.
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::A4.n_right(3), Square::D4);
+    /// ```
+    #[inline]
+    pub fn n_right(&self, n: usize) -> Self {
+        let mut square = *self;
+        for _ in 0..n {
+            square = square.right();
+        }
+        square
+    }
+
+    /// Go one [`File`] right according to the side.
     ///
     /// # Examples
     ///
@@ -248,9 +356,26 @@ impl Square {
         }
     }
 
-    /// Go one file to the left.
+    /// Go *n* [`File`] to the right according to the side.
     ///
-    /// > **Note**: If impossible, wrap around.
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::A4.n_right_for(Color::White, 3), Square::D4);
+    /// assert_eq!(Square::D4.n_right_for(Color::Black, 3), Square::A4);
+    /// ```
+    #[inline]
+    pub fn n_right_for(&self, color: Color, n: usize) -> Self {
+        let mut square = *self;
+        for _ in 0..n {
+            square = square.right_for(color);
+        }
+        square
+    }
+
+    /// Go one [`File`] to the left.
     ///
     /// # Examples
     ///
@@ -264,9 +389,25 @@ impl Square {
         Square::make_square(self.file().left(), self.rank())
     }
 
-    /// Go one file left according to the side.
+    /// Go *n* [`File`] to the left.
     ///
-    /// > **Note**: If impossible, wrap around.
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::D4.n_left(3), Square::A4);
+    /// ```
+    #[inline]
+    pub fn n_left(&self, n: usize) -> Self {
+        let mut square = *self;
+        for _ in 0..n {
+            square = square.left();
+        }
+        square
+    }
+
+    /// Go one [`File`] left according to the side.
     ///
     /// # Examples
     ///
@@ -284,8 +425,29 @@ impl Square {
         }
     }
 
+    /// Go *n* [`File`] to the left according to the side.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, Square};
+    ///
+    /// assert_eq!(Square::D4.n_left_for(Color::White, 3), Square::A4);
+    /// assert_eq!(Square::A4.n_left_for(Color::Black, 3), Square::D4);
+    /// ```
+    #[inline]
+    pub fn n_left_for(&self, color: Color, n: usize) -> Self {
+        let mut square = *self;
+        for _ in 0..n {
+            square = square.left_for(color);
+        }
+        square
+    }
+
     /// The distance between the two squares, i.e. the number of king steps
     /// to get from one square to the other.
+    ///
+    /// # Examples
     ///
     /// ```
     /// use chess::Square;

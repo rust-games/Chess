@@ -1,12 +1,13 @@
 //! Describe the board and interaction with it.
 
+use log::warn;
 use std::fmt;
 use std::ops::{Index, IndexMut};
 use std::str::FromStr;
 
 use crate::{
     CastleRights, ChessMove, Color, Error, File, Piece, Rank, Square, ALL_FILES, ALL_RANKS,
-    NUM_COLORS, NUM_SQUARES,
+    ALL_SQUARES, NUM_COLORS, NUM_SQUARES,
 };
 
 /// A representation of a chess board.
@@ -99,11 +100,13 @@ impl Board {
 
     /// Check if the [`Move`][ChessMove] is legal.
     pub fn is_legal(&self, m: ChessMove) -> bool {
-        // todo
+        warn!("is_legal(): NotImplementedYet");
         true
     }
 
     /// Update the chessboard according to the chess rules.
+    ///
+    /// Assume that the move is legal.
     ///
     /// # Examples
     ///
@@ -120,13 +123,6 @@ impl Board {
     ///
     /// - [`Error::InvalidMove`]: The move doesn't respect the chess rules.
     pub fn update(&mut self, m: ChessMove) -> Result<(), Error> {
-        if !self.is_legal(m) {
-            return Err(Error::InvalidMove {
-                board: *self,
-                invalid_move: m,
-            });
-        }
-
         let piece_from = self.piece_on(m.from).unwrap();
         let side = self.side_to_move;
         let mut new_en_passant = false;
@@ -198,11 +194,27 @@ impl Board {
         }
     }
 
+    /// Verify if the [`Square`] is occupied by the given [`Piece`].
+    pub fn piece_on_is(&self, square: Square, piece: Piece) -> bool {
+        match self.piece_on(square) {
+            Some(real_piece) if real_piece == piece => true,
+            _ => false,
+        }
+    }
+
     /// Get the [`Color`] at a given [`Square`].
     pub fn color_on(&self, square: Square) -> Option<Color> {
         match self.squares[square.to_index()] {
             Some((_, color)) => Some(color),
             None => None,
+        }
+    }
+
+    /// Verify if the [`Square`] is occupied by the given [`Color`].
+    pub fn color_on_is(&self, square: Square, color: Color) -> bool {
+        match self.color_on(square) {
+            Some(real_color) if real_color == color => true,
+            _ => false,
         }
     }
 
@@ -212,6 +224,72 @@ impl Board {
             Some((piece, color)) => Some((piece, color)),
             None => None,
         }
+    }
+
+    /// Verify if the [`Square`] is empty (i.e. not occupied).
+    pub fn is_empty(&self, square: Square) -> bool {
+        self.squares[square.to_index()].is_none()
+    }
+
+    /// Verify if the [`Square`] is occupied.
+    pub fn is_occupied(&self, square: Square) -> bool {
+        self.squares[square.to_index()].is_some()
+    }
+
+    /// Compute and return all the valid moves for a [`Piece`] (if exist) at a given [`Square`].
+    pub fn get_valid_moves(&self, from: Square) -> Option<Vec<Square>> {
+        warn!("get_valid_moves(): NotImplementedYet");
+        // todo: verify if the piece is pinned
+
+        let mut valid_moves = Vec::new();
+        match self.on(from) {
+            Some((piece_from, side)) => {
+                match piece_from {
+                    Piece::Pawn => {
+                        // If square forward is empty
+                        if self.is_empty(from.forward(side)) {
+                            valid_moves.push(from.forward(side));
+
+                            // First move of the pawn
+                            if from.rank_for(side) == Rank::Second
+                                && self.is_empty(from.n_forward(side, 2))
+                            {
+                                valid_moves.push(from.n_forward(side, 2));
+                            }
+                        }
+
+                        // If can capture (normal or en passant)
+                        if self.color_on_is(from.forward(side).left(), !side)
+                            || Some(from.forward(side).left()) == self.en_passant
+                        {
+                            valid_moves.push(from.forward(side).left());
+                        }
+                        if self.color_on_is(from.forward(side).right(), !side)
+                            || Some(from.forward(side).right()) == self.en_passant
+                        {
+                            valid_moves.push(from.forward(side).right());
+                        }
+                    }
+                    Piece::Knight => {}
+                    Piece::Bishop => {}
+                    Piece::Rook => {
+                        let mut current_square = from.up();
+                        while self.is_empty(current_square) {
+                            valid_moves.push(current_square);
+                            current_square = current_square.up();
+                        }
+                        if self.color_on_is(current_square, !side) {
+                            valid_moves.push(current_square);
+                        }
+                    }
+                    Piece::Queen => {}
+                    Piece::King => {}
+                }
+            }
+            None => return None,
+        }
+        Some(valid_moves)
+        //Some(Vec::from(ALL_SQUARES))
     }
 }
 

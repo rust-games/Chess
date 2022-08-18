@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::{Square};
+use crate::Square;
 
 /// Represent a ChessMove in memory.
 #[derive(Clone, Copy, Eq, PartialEq, Debug)]
