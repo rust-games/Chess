@@ -19,14 +19,6 @@ impl Color {
     pub fn to_index(&self) -> usize {
         *self as usize
     }
-
-    /// Verify the color value.
-    ///
-    /// Equivalent to self == color.
-    #[inline]
-    pub fn is(&self, color: Color) -> bool {
-        *self == color
-    }
 }
 
 impl Not for Color {
