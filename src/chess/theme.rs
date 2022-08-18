@@ -29,7 +29,9 @@ pub const THEME_DUST: Theme = Theme {
             "/images/pieces/black_king.png",
         ],
     ],
-    valid_moves_color: Some(Color::new(0.75, 0.25, 0.25, 0.5)),
+    valid_moves_color: Some(Color::new(0.25, 0.75, 0.25, 0.5)),
+    piece_pinned_color: Some(Color::new(0.75, 0.25, 0.25, 0.5)),
+    piece_pinned_path: Some("/images/pin.png"),
     background_color: Color::new(0.5, 0.5, 0.5, 1.0),
     font_path: "/fonts/LiberationMono-Regular.ttf",
     font_scale: 15.0,
@@ -82,6 +84,8 @@ pub struct Theme {
     pub board_color: [Color; NUM_COLORS],
     pub piece_path: [[&'static str; NUM_PIECES]; NUM_COLORS],
     pub valid_moves_color: Option<Color>,
+    pub piece_pinned_color: Option<Color>,
+    pub piece_pinned_path: Option<&'static str>,
     pub background_color: Color,
 
     // font of texts (from resources/)

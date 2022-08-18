@@ -97,8 +97,11 @@ impl Chess {
 
     /// Return the [`State`][GameState] of the Game
     pub fn state(&self) -> GameState {
-        warn!("state(): NotImplementedYet");
-        GameState::Ongoing
+        //info!("state(): Not Fully Implemented");
+        let state = self.board.state();
+        // TODO: Verify here if we need the set the State to DrawByRequest or Resigns
+        // ...
+        state
     }
 
     /// Base function to call when a user click on the screen.
@@ -134,7 +137,7 @@ impl Chess {
     /// It is the callers responsibility to ensure the coordinate is in the side.
     fn click_on_side(&self, x: f32, y: f32) {
         // todo
-        trace!("Click at: ({x},{y}) -> on the side screen")
+        info!("Click at: ({x},{y}) -> on the side screen")
     }
 
     /// Base function to call when a user click on the screen.
@@ -191,7 +194,7 @@ impl Chess {
         Ok(())
     }
 
-    /// Draw pieces.
+    /// Draw pieces on the board.
     fn draw_content_board(&self, ctx: &mut Context) -> GameResult {
         let mut path;
         let mut image;
@@ -214,31 +217,66 @@ impl Chess {
     /// Draw all the possible destination of the selected piece.
     fn draw_valid_moves(&self, ctx: &mut Context) -> GameResult {
         if let Some(square) = self.square_focused {
-            if let Some(valid_dest) = self.board.get_valid_moves(square) {
-                for dest in valid_dest {
-                    let (x, y) = dest.to_screen();
-                    let mesh = graphics::MeshBuilder::new()
-                        .rectangle(
-                            graphics::DrawMode::fill(),
-                            graphics::Rect::new(
-                                x,
-                                y,
-                                BOARD_CELL_PX_SIZE.0 as f32,
-                                BOARD_CELL_PX_SIZE.1 as f32,
-                            ),
-                            self.theme.valid_moves_color.unwrap(),
-                        )?
-                        .build(ctx)?;
-                    graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
-                }
+            for dest in self.board.get_valid_moves(square) {
+                let (x, y) = dest.to_screen();
+                let mesh = graphics::MeshBuilder::new()
+                    .rectangle(
+                        graphics::DrawMode::fill(),
+                        graphics::Rect::new(
+                            x,
+                            y,
+                            BOARD_CELL_PX_SIZE.0 as f32,
+                            BOARD_CELL_PX_SIZE.1 as f32,
+                        ),
+                        self.theme.valid_moves_color.unwrap(),
+                    )?
+                    .build(ctx)?;
+                graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
             }
         }
         Ok(())
     }
 
     /// Draw the [`Piece`] that are pinned (i.e. can't move).
-    fn draw_pinned_piece(&self, _ctx: &mut Context) -> GameResult {
-        warn!("draw_pinned_piece(): NotImplementedYet");
+    fn draw_pinned_piece(&self, ctx: &mut Context) -> GameResult {
+        if self.theme.piece_pinned_path.is_some() {
+            let mut path;
+            let mut image;
+            for square in self.board.pinned() {
+                path = self.theme.piece_pinned_path.unwrap();
+                image = graphics::Image::new(ctx, path).expect("Image load error");
+                let (x, y) = square.to_screen();
+                let dest_point = Vec2::new(x, y);
+                // We set the scale at 1.0 because we want the same size
+                // for the image and a Board_cell
+                const SCALE: f32 = 1.0;
+                let image_scale = Vec2::new(
+                    SCALE * (BOARD_CELL_PX_SIZE.0 as u16 / image.width()) as f32,
+                    SCALE * (BOARD_CELL_PX_SIZE.1 as u16 / image.height()) as f32,
+                );
+                let dp = graphics::DrawParam::new()
+                    .dest(dest_point)
+                    .scale(image_scale);
+                graphics::draw(ctx, &image, dp)?;
+            }
+        } else if self.theme.piece_pinned_color.is_some() {
+            for piece in self.board.pinned() {
+                let (x, y) = piece.to_screen();
+                let mesh = graphics::MeshBuilder::new()
+                    .rectangle(
+                        graphics::DrawMode::fill(),
+                        graphics::Rect::new(
+                            x,
+                            y,
+                            BOARD_CELL_PX_SIZE.0 as f32,
+                            BOARD_CELL_PX_SIZE.1 as f32,
+                        ),
+                        self.theme.piece_pinned_color.unwrap(),
+                    )?
+                    .build(ctx)?;
+                graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
+            }
+        }
         Ok(())
     }
 

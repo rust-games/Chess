@@ -6,8 +6,6 @@
 //!
 //! see [`main.rs`]()
 
-extern crate core;
-
 mod board;
 pub use crate::board::*;
 

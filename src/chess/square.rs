@@ -2,7 +2,9 @@ use std::cmp::max;
 use std::fmt;
 use std::str::FromStr;
 
-use crate::{Color, Error, File, Rank, BOARD_CELL_PX_SIZE, BOARD_SIZE, NUM_FILES, NUM_RANKS, Direction};
+use crate::{
+    Color, Direction, Error, File, Rank, BOARD_CELL_PX_SIZE, BOARD_SIZE, NUM_FILES, NUM_RANKS,
+};
 
 /// Represent a square on the chess board.
 #[rustfmt::skip]

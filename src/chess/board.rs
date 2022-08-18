@@ -5,7 +5,7 @@ use std::fmt;
 use std::ops::{Index, IndexMut};
 use std::str::FromStr;
 
-use crate::{CastleRights, ChessMove, Color, Error, File, Piece, Rank, Square, ALL_FILES, ALL_RANKS, ALL_SQUARES, NUM_COLORS, NUM_SQUARES, Direction, ALL_LINE, ALL_DIAGONAL, ALL_DIRECTION};
+use crate::{CastleRights, ChessMove, Color, Direction, Error, File, Piece, Rank, Square, ALL_DIAGONAL, ALL_DIRECTION, ALL_FILES, ALL_LINE, ALL_RANKS, ALL_SQUARES, NUM_COLORS, NUM_SQUARES, GameState};
 
 /// A representation of a chess board.
 ///
@@ -93,6 +93,13 @@ impl Board {
     /// Get the fullmoves number.
     pub fn fullmoves(&self) -> u64 {
         self.fullmoves
+    }
+
+    /// Get the [`State`][GameState] of the [`Board`].
+    pub fn state(&self) -> GameState {
+        // warn!("state(): NotImplementedYet");
+        // TODO: Verify if it's a Checkmate or a Draw
+        GameState::Ongoing
     }
 
     /// Check if the [`Move`][ChessMove] is legal.
@@ -223,6 +230,33 @@ impl Board {
         }
     }
 
+    /// Verify if the given [`Square`] is pinned for the current side.
+    pub fn is_pinned(&self, square: Square) -> bool {
+        // TODO
+        if let Some((piece, color)) = self.on(square) {
+            if color == self.side_to_move {
+                // vvv - modify this
+                match piece {
+                    Piece::King => return true,
+                    _ => return false,
+                }
+                // ^^^ - modify this
+            }
+        }
+        false
+    }
+
+    /// Get the piece pinned for the current side.
+    pub fn pinned(&self) -> Vec<Square> {
+        let mut pinned = Vec::new();
+        for square in ALL_SQUARES {
+            if self.is_pinned(square) {
+                pinned.push(square);
+            }
+        }
+        pinned
+    }
+
     /// Get the [`Square`] of the [`King`][Piece::King] of the given [`Color`].
     pub fn king_of(&self, color: Color) -> Square {
         for square in ALL_SQUARES {
@@ -249,97 +283,118 @@ impl Board {
     }
 
     /// Compute and return all the valid moves for a [`Piece`] (if exist) at a given [`Square`].
-    pub fn get_valid_moves(&self, from: Square) -> Option<Vec<Square>> {
-        warn!("get_valid_moves(): NotImplementedYet");
+    pub fn get_valid_moves(&self, from: Square) -> Vec<Square> {
+        warn!("get_valid_moves(): Pinned feature is not implemented");
         /* Todo: Verify if the piece is pinned (for all piece)
          *  WIP: add knight move
          */
 
         let mut valid_moves = Vec::new();
-        match self.on(from) {
-            Some((piece_from, side)) => {
-                match piece_from {
-                    Piece::Pawn => {
-                        // If square forward is empty
-                        if self.is_empty(from.forward(side)) {
-                            valid_moves.push(from.forward(side));
+        if let Some((piece_from, side)) = self.on(from) {
+            match piece_from {
+                Piece::Pawn => {
+                    // If square forward is empty
+                    if self.is_empty(from.forward(side)) {
+                        valid_moves.push(from.forward(side));
 
-                            // First move of the pawn
-                            if from.rank_for(side) == Rank::Second
-                                && self.is_empty(from.n_forward(side, 2))
-                            {
-                                valid_moves.push(from.n_forward(side, 2));
-                            }
+                        // First move of the pawn
+                        if from.rank_for(side) == Rank::Second
+                            && self.is_empty(from.n_forward(side, 2))
+                        {
+                            valid_moves.push(from.n_forward(side, 2));
                         }
+                    }
 
-                        // If can capture (normal or en passant)
-                        if self.color_on_is(from.forward(side).left(), !side)
-                            || Some(from.forward(side).left()) == self.en_passant
+                    // If can capture (normal or en passant)
+                    if self.color_on_is(from.forward(side).left(), !side)
+                        || Some(from.forward(side).left()) == self.en_passant
+                    {
+                        valid_moves.push(from.forward(side).left());
+                    }
+                    if self.color_on_is(from.forward(side).right(), !side)
+                        || Some(from.forward(side).right()) == self.en_passant
+                    {
+                        valid_moves.push(from.forward(side).right());
+                    }
+                }
+                Piece::Knight => {
+                    let _knight_moves = vec![
+                        from.up().up().left(),
+                        from.up().up().right(),
+                        from.right().right().up(),
+                        from.right().right().down(),
+                        from.down().down().right(),
+                        from.down().down().left(),
+                        from.left().left().down(),
+                        from.left().left().up(),
+                    ];
+                    let mut knight_moves = Vec::with_capacity(8);
+                    for knight_move in _knight_moves {
+                        if from.distance(knight_move) > 2 {
+                            knight_moves.push(knight_move);
+                        }
+                    }
+                    for destination in knight_moves {
+                        if !self.color_on_is(destination, side) {
+                            valid_moves.push(destination);
+                        }
+                    }
+                }
+                Piece::Bishop => {
+                    let mut current_square;
+                    for direction in ALL_DIAGONAL {
+                        current_square = from.follow_direction(direction);
+                        while self.is_empty(current_square) {
+                            valid_moves.push(current_square);
+                            current_square = current_square.follow_direction(direction);
+                        }
+                        if self.color_on_is(current_square, !side) {
+                            valid_moves.push(current_square);
+                        }
+                    }
+                }
+                Piece::Rook => {
+                    let mut current_square;
+                    for direction in ALL_LINE {
+                        current_square = from.follow_direction(direction);
+                        while self.is_empty(current_square) {
+                            valid_moves.push(current_square);
+                            current_square = current_square.follow_direction(direction);
+                        }
+                        if self.color_on_is(current_square, !side) {
+                            valid_moves.push(current_square);
+                        }
+                    }
+                }
+                Piece::Queen => {
+                    let mut current_square;
+                    for direction in ALL_DIRECTION {
+                        current_square = from.follow_direction(direction);
+                        while self.is_empty(current_square) {
+                            valid_moves.push(current_square);
+                            current_square = current_square.follow_direction(direction);
+                        }
+                        if self.color_on_is(current_square, !side) {
+                            valid_moves.push(current_square);
+                        }
+                    }
+                }
+                Piece::King => {
+                    let mut destination;
+                    for direction in ALL_DIRECTION {
+                        destination = from.follow_direction(direction);
+
+                        // If destination is
+                        if !self.color_on_is(destination, side)
+                            && !self.is_targeted(destination, !side)
                         {
-                            valid_moves.push(from.forward(side).left());
-                        }
-                        if self.color_on_is(from.forward(side).right(), !side)
-                            || Some(from.forward(side).right()) == self.en_passant
-                        {
-                            valid_moves.push(from.forward(side).right());
-                        }
-                    }
-                    Piece::Knight => {}
-                    Piece::Bishop => {
-                        let mut current_square;
-                        for direction in ALL_DIAGONAL {
-                            current_square = from.follow_direction(direction);
-                            while self.is_empty(current_square) {
-                                valid_moves.push(current_square);
-                                current_square = current_square.follow_direction(direction);
-                            }
-                            if self.color_on_is(current_square, !side) {
-                                valid_moves.push(current_square);
-                            }
-                        }
-                    }
-                    Piece::Rook => {
-                        let mut current_square;
-                        for direction in ALL_LINE {
-                            current_square = from.follow_direction(direction);
-                            while self.is_empty(current_square) {
-                                valid_moves.push(current_square);
-                                current_square = current_square.follow_direction(direction);
-                            }
-                            if self.color_on_is(current_square, !side) {
-                                valid_moves.push(current_square);
-                            }
-                        }
-                    }
-                    Piece::Queen => {
-                        let mut current_square;
-                        for direction in ALL_DIRECTION {
-                            current_square = from.follow_direction(direction);
-                            while self.is_empty(current_square) {
-                                valid_moves.push(current_square);
-                                current_square = current_square.follow_direction(direction);
-                            }
-                            if self.color_on_is(current_square, !side) {
-                                valid_moves.push(current_square);
-                            }
-                        }
-                    }
-                    Piece::King => {
-                        let mut destination;
-                        for direction in ALL_DIRECTION {
-                            destination = from.follow_direction(direction);
-                            if !self.color_on_is(destination, side) &&
-                                !self.is_targeted(destination, !side)
-                            {
-                                valid_moves.push(destination);
-                            }
+                            valid_moves.push(destination);
                         }
                     }
                 }
             }
-            None => return None,
         }
-        Some(valid_moves)
+        valid_moves
     }
 
     /// Construct a [`vector`][Vec] of [`Square`] from a [`Square`] (exclusive) to the first [`Piece`]
