@@ -3,7 +3,7 @@ use std::fmt;
 use super::Color;
 
 /// Represent a chess piece as a very simple enum.
-#[derive(Debug, Clone, Copy, PartialOrd, PartialEq, Eq)]
+#[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Debug)]
 pub enum Piece {
     Pawn,
     Knight,

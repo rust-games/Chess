@@ -3,7 +3,9 @@ use thiserror::Error;
 use crate::{Board, ChessMove};
 
 /// Sometimes, bad stuff happens.
-#[derive(Error, Clone, Debug)]
+///
+/// derive from PartialEq for UnitTest
+#[derive(Error, Clone, PartialEq, Debug)]
 pub enum Error {
     /// The move on a particular board doesn't respect the chess rules.
     #[error(

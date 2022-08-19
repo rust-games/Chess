@@ -1,14 +1,13 @@
 //! Describe the board and interaction with it.
 
-use std::borrow::Borrow;
-use log::warn;
+use log::debug;
 use std::fmt;
 use std::ops::{Index, IndexMut};
 use std::str::FromStr;
 
 use crate::*;
 
-/// A representation of a chess board.
+/// A representation of a chess board that implement FEN notation ([`Board::from_str`]).
 ///
 /// # Examples
 ///
@@ -96,14 +95,14 @@ impl Board {
         self.fullmoves
     }
 
-    /// Get the [`State`][GameState] of the [`Board`].
+    /// Get the [`GameState`] of the [`Board`].
     pub fn state(&self) -> GameState {
         // warn!("state(): NotImplementedYet");
         // TODO: Verify if it's a Checkmate or a Draw
         GameState::Ongoing
     }
 
-    /// Check if the [`Move`][ChessMove] is valid. Legality is not verified.
+    /// Check if the [`ChessMove`] is valid. Legality is not verified.
     pub fn is_valid(&self, m: ChessMove) -> bool {
         let mut is_valid = false;
         if let Some(side) = self.color_on(m.from) {
@@ -116,12 +115,7 @@ impl Board {
         is_valid
     }
 
-    /// Check if the [`Move`][ChessMove] is valid. Legality is not verified.
-    pub fn _is_valid(&self, m: ChessMove) -> bool {
-
-    }
-
-    /// Check if the [`Move`][ChessMove] is legal.
+    /// Check if the [`ChessMove`] is legal.
     pub fn is_legal(&self, m: ChessMove) -> bool {
         let mut is_legal = false;
         if let Some(side) = self.color_on(m.from) {
@@ -136,7 +130,7 @@ impl Board {
 
     /// Update the chessboard according to the chess rules.
     ///
-    /// Assume that the move is legal.
+    /// Assume that the [`ChessMove`] is legal.
     ///
     /// # Examples
     ///
@@ -156,12 +150,13 @@ impl Board {
         let piece_from = self.piece_on(m.from).unwrap();
         let side = self.side_to_move;
         let mut new_en_passant = false;
+        let update_halfmove = !(self.piece_on_is(m.from, Piece::Pawn) || self.is_occupied(m.to));
 
         match piece_from {
             // Pawn: En Passant, promotion
             Piece::Pawn => {
                 self[m.from] = None;
-                self[m.to] = Some((piece_from, side));
+                self[m.to] = Some((Piece::Pawn, side));
                 // if En Passant: capture the pawn
                 if self.en_passant == Some(m.to) {
                     match side {
@@ -171,33 +166,54 @@ impl Board {
                 }
                 // Set self.en_passant
                 if m.distance() == 2 {
-                    self.en_passant = match side {
-                        Color::White => Some(m.to.down()),
-                        Color::Black => Some(m.to.up()),
-                    };
-                    new_en_passant = true;
+                    if self.on_is(m.to.left(), (Piece::Pawn, !side))
+                        || self.on_is(m.to.right(), (Piece::Pawn, !side))
+                    {
+                        self.en_passant = Some(m.to.backward(side));
+                        new_en_passant = true;
+                    }
                 } else {
                     self.en_passant = None;
                 }
 
                 // Promotion
-                if m.to.rank() == Rank::First || m.to.rank() == Rank::Eighth {
+                if m.to.rank_for(side) == Rank::Eighth {
                     self[m.to] = Some((Piece::Queen, side));
                 }
             }
-            // king: Castle
+            // King: Castle
             Piece::King => {
-                // King
-                self[m.from] = None;
-                self[m.to] = Some((piece_from, side));
-                // if Castle: move Rook
-                if self.on(m.to.right()) == Some((Piece::Rook, side)) {
-                    self[m.to.right()] = None;
+                if self.castle_rights[side.to_index()].has_kingside() {
+                    // if is a Castle - Kingside
+                    self[m.from] = None;
                     self[m.to.left()] = Some((Piece::Rook, side));
-                } else if self.on(m.to.left().left()) == Some((Piece::Rook, side)) {
+                    self[m.to] = Some((Piece::King, side));
+                    self[m.to.right()] = None;
+                } else if self.castle_rights[side.to_index()].has_queenside() {
+                    // if is a Castle - Queenside
                     self[m.to.left().left()] = None;
+                    self[m.to] = Some((Piece::King, side));
                     self[m.to.right()] = Some((Piece::Rook, side));
+                    self[m.from] = None;
+                } else {
+                    // normal move
+                    self[m.from] = None;
+                    self[m.to] = Some((Piece::King, side));
                 }
+
+                // If the king move he lost both CastleRights
+                self.remove_castle_rights(side, CastleRights::Both);
+            }
+            // Rook: Castle
+            Piece::Rook => {
+                // remove CastleRights
+                match m.from {
+                    Square::A1 | Square::A8 => self.remove_castle_rights(side, CastleRights::QueenSide),
+                    Square::H1 | Square::H8 => self.remove_castle_rights(side, CastleRights::KingSide),
+                    _ => {}
+                }
+                self[m.from] = None;
+                self[m.to] = Some((Piece::Rook, side));
             }
             _ => {
                 self[m.from] = None;
@@ -209,13 +225,15 @@ impl Board {
         if !new_en_passant {
             self.en_passant = None;
         }
-        self.halfmoves += 1;
+        if update_halfmove {
+            self.halfmoves += 1;
+        }
         if self.side_to_move == Color::White {
             self.fullmoves += 1;
         }
     }
 
-    /// Remove [castle rights][CastleRights] for a particular side.
+    /// Remove [`CastleRights`] for a particular side.
     ///
     /// # Examples
     ///
@@ -277,6 +295,14 @@ impl Board {
         }
     }
 
+    /// Verify if the [`Square`] is occupied by the given [`Piece`] and [`Color`].
+    pub fn on_is(&self, square: Square, (piece, color): (Piece, Color)) -> bool {
+        match self.on(square) {
+            Some((real_piece, real_color)) if real_color == color && real_piece == piece => true,
+            _ => false,
+        }
+    }
+
     /// Verify if the given [`Square`] is pinned for the current side.
     ///
     /// This implementation returns true only if the [`Piece`] has more than one valid move,
@@ -300,7 +326,7 @@ impl Board {
         pinned
     }
 
-    /// Get the [`Square`] of the [`King`][Piece::King] of the given [`Color`].
+    /// Get the [`Square`] of the [`Piece::King`] of the given [`Color`].
     pub fn king_of(&self, color: Color) -> Square {
         for square in ALL_SQUARES {
             if self.on(square) == Some((Piece::King, color)) {
@@ -334,7 +360,7 @@ impl Board {
         is_targeted
     }
 
-    /// Verify if the [`King`][Piece::King] is in check.
+    /// Verify if the [`Piece::King`] is in check.
     pub fn is_check(&self) -> bool {
         let king_square = self.king_of(self.side_to_move);
         let enemy_color = !self.side_to_move;
@@ -533,6 +559,7 @@ impl Board {
                 }
             }
         }
+        debug!("get_valid_moves from {from}: {valid_moves:?}");
         valid_moves
     }
 
@@ -727,7 +754,7 @@ impl Board {
         valid_moves
     }
 
-    /// Construct a [`vector`][Vec] of [`Square`] from a [`Square`] (exclusive) to the first [`Piece`]
+    /// Construct a [`Vec`] of [`Square`] from a [`Square`] (exclusive) to the first [`Piece`]
     /// (inclusive) with a given direction.
     ///
     /// # Examples
@@ -775,6 +802,9 @@ impl Default for Board {
 impl FromStr for Board {
     type Err = Error;
 
+    /// From Forsyth-Edwards Notation (FEN).
+    ///
+    /// <https://www.chess.com/terms/fen-chess>
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         let mut cur_rank = Rank::Eighth;
         let mut cur_file = File::A;
@@ -917,20 +947,6 @@ impl FromStr for Board {
     }
 }
 
-impl Index<Square> for Board {
-    type Output = Option<(Piece, Color)>;
-
-    fn index(&self, index: Square) -> &Self::Output {
-        &self.squares[index.to_index()]
-    }
-}
-
-impl IndexMut<Square> for Board {
-    fn index_mut(&mut self, index: Square) -> &mut Self::Output {
-        &mut self.squares[index.to_index()]
-    }
-}
-
 impl fmt::Display for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // Piece Placement
@@ -997,5 +1013,239 @@ impl fmt::Display for Board {
 
         // halfmoves and fullmoves
         write!(f, " {} {}", self.halfmoves, self.fullmoves)
+    }
+}
+
+impl Index<Square> for Board {
+    type Output = Option<(Piece, Color)>;
+
+    fn index(&self, index: Square) -> &Self::Output {
+        &self.squares[index.to_index()]
+    }
+}
+
+impl IndexMut<Square> for Board {
+    fn index_mut(&mut self, index: Square) -> &mut Self::Output {
+        &mut self.squares[index.to_index()]
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[ignore]
+    fn state() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn is_valid() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn is_legal() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn update() {
+        todo!()
+    }
+
+    #[test]
+    fn remove_castle_rights() {
+        let mut board = Board::default();
+
+        assert_eq!(board.castle_rights(Color::White), CastleRights::Both);
+        assert_eq!(board.castle_rights(Color::Black), CastleRights::Both);
+
+        board.remove_castle_rights(Color::White, CastleRights::QueenSide);
+        board.remove_castle_rights(Color::Black, CastleRights::NoRights);
+
+        assert_eq!(board.castle_rights(Color::White), CastleRights::KingSide);
+        assert_eq!(board.castle_rights(Color::Black), CastleRights::Both);
+
+        board.remove_castle_rights(Color::White, CastleRights::KingSide);
+        board.remove_castle_rights(Color::Black, CastleRights::Both);
+
+        assert_eq!(board.castle_rights(Color::White), CastleRights::NoRights);
+        assert_eq!(board.castle_rights(Color::Black), CastleRights::NoRights);
+    }
+
+    #[test]
+    fn piece_on() {
+        let board = Board::default();
+        assert_eq!(board.piece_on(Square::A1), Some(Piece::Rook));
+        assert_eq!(board.piece_on(Square::A2), Some(Piece::Pawn));
+        assert_eq!(board.piece_on(Square::A3), None);
+    }
+
+    #[test]
+    fn piece_on_is() {
+        let board = Board::default();
+        assert!(board.piece_on_is(Square::A1, Piece::Rook));
+        assert!(board.piece_on_is(Square::A7, Piece::Pawn));
+        assert!(!board.piece_on_is(Square::A2, Piece::Queen));
+        assert!(!board.piece_on_is(Square::A3, Piece::King));
+    }
+
+    #[test]
+    fn color_on() {
+        let board = Board::default();
+        assert_eq!(board.color_on(Square::A1), Some(Color::White));
+        assert_eq!(board.color_on(Square::A8), Some(Color::Black));
+        assert_eq!(board.color_on(Square::A3), None);
+    }
+
+    #[test]
+    fn color_on_is() {
+        let board = Board::default();
+        assert!(board.color_on_is(Square::A1, Color::White));
+        assert!(board.color_on_is(Square::A8, Color::Black));
+        assert!(!board.color_on_is(Square::A2, Color::Black));
+        assert!(!board.color_on_is(Square::A3, Color::White));
+    }
+
+    #[test]
+    fn on() {
+        let board = Board::default();
+        assert_eq!(board.on(Square::A1), Some((Piece::Rook, Color::White)));
+        assert_eq!(board.on(Square::A7), Some((Piece::Pawn, Color::Black)));
+        assert_eq!(board.on(Square::A3), None);
+    }
+
+    #[test]
+    #[ignore]
+    fn is_pinned() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn king_of() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn is_empty() {
+        let board = Board::default();
+        for square in ALL_SQUARES {
+            if square.rank().between(Rank::Second, Rank::Seventh) {
+                assert!(board.is_empty(square));
+            }
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn is_occupied() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn is_targeted() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn is_check() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn is_exposing_move() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn has_valid_moves() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn has_legal_moves() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn get_valid_move() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn get_legal_move() {
+        todo!()
+    }
+
+    #[test]
+    #[ignore]
+    fn get_line() {
+        todo!()
+    }
+
+    #[test]
+    fn from_fen() {
+        let fen = "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2N2N2/PPPP1PPP/R1BQK2R w KQkq - 6 5";
+        let fen_board = Board::from_str(fen).expect("valid fen");
+
+        let mut board = Board::default();
+
+        board.update(ChessMove::new(Square::E2, Square::E4));
+        board.update(ChessMove::new(Square::E7, Square::E5));
+
+        board.update(ChessMove::new(Square::B1, Square::C3));
+        board.update(ChessMove::new(Square::B8, Square::C6));
+
+        board.update(ChessMove::new(Square::G1, Square::F3));
+        board.update(ChessMove::new(Square::G8, Square::F6));
+
+        board.update(ChessMove::new(Square::F1, Square::C4));
+        board.update(ChessMove::new(Square::F8, Square::C5));
+
+        assert_eq!(board, fen_board, "update don't work?");
+
+        // Broke CastleRights
+        let fen = "r1bq1rk1/pppp1ppp/2n2n2/2b1p3/2B1P3/2N2N2/PPPP1PPP/R1BQK1R1 w Q - 8 6";
+        let fen_board = Board::from_str(fen).expect("valid fen");
+
+        board.update(ChessMove::new(Square::H1, Square::G1)); // rook move so remove kingside
+        board.update(ChessMove::new(Square::E8, Square::G8)); // king use castle kingside then loose both CastleRights
+
+        assert_eq!(board, fen_board, "Castle remove don't work?");
+
+    }
+
+    #[test]
+    fn to_fen() {
+        let mut board = Board::default();
+
+        board.update(ChessMove::new(Square::E2, Square::E4));
+        board.update(ChessMove::new(Square::E7, Square::E5));
+
+        board.update(ChessMove::new(Square::B1, Square::C3));
+        board.update(ChessMove::new(Square::B8, Square::C6));
+
+        board.update(ChessMove::new(Square::G1, Square::F3));
+        board.update(ChessMove::new(Square::G8, Square::F6));
+
+        board.update(ChessMove::new(Square::F1, Square::C4));
+        board.update(ChessMove::new(Square::F8, Square::C5));
+
+        let fen = "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2N2N2/PPPP1PPP/R1BQK2R w KQkq - 6 5";
+        assert_eq!(board.to_string(), fen.to_string());
     }
 }
