@@ -47,3 +47,45 @@ pub const ALL_DIRECTION: [Direction; NUM_DIRECTION] = [
     Direction::Left,
     Direction::UpLeft,
 ];
+
+impl Direction {
+    /// Verify if a direction is contain in another.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::Direction;
+    ///
+    /// assert_eq!(Direction::Up.has(Direction::Up), true);
+    /// assert_eq!(Direction::Up.has(Direction::Right), false);
+    /// assert_eq!(Direction::UpRight.has(Direction::Up), true);
+    /// assert_eq!(Direction::UpRight.has(Direction::Right), true);
+    /// // but it's not symmetric
+    /// assert_eq!(Direction::Up.has(Direction::UpRight), false);
+    /// ```
+    pub fn has(&self, direction: Direction) -> bool {
+        match *self {
+            Direction::Up if direction == Direction::Up => true,
+            Direction::UpRight => match direction {
+                Direction::Up | Direction::Right => true,
+                _ => false,
+            },
+            Direction::Right if direction == Direction::Right => true,
+            Direction::DownRight => match direction {
+                Direction::Down | Direction::Right => true,
+                _ => false,
+            },
+            Direction::Down if direction == Direction::Down => true,
+            Direction::DownLeft => match direction {
+                Direction::Down | Direction::Left => true,
+                _ => false,
+            },
+            Direction::Left if direction == Direction::Left => true,
+            Direction::UpLeft => match direction {
+                Direction::Up | Direction::Left => true,
+                _ => false,
+            },
+            _ => false,
+        }
+    }
+}
