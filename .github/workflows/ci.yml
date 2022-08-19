@@ -2,14 +2,14 @@ name: Cargo Build & Test
 
 on:
   push:
-    branches:
-      - master
+    branches-ignore:
+      - gh-pages
     paths-ignore:
       - '.github/**'
       - 'docs/**'
   pull_request:
-    branches:
-      - master
+    branches-ignore:
+      - gh-pages
     paths-ignore:
       - '.github/**'
       - 'docs/**'
@@ -73,12 +73,12 @@ jobs:
       - name: Run Tests
         run: cargo test --verbose
 
-      - name: Run Benches
-        if: matrix.benches
-        run: cargo bench
+      #- name: Run Benches
+      #  if: matrix.benches
+      #  run: cargo bench
 
-      - name: Run example simple
-        run: cargo run --example simple
+      #- name: Run example simple
+      #  run: cargo run --example simple
 
-      - name: Run example multi-file
-        run: cargo run --example multi-file-example
+      #- name: Run example multi-file
+      #  run: cargo run --example multi-file-example
