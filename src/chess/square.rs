@@ -132,6 +132,25 @@ impl Square {
         File::new(self.to_index() % NUM_FILES)
     }
 
+    /// Return the "relative" [`File`] of this square according the side.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, File, Square};
+    ///
+    /// assert_eq!(Square::A1.file_for(Color::White), File::A);
+    /// assert_eq!(Square::A1.file_for(Color::Black), File::H);
+    /// ```
+    #[inline]
+    pub fn file_for(&self, color: Color) -> File {
+        let file = self.file();
+        match color {
+            Color::White => file,
+            Color::Black => File::new(NUM_FILES - file.to_index() - 1),
+        }
+    }
+
     /// Return the [`Rank`] of this square.
     ///
     /// # Examples
