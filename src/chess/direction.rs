@@ -14,7 +14,7 @@ pub enum Direction {
 /// Numbers of line (vertical and horizontal).
 pub const NUM_LINES: usize = 4;
 
-/// Enumerate [`Directions`] in line (vertical and horizontal).
+/// Enumerate [`Direction`] in line (vertical and horizontal).
 pub const ALL_LINE: [Direction; NUM_LINES] = [
     Direction::Up,
     Direction::Right,
@@ -25,7 +25,7 @@ pub const ALL_LINE: [Direction; NUM_LINES] = [
 /// Numbers of diagonal.
 pub const NUM_DIAGONAL: usize = 4;
 
-/// Enumerate [`Directions`] in diagonal.
+/// Enumerate [`Direction`] in diagonal.
 pub const ALL_DIAGONAL: [Direction; NUM_DIAGONAL] = [
     Direction::UpRight,
     Direction::DownRight,
