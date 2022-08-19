@@ -97,7 +97,6 @@ impl Chess {
 
     /// Return the [`State`][GameState] of the Game
     pub fn state(&self) -> GameState {
-        //info!("state(): Not Fully Implemented");
         let state = self.board.state();
         // TODO: Verify here if we need the set the State to DrawByRequest or Resigns
         // ...
@@ -159,9 +158,7 @@ impl Chess {
     /// Draw the all the board side.
     pub fn draw_board(&self, ctx: &mut Context) -> GameResult {
         self.draw_empty_board(ctx)?;
-        if self.theme.valid_moves_color.is_some() {
-            self.draw_valid_moves(ctx)?;
-        }
+        self.draw_legal_moves(ctx)?;
         self.draw_pinned_piece(ctx)?;
         self.draw_content_board(ctx)?;
         Ok(())
@@ -215,23 +212,25 @@ impl Chess {
     }
 
     /// Draw all the possible destination of the selected piece.
-    fn draw_valid_moves(&self, ctx: &mut Context) -> GameResult {
-        if let Some(square) = self.square_focused {
-            for dest in self.board.get_legal_moves(square) {
-                let (x, y) = dest.to_screen();
-                let mesh = graphics::MeshBuilder::new()
-                    .rectangle(
-                        graphics::DrawMode::fill(),
-                        graphics::Rect::new(
-                            x,
-                            y,
-                            BOARD_CELL_PX_SIZE.0 as f32,
-                            BOARD_CELL_PX_SIZE.1 as f32,
-                        ),
-                        self.theme.valid_moves_color.unwrap(),
-                    )?
-                    .build(ctx)?;
-                graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
+    fn draw_legal_moves(&self, ctx: &mut Context) -> GameResult {
+        if self.theme.valid_moves_color.is_some() {
+            if let Some(square) = self.square_focused {
+                for dest in self.board.get_legal_moves(square) {
+                    let (x, y) = dest.to_screen();
+                    let mesh = graphics::MeshBuilder::new()
+                        .rectangle(
+                            graphics::DrawMode::fill(),
+                            graphics::Rect::new(
+                                x,
+                                y,
+                                BOARD_CELL_PX_SIZE.0 as f32,
+                                BOARD_CELL_PX_SIZE.1 as f32,
+                            ),
+                            self.theme.valid_moves_color.unwrap(),
+                        )?
+                        .build(ctx)?;
+                    graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
+                }
             }
         }
         Ok(())
