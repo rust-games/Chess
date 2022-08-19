@@ -104,7 +104,6 @@ impl FromStr for Rank {
 
 #[cfg(test)]
 mod tests {
-    use crate::Error::InvalidRank;
     use super::*;
 
     #[test]
@@ -176,8 +175,8 @@ mod tests {
 
     #[test]
     fn from_str_error() {
-        assert_eq!(Rank::from_str(""), Err(InvalidRank));
-        assert_eq!(Rank::from_str(" 1"), Err(InvalidRank));
-        assert_eq!(Rank::from_str("second"), Err(InvalidRank));
+        assert_eq!(Rank::from_str(""), Err(Error::InvalidRank));
+        assert_eq!(Rank::from_str(" 1"), Err(Error::InvalidRank));
+        assert_eq!(Rank::from_str("second"), Err(Error::InvalidRank));
     }
 }

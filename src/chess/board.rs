@@ -208,8 +208,12 @@ impl Board {
             Piece::Rook => {
                 // remove CastleRights
                 match m.from {
-                    Square::A1 | Square::A8 => self.remove_castle_rights(side, CastleRights::QueenSide),
-                    Square::H1 | Square::H8 => self.remove_castle_rights(side, CastleRights::KingSide),
+                    Square::A1 | Square::A8 => {
+                        self.remove_castle_rights(side, CastleRights::QueenSide)
+                    }
+                    Square::H1 | Square::H8 => {
+                        self.remove_castle_rights(side, CastleRights::KingSide)
+                    }
                     _ => {}
                 }
                 self[m.from] = None;
@@ -1226,7 +1230,6 @@ mod tests {
         board.update(ChessMove::new(Square::E8, Square::G8)); // king use castle kingside then loose both CastleRights
 
         assert_eq!(board, fen_board, "Castle remove don't work?");
-
     }
 
     #[test]

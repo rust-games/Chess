@@ -101,7 +101,6 @@ impl FromStr for File {
 
 #[cfg(test)]
 mod tests {
-    use crate::Error::InvalidFile;
     use super::*;
 
     #[test]
@@ -173,8 +172,8 @@ mod tests {
 
     #[test]
     fn from_str_error() {
-        assert_eq!(File::from_str(""), Err(InvalidFile));
-        assert_eq!(File::from_str(" a"), Err(InvalidFile));
-        assert_eq!(File::from_str("A"), Err(InvalidFile));
+        assert_eq!(File::from_str(""), Err(Error::InvalidFile));
+        assert_eq!(File::from_str(" a"), Err(Error::InvalidFile));
+        assert_eq!(File::from_str("A"), Err(Error::InvalidFile));
     }
 }
