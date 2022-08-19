@@ -80,7 +80,7 @@ impl Square {
 
     /// Transform a screen coordinate into a [`Square`].
     ///
-    /// > **Reciprocal**: see [`to_screen`]
+    /// > **Reciprocal**: see [`Square::to_screen`].
     ///
     /// The result depend of:
     /// - [`BOARD_SIZE`]
@@ -99,7 +99,7 @@ impl Square {
 
     /// Transform a [`Square`] into a screen coordinate.
     ///
-    /// > **Reciprocal**: see [`from_screen`]
+    /// > **Reciprocal**: see [`Square::from_screen`].
     ///
     /// The result depend of:
     /// - [`BOARD_SIZE`]
