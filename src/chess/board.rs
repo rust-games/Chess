@@ -1,5 +1,6 @@
 //! Describe the board and interaction with it.
 
+use std::borrow::Borrow;
 use log::warn;
 use std::fmt;
 use std::ops::{Index, IndexMut};
@@ -30,7 +31,7 @@ use crate::*;
 ///
 /// // White move the pawn from E2 to E4
 /// let m = ChessMove::new(Square::E2, Square::E4);
-/// board.update(m)?;
+/// board.update(m);
 /// // 8 | r n b q k b n r
 /// // 7 | p p p p p p p p
 /// // 6 | . . . . . . . .
@@ -102,12 +103,30 @@ impl Board {
         GameState::Ongoing
     }
 
+    /// Check if the [`Move`][ChessMove] is valid. Legality is not verified.
+    pub fn is_valid(&self, m: ChessMove) -> bool {
+        let mut is_valid = false;
+        if let Some(side) = self.color_on(m.from) {
+            if side == self.side_to_move {
+                if self.get_valid_moves(m.from).contains(&m.to) {
+                    is_valid = true;
+                }
+            }
+        }
+        is_valid
+    }
+
+    /// Check if the [`Move`][ChessMove] is valid. Legality is not verified.
+    pub fn _is_valid(&self, m: ChessMove) -> bool {
+
+    }
+
     /// Check if the [`Move`][ChessMove] is legal.
     pub fn is_legal(&self, m: ChessMove) -> bool {
         let mut is_legal = false;
-        if let Some((piece, side)) = self.on(m.from) {
+        if let Some(side) = self.color_on(m.from) {
             if side == self.side_to_move {
-                if self.get_valid_moves(m.from).contains(&m.to) {
+                if self.get_legal_moves(m.from).contains(&m.to) {
                     is_legal = true;
                 }
             }
@@ -127,13 +146,13 @@ impl Board {
     /// let mut board = Board::default();
     /// let m = ChessMove::new(Square::E2, Square::E4);
     ///
-    /// board.update(m).expect("Valid move");
+    /// board.update(m);
     /// ```
     ///
     /// # Errors
     ///
     /// - [`Error::InvalidMove`]: The move doesn't respect the chess rules.
-    pub fn update(&mut self, m: ChessMove) -> Result<(), Error> {
+    pub fn update(&mut self, m: ChessMove) {
         let piece_from = self.piece_on(m.from).unwrap();
         let side = self.side_to_move;
         let mut new_en_passant = false;
@@ -194,7 +213,28 @@ impl Board {
         if self.side_to_move == Color::White {
             self.fullmoves += 1;
         }
-        Ok(())
+    }
+
+    /// Remove [castle rights][CastleRights] for a particular side.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Board, CastleRights, Color};
+    /// let mut board = Board::default();
+    ///
+    /// assert_eq!(board.castle_rights(Color::White), CastleRights::Both);
+    /// assert_eq!(board.castle_rights(Color::Black), CastleRights::Both);
+    ///
+    /// board.remove_castle_rights(Color::White, CastleRights::QueenSide);
+    /// board.remove_castle_rights(Color::Black, CastleRights::Both);
+    ///
+    /// assert_eq!(board.castle_rights(Color::White), CastleRights::KingSide);
+    /// assert_eq!(board.castle_rights(Color::Black), CastleRights::NoRights);
+    /// ```
+    pub fn remove_castle_rights(&mut self, color: Color, remove: CastleRights) {
+        let index = self.castle_rights[color.to_index()].to_index() & !remove.to_index();
+        self.castle_rights[color.to_index()] = CastleRights::from_index(index);
     }
 
     /// Get the [`Piece`] at a given [`Square`].
@@ -238,19 +278,15 @@ impl Board {
     }
 
     /// Verify if the given [`Square`] is pinned for the current side.
+    ///
+    /// This implementation returns true only if the [`Piece`] has more than one valid move,
+    /// if not or if the [`Square`] is empty, then it returns false.
     pub fn is_pinned(&self, square: Square) -> bool {
-        // TODO
-        if let Some((piece, color)) = self.on(square) {
-            if color == self.side_to_move {
-                // vvv - modify this
-                match piece {
-                    Piece::King => return true,
-                    _ => return false,
-                }
-                // ^^^ - modify this
-            }
+        if self.color_on(square) == Some(self.side_to_move) {
+            !self.has_legal_move(square)
+        } else {
+            false
         }
-        false
     }
 
     /// Get the piece pinned for the current side.
@@ -284,24 +320,32 @@ impl Board {
         self.squares[square.to_index()].is_some()
     }
 
-    /// Verify if a Square is under attack (i.e. an enemy can move on this square).
-    pub fn is_under_attack(&self, square: Square) -> bool {
-        warn!("is_under_attack(): NotImplementedYet");
-        // TODO
-        false
+    /// Verify if a [`Square`] can be taken by the given [`Color`] in the current [`Board`].
+    pub fn is_targeted(&self, square: Square, color: Color) -> bool {
+        let mut is_targeted = false;
+        for from_square in ALL_SQUARES {
+            if self.color_on_is(from_square, color) {
+                if self.get_valid_moves(from_square).contains(&square) {
+                    is_targeted = true;
+                    break;
+                }
+            }
+        }
+        is_targeted
     }
 
-    /// Verify if a [`Square`] can be taken by the given [`Color`].
-    pub fn is_targeted(&self, square: Square, color: Color) -> bool {
-        todo!()
+    /// Verify if the [`King`][Piece::King] is in check.
+    pub fn is_check(&self) -> bool {
+        let king_square = self.king_of(self.side_to_move);
+        let enemy_color = !self.side_to_move;
+        self.is_targeted(king_square, enemy_color)
     }
 
     /// Verify if a move expose the king (used for legality).
     fn is_exposing_move(&self, m: ChessMove) -> bool {
         let mut next_board = self.clone();
-        next_board.update(m).expect("valid move");
-        let king = next_board.king_of(self.side_to_move);
-        if next_board.is_targeted(king, next_board.side_to_move) {
+        next_board.update(m);
+        if next_board.is_check() {
             return true;
         }
         false
@@ -310,18 +354,25 @@ impl Board {
     /// Verify if the [`Piece`] on the [`Square`] has one or more valid moves.
     ///
     /// If no [`Piece`] exist on the [`Square`] then return false.
+    ///
+    /// > **Note**: The legality is not verify, if you want to: use [`has_legal_move`][Board::has_legal_move].
     pub fn has_valid_move(&self, square: Square) -> bool {
         self.get_valid_moves(square).len() > 0
+    }
+
+    /// Verify if the [`Piece`] on the [`Square`] has one or more legal moves.
+    ///
+    /// If no [`Piece`] exist on the [`Square`] then return false.
+    pub fn has_legal_move(&self, square: Square) -> bool {
+        self.get_legal_moves(square).len() > 0
     }
 
     /// Compute and return all the valid moves for a [`Piece`] (if exist) at a given [`Square`].
     ///
     /// If no [`Piece`] exist on the [`Square`] then return an empty [`Vec`].
+    ///
+    /// > **Note**: The legality is not verify, if you want to: use [`get_legal_moves`][Board::get_legal_moves].
     pub fn get_valid_moves(&self, from: Square) -> Vec<Square> {
-        // Todo: Verify if the piece is pinned (for all piece)
-        //       Caution: a piece can partially move if he can protect the king
-        warn!("get_valid_moves(): Pinned feature is not implemented");
-
         let mut valid_moves = Vec::new();
         if let Some((piece_from, side)) = self.on(from) {
             let mut dest_square;
@@ -380,15 +431,17 @@ impl Board {
                         from.left().left().down(),
                         from.left().left().up(),
                     ];
-                    let mut knight_moves = Vec::with_capacity(8);
-                    for knight_move in _knight_moves {
-                        if from.distance(knight_move) == 2 {
-                            knight_moves.push(knight_move);
+                    let mut knight_moves = Vec::new();
+                    // filter
+                    for dest_square in _knight_moves {
+                        if from.distance(dest_square) == 2 {
+                            knight_moves.push(dest_square);
                         }
                     }
-                    for destination in knight_moves {
-                        if !self.color_on_is(destination, side) {
-                            valid_moves.push(destination);
+                    // Verify legality
+                    for dest_square in knight_moves {
+                        if !self.color_on_is(dest_square, side) {
+                            valid_moves.push(dest_square);
                         }
                     }
                 }
@@ -473,6 +526,195 @@ impl Board {
                 Piece::King => {
                     for direction in ALL_DIRECTION {
                         dest_square = from.follow_direction(direction);
+                        if !self.color_on_is(dest_square, side) {
+                            valid_moves.push(dest_square);
+                        }
+                    }
+                }
+            }
+        }
+        valid_moves
+    }
+
+    /// Compute and return all the legal moves for a [`Piece`] (if exist) at a given [`Square`].
+    ///
+    /// If no [`Piece`] exist on the [`Square`] then return an empty [`Vec`].
+    pub fn get_legal_moves(&self, from: Square) -> Vec<Square> {
+        let mut valid_moves = Vec::new();
+        if let Some((piece_from, side)) = self.on(from) {
+            let mut dest_square;
+            match piece_from {
+                Piece::Pawn => {
+                    // If square forward is is empty
+                    dest_square = from.forward(side);
+                    if self.is_empty(dest_square) {
+                        if !self.is_exposing_move(ChessMove::new(from, dest_square)) {
+                            valid_moves.push(dest_square);
+                        }
+
+                        // First move of the pawn
+                        dest_square = dest_square.forward(side);
+                        if from.rank_for(side) == Rank::Second
+                            && self.is_empty(dest_square)
+                            && !self.is_exposing_move(ChessMove::new(from, dest_square))
+                        {
+                            valid_moves.push(dest_square);
+                        }
+                    }
+
+                    // If can capture (normal or en passant)
+                    if from.file_for(side) == File::A {
+                        dest_square = from.forward(side).right();
+                        if (self.color_on_is(dest_square, !side)
+                            || Some(dest_square) == self.en_passant)
+                            && !self.is_exposing_move(ChessMove::new(from, dest_square))
+                        {
+                            valid_moves.push(dest_square);
+                        }
+                    } else if from.file_for(side) == File::H {
+                        dest_square = from.forward(side).left();
+                        if (self.color_on_is(dest_square, !side)
+                            || Some(dest_square) == self.en_passant)
+                            && !self.is_exposing_move(ChessMove::new(from, dest_square))
+                        {
+                            valid_moves.push(dest_square);
+                        }
+                    } else {
+                        dest_square = from.forward(side).right();
+                        if (self.color_on_is(dest_square, !side)
+                            || Some(dest_square) == self.en_passant)
+                            && !self.is_exposing_move(ChessMove::new(from, dest_square))
+                        {
+                            valid_moves.push(dest_square);
+                        }
+                        dest_square = from.forward(side).left();
+                        if (self.color_on_is(dest_square, !side)
+                            || Some(dest_square) == self.en_passant)
+                            && !self.is_exposing_move(ChessMove::new(from, dest_square))
+                        {
+                            valid_moves.push(dest_square);
+                        }
+                    }
+                }
+                Piece::Knight => {
+                    let _knight_moves = vec![
+                        from.up().up().left(),
+                        from.up().up().right(),
+                        from.right().right().up(),
+                        from.right().right().down(),
+                        from.down().down().right(),
+                        from.down().down().left(),
+                        from.left().left().down(),
+                        from.left().left().up(),
+                    ];
+                    let mut knight_moves = Vec::with_capacity(8);
+                    // filter
+                    for dest_square in _knight_moves {
+                        if from.distance(dest_square) == 2
+                            && !self.is_exposing_move(ChessMove::new(from, dest_square))
+                        {
+                            knight_moves.push(dest_square);
+                        }
+                    }
+                    // Verify legality
+                    for dest_square in knight_moves {
+                        if !self.color_on_is(dest_square, side)
+                            && !self.is_exposing_move(ChessMove::new(from, dest_square))
+                        {
+                            valid_moves.push(dest_square);
+                        }
+                    }
+                }
+                Piece::Bishop => {
+                    for direction in ALL_DIAGONAL {
+                        match from.rank() {
+                            Rank::First if direction.has(Direction::Down) => continue,
+                            Rank::Eighth if direction.has(Direction::Up) => continue,
+                            _ => {}
+                        }
+                        match from.file() {
+                            File::A if direction.has(Direction::Left) => continue,
+                            File::H if direction.has(Direction::Right) => continue,
+                            _ => {}
+                        }
+                        let mut old_square = from;
+                        dest_square = old_square.follow_direction(direction);
+                        while self.is_empty(dest_square) && old_square.distance(dest_square) == 1 {
+                            if !self.is_exposing_move(ChessMove::new(from, dest_square)) {
+                                valid_moves.push(dest_square);
+                            }
+                            old_square = dest_square;
+                            dest_square = dest_square.follow_direction(direction);
+                        }
+                        if self.color_on_is(dest_square, !side)
+                            && old_square.distance(dest_square) == 1
+                            && !self.is_exposing_move(ChessMove::new(from, dest_square))
+                        {
+                            valid_moves.push(dest_square);
+                        }
+                    }
+                }
+                Piece::Rook => {
+                    for direction in ALL_LINE {
+                        match from.rank() {
+                            Rank::First if direction.has(Direction::Down) => continue,
+                            Rank::Eighth if direction.has(Direction::Up) => continue,
+                            _ => {}
+                        }
+                        match from.file() {
+                            File::A if direction.has(Direction::Left) => continue,
+                            File::H if direction.has(Direction::Right) => continue,
+                            _ => {}
+                        }
+                        let mut old_square = from;
+                        dest_square = old_square.follow_direction(direction);
+                        while self.is_empty(dest_square) && old_square.distance(dest_square) == 1 {
+                            if !self.is_exposing_move(ChessMove::new(from, dest_square)) {
+                                valid_moves.push(dest_square);
+                            }
+                            old_square = dest_square;
+                            dest_square = dest_square.follow_direction(direction);
+                        }
+                        if self.color_on_is(dest_square, !side)
+                            && old_square.distance(dest_square) == 1
+                            && !self.is_exposing_move(ChessMove::new(from, dest_square))
+                        {
+                            valid_moves.push(dest_square);
+                        }
+                    }
+                }
+                Piece::Queen => {
+                    for direction in ALL_DIRECTION {
+                        match from.rank() {
+                            Rank::First if direction.has(Direction::Down) => continue,
+                            Rank::Eighth if direction.has(Direction::Up) => continue,
+                            _ => {}
+                        }
+                        match from.file() {
+                            File::A if direction.has(Direction::Left) => continue,
+                            File::H if direction.has(Direction::Right) => continue,
+                            _ => {}
+                        }
+                        let mut old_square = from;
+                        dest_square = old_square.follow_direction(direction);
+                        while self.is_empty(dest_square) && old_square.distance(dest_square) == 1 {
+                            if !self.is_exposing_move(ChessMove::new(from, dest_square)) {
+                                valid_moves.push(dest_square);
+                            }
+                            old_square = dest_square;
+                            dest_square = dest_square.follow_direction(direction);
+                        }
+                        if self.color_on_is(dest_square, !side)
+                            && old_square.distance(dest_square) == 1
+                            && !self.is_exposing_move(ChessMove::new(from, dest_square))
+                        {
+                            valid_moves.push(dest_square);
+                        }
+                    }
+                }
+                Piece::King => {
+                    for direction in ALL_DIRECTION {
+                        dest_square = from.follow_direction(direction);
                         if !self.color_on_is(dest_square, side)
                             && !self.is_targeted(dest_square, !side)
                         {
@@ -494,8 +736,8 @@ impl Board {
     /// use chess::{Board, ChessMove, Direction, Square};
     ///
     /// let mut board = Board::default();
-    /// board.update(ChessMove::new(Square::D2, Square::D3)).expect("");
-    /// board.update(ChessMove::new(Square::G7, Square::G5)).expect("");
+    /// board.update(ChessMove::new(Square::D2, Square::D3));
+    /// board.update(ChessMove::new(Square::G7, Square::G5));
     /// // 8 | r n b q k b n r
     /// // 7 | p p p p p p . p
     /// // 6 | . . . . . . . .

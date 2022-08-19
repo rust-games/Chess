@@ -25,7 +25,7 @@ pub enum GameAction {
 /// use chess::{Color, GameState};
 ///
 /// let state = GameState::Checkmates(Color::Black);
-/// assert!(Some(Color::White), state.winner())
+/// assert_eq!(Some(Color::White), state.winner())
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GameState {
@@ -79,9 +79,9 @@ impl Chess {
     /// # Examples
     ///
     /// ```
-    /// # use chess::{Chess, SANDCASTLE_THEME};
+    /// # use chess::{Chess, THEME_SANDCASTLE};
     /// let mut game = Chess::new();
-    /// game.set_theme(SANDCASTLE_THEME);
+    /// game.set_theme(THEME_SANDCASTLE);
     /// ```
     #[allow(unused)]
     pub fn set_theme(&mut self, theme: Theme) {
@@ -150,7 +150,7 @@ impl Chess {
         );
         let m = ChessMove::new(from, to);
         if self.board.is_legal(m) {
-            self.board.update(m).expect("valid move");
+            self.board.update(m);
             self.historic.push(self.board.to_string());
         }
         self.square_focused = None;
@@ -217,7 +217,7 @@ impl Chess {
     /// Draw all the possible destination of the selected piece.
     fn draw_valid_moves(&self, ctx: &mut Context) -> GameResult {
         if let Some(square) = self.square_focused {
-            for dest in self.board.get_valid_moves(square) {
+            for dest in self.board.get_legal_moves(square) {
                 let (x, y) = dest.to_screen();
                 let mesh = graphics::MeshBuilder::new()
                     .rectangle(
