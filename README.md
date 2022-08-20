@@ -51,6 +51,8 @@ git clone git@github.com:rust-games/chess.git
 cargo build --release
 ```
 
+> **Note**: if you don't build in `release`, the game may be slow.
+
 ## Tests
 
 ```bash
@@ -63,8 +65,11 @@ cargo test
 cargo run --release
 ```
 
+## Chess book
+### [rust-games.github.io/chess/](rust-games.github.io/chess/)
+
 ## Chess Notation
-### [Forsyth-Edwards Notation (FEN)](https://www.chess.com/terms/fen-chess)
+### [Forsyth-Edwards Notation (FEN)](https://www.chess.com/terms/fen-chess) -> implemented
 
 ### [Standard Algebraic Notation (SAN)](https://www.chess.com/article/view/chess-notation)
 
