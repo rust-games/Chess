@@ -194,7 +194,9 @@ impl Board {
                         self[m.to] = Some((Piece::King, side));
                         self[m.to.right()] = None;
                         self[m.to.left()] = Some((Piece::Rook, side));
-                    } else if self.castle_rights(side).has_queenside() && m.to.file() < m.from.file() {
+                    } else if self.castle_rights(side).has_queenside()
+                        && m.to.file() < m.from.file()
+                    {
                         // if is a Castle - Queenside
                         self[m.from] = None;
                         self[m.to] = Some((Piece::King, side));
