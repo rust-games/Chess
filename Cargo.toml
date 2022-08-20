@@ -12,8 +12,8 @@ keywords = ["game"]
 
 [dependencies]
 ggez = "0.7.0"
-grid = "0.6.0"
-glam = { version = "0.20", features = ["mint"] }
+grid = "0.8.1"
+glam = { version = "0.21.3", features = ["mint"] }
 # Has to be the same version of mint that our math lib uses here.
 mint = "0.5"
 log = "0.4.17"
