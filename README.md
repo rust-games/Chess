@@ -23,8 +23,9 @@ A simple game of chess write in [Rust](https://www.rust-lang.org/fr/).
     * [System requirement](#system-requirement)
     * [Software requirement](#software-requirement)
     * [Manual installation](#manual-installation)
-* [Usage](#usage)
 * [Tests](#tests)
+* [Usage](#usage)
+* [Chess Notation](#chess-notation)
 * [Potential Maintainers](#potential-maintainers)
 * [Credits](#credits)
 
@@ -62,6 +63,11 @@ cargo test
 cargo run --release
 ```
 
+## Chess Notation
+### [Forsyth-Edwards Notation (FEN)](https://www.chess.com/terms/fen-chess)
+
+### [Standard Algebraic Notation (SAN)](https://www.chess.com/article/view/chess-notation)
+
 <!--
 ## How to Contribute
 
@@ -75,6 +81,6 @@ Thank you for considering and taking the time to contribute! Before contributing
 
 ## Credits
 
-<a href="https://github.com/ValentinColin/rust-template-project/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ValentinColin/rust-template-project" alt="contributors"/>
+<a href="https://github.com/rust-games/chess/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=rust-games/chess" alt="contributors"/>
 </a>
