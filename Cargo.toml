@@ -1,6 +1,6 @@
 [package]
 name = "chess"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Valentin Colin <valentin.colin78@gmail.com>", "Marc Partensky <marc.partensky@gmail.com>"]
 edition = "2021"
 description = "Game Chess with graphical interface"
