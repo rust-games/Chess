@@ -66,7 +66,7 @@ cargo run --release
 ```
 
 ## Chess book
-### [rust-games.github.io/chess/](rust-games.github.io/chess/)
+### [MdBook](https://rust-games.github.io/chess/)
 
 ## Chess Notation
 ### [Forsyth-Edwards Notation (FEN)](https://www.chess.com/terms/fen-chess) -> implemented
