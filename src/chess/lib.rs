@@ -9,8 +9,11 @@
 mod board;
 pub use crate::board::*;
 
-mod game;
-pub use crate::game::*;
+mod chess;
+pub use crate::chess::*;
+
+mod chess_gui;
+pub use crate::chess_gui::*;
 
 mod piece;
 pub use crate::piece::*;
@@ -44,3 +47,29 @@ pub use crate::theme::*;
 
 mod direction;
 pub use crate::direction::*;
+
+/// Run the GUI.
+pub fn run(game: ChessGui) {
+    let default_conf = ggez::conf::Conf {
+        window_mode: ggez::conf::WindowMode::default()
+            .dimensions(SCREEN_PX_SIZE.0 as f32, SCREEN_PX_SIZE.1 as f32),
+        window_setup: ggez::conf::WindowSetup::default()
+            .title("Chess")
+            .icon("/images/icon.png"),
+        backend: ggez::conf::Backend::default(),
+        modules: ggez::conf::ModuleConf {
+            gamepad: false,
+            audio: false,
+        },
+    };
+    let (ctx, event_loop) =
+        ggez::ContextBuilder::new(env!("CARGO_PKG_NAME"), env!("CARGO_PKG_AUTHORS"))
+            .add_resource_path::<std::path::PathBuf>(
+                [env!("CARGO_MANIFEST_DIR"), "resources"].iter().collect(),
+            )
+            .default_conf(default_conf)
+            .build()
+            .expect("Failed to build ggez context");
+
+    ggez::event::run(ctx, event_loop, game)
+}

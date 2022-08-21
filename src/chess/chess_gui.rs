@@ -1,110 +1,42 @@
-use ggez::event::{self, KeyCode, MouseButton};
-use ggez::{graphics, Context, GameError, GameResult};
+use ggez::event::{KeyCode, KeyMods, MouseButton};
+use ggez::{event, graphics, Context, GameError, GameResult};
 use glam::Vec2;
 use log::{debug, info, trace, warn};
 
-use crate::{
-    Board, ChessMove, Color, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE,
-    BOARD_SIZE, THEME_DEFAULT,
-};
+use crate::{Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE, BOARD_SIZE};
 
-/// Contains all actions supported within the game.
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum GameAction {
-    OfferDraw(Color),
-    AcceptDraw,
-    RefuseDraw,
-    Resign(Color),
-}
-
-/// The Result of the game.
-///
-/// # Examples
-///
-/// ```
-/// use chess::{Color, GameState};
-///
-/// let state = GameState::Checkmates(Color::Black);
-/// assert_eq!(Some(Color::White), state.winner())
-/// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum GameState {
-    /// The game is still ongoing.
-    Ongoing,
-    /// Checkmates for the given [`Color`] (ie. the looser).
-    Checkmates(Color),
-    /// Draw by Stalemate.
-    Stalemate,
-    /// Draw by request (ie. Mutual Agreement).
-    DrawByRequest,
-    /// The [`Color`] has resigns.
-    Resigns(Color),
-}
-
-impl GameState {
-    pub fn winner(&self) -> Option<Color> {
-        match *self {
-            GameState::Ongoing => None,
-            GameState::Checkmates(color) => Some(!color),
-            GameState::Stalemate => None,
-            GameState::DrawByRequest => None,
-            GameState::Resigns(color) => Some(!color),
-        }
-    }
-}
-
-/// A Standard Chess game.
-///
-/// TODO: Add a timer for each player.
-pub struct Chess {
-    board: Board,
-    square_focused: Option<Square>,
+/// A wrapper of [`Chess`] for GUI.
+#[derive(Default, Debug)]
+pub struct ChessGui {
+    chess: Chess,
     theme: Theme,
-    historic: Vec<String>,
 }
 
-impl Chess {
-    /// Create a new instance of Chess.
-    pub fn new() -> Self {
-        Chess {
-            board: Board::default(),
-            square_focused: None,
-            theme: THEME_DEFAULT,
-            historic: vec![],
+impl ChessGui {
+    /// Create a new instance of ChessGui.
+    pub fn new(chess: Chess, theme: Theme) -> Self {
+        ChessGui {
+            chess,
+            theme,
         }
     }
 
-    /// Set the theme of the game.
+    /// Set the theme for the GUI.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use chess::{Chess, THEME_SANDCASTLE};
-    /// let mut game = Chess::new();
+    /// use chess::{ChessGui, THEME_SANDCASTLE};
+    ///
+    /// let mut game = ChessGui::default();
     /// game.set_theme(THEME_SANDCASTLE);
     /// ```
-    #[allow(unused)]
     pub fn set_theme(&mut self, theme: Theme) {
         self.theme = theme;
     }
 
-    /// Reset the Game.
-    pub fn reset(&mut self) {
-        self.board = Board::default();
-        self.square_focused = None;
-        self.historic = vec![];
-    }
-
-    /// Return the [`State`][GameState] of the Game
-    pub fn state(&self) -> GameState {
-        let state = self.board.state();
-        // TODO: Verify here if we need the set the State to DrawByRequest or Resigns
-        // ...
-        state
-    }
-
     /// Base function to call when a user click on the screen.
-    pub fn click(&mut self, x: f32, y: f32) {
+    fn click(&mut self, x: f32, y: f32) {
         if x < BOARD_PX_SIZE.0 as f32 {
             self.click_on_board(x, y);
         } else {
@@ -118,14 +50,15 @@ impl Chess {
     fn click_on_board(&mut self, x: f32, y: f32) {
         let current_square = Square::from_screen(x, y);
         debug!("Click at: ({x},{y}) -> on the square: {current_square}");
-        match self.square_focused {
-            Some(square_selected) => self.play(square_selected, current_square),
+        match self.chess.square_focused {
+            Some(square_selected) => self.chess.play(square_selected, current_square),
             None => {
                 if self
+                    .chess
                     .board
-                    .color_on_is(current_square, self.board.side_to_move())
+                    .color_on_is(current_square, self.chess.board.side_to_move())
                 {
-                    self.square_focused = Some(current_square);
+                    self.chess.square_focused = Some(current_square);
                 }
             }
         }
@@ -139,24 +72,8 @@ impl Chess {
         info!("Click at: ({x},{y}) -> on the side screen")
     }
 
-    /// Base function to call when a user click on the screen.
-    pub fn play(&mut self, from: Square, to: Square) {
-        debug!(
-            "The player {:?} play {} to {}",
-            self.board.side_to_move(),
-            from,
-            to
-        );
-        let m = ChessMove::new(from, to);
-        if self.board.is_legal(m) {
-            self.board.update(m);
-            self.historic.push(self.board.to_string());
-        }
-        self.square_focused = None;
-    }
-
-    /// Draw the all the board side.
-    pub fn draw_board(&self, ctx: &mut Context) -> GameResult {
+    /// Draw all of the board side.
+    fn draw_board(&self, ctx: &mut Context) -> GameResult {
         self.draw_empty_board(ctx)?;
         self.draw_legal_moves(ctx)?;
         self.draw_pinned_piece(ctx)?;
@@ -166,8 +83,8 @@ impl Chess {
 
     /// Draw the empty chess board (without pieces).
     fn draw_empty_board(&self, ctx: &mut Context) -> GameResult {
-        for y in 0..BOARD_SIZE.1 as i16 {
-            for x in 0..BOARD_SIZE.0 as i16 {
+        for y in 0..BOARD_SIZE.1 {
+            for x in 0..BOARD_SIZE.0 {
                 let color_index = if (x % 2 == 1 && y % 2 == 1) || (x % 2 == 0 && y % 2 == 0) {
                     0
                 } else {
@@ -196,7 +113,7 @@ impl Chess {
         let mut path;
         let mut image;
         for square in ALL_SQUARES {
-            if let Some((piece, color)) = self.board.on(square) {
+            if let Some((piece, color)) = self.chess.board.on(square) {
                 path = self.theme.piece_path[color.to_index()][piece.to_index()];
                 image = graphics::Image::new(ctx, path).expect("Image load error");
                 let (x, y) = square.to_screen();
@@ -214,8 +131,8 @@ impl Chess {
     /// Draw all the possible destination of the selected piece.
     fn draw_legal_moves(&self, ctx: &mut Context) -> GameResult {
         if self.theme.valid_moves_color.is_some() {
-            if let Some(square) = self.square_focused {
-                for dest in self.board.get_legal_moves(square) {
+            if let Some(square) = self.chess.square_focused {
+                for dest in self.chess.board.get_legal_moves(square) {
                     let (x, y) = dest.to_screen();
                     let mesh = graphics::MeshBuilder::new()
                         .rectangle(
@@ -241,7 +158,7 @@ impl Chess {
         if self.theme.piece_pinned_path.is_some() {
             let mut path;
             let mut image;
-            for square in self.board.pinned() {
+            for square in self.chess.board.pinned() {
                 path = self.theme.piece_pinned_path.unwrap();
                 image = graphics::Image::new(ctx, path).expect("Image load error");
                 let (x, y) = square.to_screen();
@@ -259,7 +176,7 @@ impl Chess {
                 graphics::draw(ctx, &image, dp)?;
             }
         } else if self.theme.piece_pinned_color.is_some() {
-            for piece in self.board.pinned() {
+            for piece in self.chess.board.pinned() {
                 let (x, y) = piece.to_screen();
                 let mesh = graphics::MeshBuilder::new()
                     .rectangle(
@@ -279,15 +196,21 @@ impl Chess {
         Ok(())
     }
 
+    /// Draw all the side screen.
+    fn draw_side(&self, _ctx: &mut Context) -> GameResult {
+        // todo
+        Ok(())
+    }
+
     /// Draw a window with winner, score?, stats?
-    pub fn draw_winner(&self, _ctx: &mut Context, winner: String) -> GameResult {
+    fn draw_winner(&self, _ctx: &mut Context, game_state: GameState) -> GameResult {
         warn!("NotImplementedYet: draw_winner()");
-        trace!("The winner is {}", winner);
+        trace!("GameState: {:?}", game_state);
         Ok(())
     }
 }
 
-impl event::EventHandler<GameError> for Chess {
+impl event::EventHandler<GameError> for ChessGui {
     /// Update will happen on every frame before it is drawn.
     fn update(&mut self, _ctx: &mut Context) -> GameResult {
         Ok(())
@@ -298,32 +221,13 @@ impl event::EventHandler<GameError> for Chess {
         // First we clear the screen and set the background color
         graphics::clear(ctx, self.theme.background_color);
 
-        // Draw the board and his content
-        self.draw_board(ctx)?;
-
-        // If the game is over draw a popup to show the score
-        match self.state() {
-            GameState::Ongoing => { /* Do Nothing */ }
-            GameState::Checkmates(color) => {
-                let winner = match !color {
-                    Color::White => "White".to_string(),
-                    Color::Black => "Black".to_string(),
-                };
-                self.draw_winner(ctx, winner)?;
+        // Draw according to the GameState
+        match self.chess.state() {
+            GameState::Ongoing => {
+                self.draw_board(ctx)?;
+                self.draw_side(ctx)?;
             }
-            GameState::Stalemate => {
-                self.draw_winner(ctx, "Stalemate".to_string())?;
-            }
-            GameState::DrawByRequest => {
-                self.draw_winner(ctx, "Draw".to_string())?;
-            }
-            GameState::Resigns(color) => {
-                let winner = match !color {
-                    Color::White => "White".to_string(),
-                    Color::Black => "Black".to_string(),
-                };
-                self.draw_winner(ctx, format!("{winner} wins by default"))?;
-            }
+            game_state => self.draw_winner(ctx, game_state)?,
         }
 
         // Finally we call graphics::present to cycle the gpu's framebuffer and display
@@ -347,18 +251,16 @@ impl event::EventHandler<GameError> for Chess {
         &mut self,
         ctx: &mut Context,
         keycode: KeyCode,
-        _keymod: ggez::input::keyboard::KeyMods,
+        keymod: KeyMods,
         _repeat: bool,
     ) {
         match keycode {
-            KeyCode::Escape => {
-                info!("EXIT from key Escape");
-                event::quit(ctx);
-            }
-            KeyCode::R => {
-                debug!("RESET from key R");
-                self.reset();
-            }
+            // Z: Quit the game
+            KeyCode::Escape => event::quit(ctx),
+            // R: Reset the game (new chess game)
+            KeyCode::R => self.chess.reset(),
+            // CTRL+Z: Undo (i.e. go back one step in history)
+            KeyCode::Z if keymod == KeyMods::CTRL => self.chess.undo(),
             _ => {}
         };
     }
