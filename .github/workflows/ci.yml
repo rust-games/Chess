@@ -6,12 +6,14 @@ on:
       - gh-pages
     paths-ignore:
       - '.github/**'
+      - '.run/**'
       - 'docs/**'
   pull_request:
     branches-ignore:
       - gh-pages
     paths-ignore:
       - '.github/**'
+      - '.run/**'
       - 'docs/**'
 
 env:
