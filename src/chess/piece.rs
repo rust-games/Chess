@@ -26,11 +26,11 @@ pub const ALL_PIECES: [Piece; NUM_PIECES] = [
     Piece::King,
 ];
 
-// /// How many ways can I promote?
+// /// Number of promotion.
 // pub const NUM_PROMOTION_PIECES: usize = 4;
 
-// /// What pieces can I promote to?
-// pub const PROMOTION_PIECES: [Piece; 4] = [Piece::Queen, Piece::Knight, Piece::Rook, Piece::Bishop];
+// /// Enumerate all [`Piece`] in which a [`Piece::Pawn`] can be promoted.
+// pub const PROMOTION_PIECES: [Piece; 4] = [Piece::Queen, Piece::Rook, Piece::Bishop, Piece::Knight];
 
 impl Piece {
     /// Convert the [`Piece`] to a [`usize`] for table lookups.

@@ -16,7 +16,7 @@ pub enum Rank {
     Eighth,
 }
 
-/// Numbers of [`Rank`]
+/// Numbers of [`Rank`].
 pub const NUM_RANKS: usize = BOARD_SIZE.1 as usize;
 
 /// Enumerate all ranks.
