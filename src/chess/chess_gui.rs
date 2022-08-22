@@ -3,7 +3,9 @@ use ggez::{event, graphics, Context, GameError, GameResult};
 use glam::Vec2;
 use log::{debug, info, trace, warn};
 
-use crate::{Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE, BOARD_SIZE};
+use crate::{
+    Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE, BOARD_SIZE,
+};
 
 /// A wrapper of [`Chess`] for GUI.
 #[derive(Default, Debug)]
@@ -15,10 +17,7 @@ pub struct ChessGui {
 impl ChessGui {
     /// Create a new instance of ChessGui.
     pub fn new(chess: Chess, theme: Theme) -> Self {
-        ChessGui {
-            chess,
-            theme,
-        }
+        ChessGui { chess, theme }
     }
 
     /// Set the theme for the GUI.
