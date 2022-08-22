@@ -1,5 +1,6 @@
-use ggez::event::{KeyCode, KeyMods, MouseButton};
+use ggez::event::{EventHandler, KeyCode, KeyMods, MouseButton};
 use ggez::{event, graphics, Context, GameError, GameResult};
+use ggez::graphics::Mesh;
 use glam::Vec2;
 use log::{debug, info, trace, warn};
 
@@ -196,8 +197,38 @@ impl ChessGui {
     }
 
     /// Draw all the side screen.
-    fn draw_side(&self, _ctx: &mut Context) -> GameResult {
+    ///
+    /// TODO: according to the state, print some features
+    ///     - button offer/accept draw
+    ///     - button declare draw
+    ///     - button resign
+    ///     - button undo
+    ///     - timer
+    ///     - winner
+    ///     - button for changing the theme (un bouton qui fait rouler les thème au début)
+    fn draw_side(&self, ctx: &mut Context) -> GameResult {
         // todo
+        let bounds = graphics::Rect::new(
+            (800 + 20) as f32,
+            90 as f32,
+            150 as f32,
+            50 as f32,
+        );
+        let color = graphics::Color::new(0.5, 0.5, 0.5, 1.0);
+        self.draw_button(bounds, color)?;
+        Ok(())
+    }
+
+    /// Draw a button.
+    fn draw_button(&self, bounds: graphics::Rect, color: graphics::Color) -> GameResult {
+        let mesh = graphics::MeshBuilder::new()
+            .rectangle(
+                graphics::DrawMode::fill(),
+                bounds,
+                color,
+            )?
+            .build(ctx)?;
+        graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
         Ok(())
     }
 
