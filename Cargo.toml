@@ -6,9 +6,10 @@ edition = "2021"
 description = "Chess Game with graphical interface."
 homepage = "https://rust-games.github.io/chess/"
 repository = "https://github.com/rust-games/chess"
+documentation = "https://docs.rs/rg-chess/latest/chess/"
 license = "MIT"
 # licence-file = "LICENSE"
-keywords = ["game"]
+keywords = ["chess", "game", "gui"]
 
 [dependencies]
 ggez = "0.7.0"
