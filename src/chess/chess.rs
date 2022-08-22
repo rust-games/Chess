@@ -2,15 +2,6 @@ use std::str::FromStr;
 
 use crate::{Board, ChessMove, Color, Square};
 
-/// Contains all actions supported within the game.
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum GameAction {
-    OfferDraw(Color),
-    AcceptDraw,
-    RefuseDraw,
-    Resign(Color),
-}
-
 /// The Result of the game.
 ///
 /// # Examples
@@ -21,30 +12,21 @@ pub enum GameAction {
 /// let state = GameState::Checkmates(Color::Black);
 /// assert_eq!(Some(Color::White), state.winner())
 /// ```
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub enum GameState {
     /// The game is still ongoing.
+    #[default]
     Ongoing,
-    /// Checkmates for the given [`Color`] (ie. the looser).
+    /// A player is checkmates.
     Checkmates(Color),
     /// Draw by Stalemate.
     Stalemate,
-    /// Draw by request (ie. Mutual Agreement).
-    DrawByRequest,
+    /// Draw by request accepted (ie. Mutual Agreement).
+    DrawAccepted,
+    /// Draw declared by a player.
+    DrawDeclared,
     /// The [`Color`] has resigns.
     Resigns(Color),
-}
-
-impl GameState {
-    pub fn winner(&self) -> Option<Color> {
-        match *self {
-            GameState::Ongoing => None,
-            GameState::Checkmates(color) => Some(!color),
-            GameState::Stalemate => None,
-            GameState::DrawByRequest => None,
-            GameState::Resigns(color) => Some(!color),
-        }
-    }
 }
 
 /// A Standard Chess game.
@@ -55,6 +37,7 @@ pub struct Chess {
     pub(crate) board: Board,
     pub(crate) square_focused: Option<Square>,
     pub(crate) history: Vec<String>,
+    pub(crate) state: GameState,
 }
 
 impl Chess {
@@ -62,8 +45,9 @@ impl Chess {
     pub fn new(board: Board) -> Self {
         Chess {
             board,
-            square_focused: Default::default(),
-            history: Default::default(),
+            square_focused: None,
+            history: vec![],
+            state: GameState::Ongoing,
         }
     }
 
@@ -100,14 +84,12 @@ impl Chess {
         self.board = Board::default();
         self.square_focused = None;
         self.history = vec![];
+        self.state = GameState::Ongoing;
     }
 
-    /// Return the [`State`][GameState] of the Game
-    ///
-    /// TODO: Verify here if we need the set the State to DrawByRequest or Resigns
-    pub fn state(&self) -> GameState {
-        let state = self.board.state();
-        state
+    /// Return the [`State`][GameState] of the Game.
+    pub fn state(&mut self) -> GameState {
+        self.state
     }
 
     /// Base function to call when a user click on the screen.
@@ -116,7 +98,47 @@ impl Chess {
         if self.board.is_legal(m) {
             self.history.push(self.board.to_string());
             self.board.update(m);
+            self.state = self.board.state();
         }
         self.square_focused = None;
+    }
+
+    /// [`Color`] offer a draw.
+    #[cfg(any())]
+    pub fn offer_draw(&mut self, color: Color) {}
+
+    /// [`Color`] accept the draw. Assumes that a draw is offered.
+    ///
+    /// > **Caution**: This crate don't implement the offer_draw() method.
+    ///   You need to react yourself to this action.
+    pub fn accept_draw(&mut self) {
+        self.state = GameState::DrawAccepted;
+    }
+
+    /// Verify if a player can legally declare a draw by 3-fold repetition or 50-move rule.
+    pub fn can_declare_draw(&self) -> bool {
+        let t = self.history.len();
+        let fen_boards = [
+            self.board.to_string().split(' ').next().unwrap().to_string(),
+            self.history[t - 2].clone(),
+            self.history[t - 4].clone(),
+        ];
+        if fen_boards[0] == fen_boards[1] && fen_boards[1] == fen_boards[2] {
+            return true;
+        }
+        if self.board.halfmoves() >= 100 {
+            return true;
+        }
+        false
+    }
+
+    /// Declare a draw by 3-fold repetition or 50-move rule. Assumes that a draw can be declare.
+    pub fn declare_draw(&mut self) {
+        self.state = GameState::DrawDeclared;
+    }
+
+    /// [`Color`] resigns the game.
+    pub fn resign(&mut self, color: Color) {
+        self.state = GameState::Resigns(color);
     }
 }

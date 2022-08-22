@@ -96,10 +96,6 @@ impl Board {
 
     /// Get the [`GameState`] of the [`Board`].
     pub fn state(&self) -> GameState {
-        // TODO: Verify if it's a Checkmate or a Draw
-        //  Ongoing
-        //  Checkmates(Color)
-        //  Stalemate
         let mut state = GameState::Ongoing;
         if !self.has_any_move() {
             state = GameState::Stalemate;
