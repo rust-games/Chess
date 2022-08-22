@@ -77,7 +77,7 @@ pub const THEME_SANDCASTLE: Theme = Theme {
 
 /// Describe the theme of the chess game (GUI).
 ///
-/// RootPath is `resources/` (changed by [`ContextBuilder::add_resource_path`]).
+/// RootPath is `resources/` (changed by [`ggez::ContextBuilder::add_resource_path`]).
 ///
 /// # Examples
 ///
