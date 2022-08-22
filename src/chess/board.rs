@@ -239,6 +239,7 @@ impl Board {
         if !new_en_passant {
             self.en_passant = None;
         }
+        self.halfmoves += 1;
         if reset_halfmove {
             self.halfmoves = 0;
         }
