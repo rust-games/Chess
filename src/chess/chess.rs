@@ -50,7 +50,7 @@ impl GameState {
 /// A Standard Chess game.
 ///
 /// TODO: Add a timer for each player.
-#[derive(Clone, PartialEq, Default, Debug)]
+#[derive(Clone, Eq, PartialEq, Default, Debug)]
 pub struct Chess {
     pub(crate) board: Board,
     pub(crate) square_focused: Option<Square>,

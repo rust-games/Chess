@@ -44,7 +44,7 @@ use crate::*;
 /// assert_eq!(board.on(Square::E4), Some((Piece::Pawn, Color::White)));
 /// assert_eq!(board.side_to_move(), Color::Black);
 /// ```
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Board {
     squares: [Option<(Piece, Color)>; NUM_SQUARES],
     side_to_move: Color,
@@ -154,7 +154,7 @@ impl Board {
         let piece_from = self.piece_on(m.from).unwrap();
         let side = self.side_to_move;
         let mut new_en_passant = false;
-        let update_halfmove = !(self.piece_on_is(m.from, Piece::Pawn) || self.is_occupied(m.to));
+        let reset_halfmove = self.piece_on_is(m.from, Piece::Pawn) || self.is_occupied(m.to);
 
         match piece_from {
             // Pawn: En Passant, promotion
@@ -239,8 +239,8 @@ impl Board {
         if !new_en_passant {
             self.en_passant = None;
         }
-        if update_halfmove {
-            self.halfmoves += 1;
+        if reset_halfmove {
+            self.halfmoves = 0;
         }
         if self.side_to_move == Color::White {
             self.fullmoves += 1;
