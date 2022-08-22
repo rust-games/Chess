@@ -13,7 +13,7 @@ pub enum Piece {
     King,
 }
 
-/// Numbers of [`Piece`]
+/// Numbers of [`Piece`].
 pub const NUM_PIECES: usize = 6;
 
 /// An array representing each [`Piece`] type, in order of ascending value.
