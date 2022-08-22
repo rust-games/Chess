@@ -110,7 +110,12 @@ impl Chess {
     pub fn can_declare_draw(&self) -> bool {
         let t = self.history.len();
         let fen_boards = [
-            self.board.to_string().split(' ').next().unwrap().to_string(),
+            self.board
+                .to_string()
+                .split(' ')
+                .next()
+                .unwrap()
+                .to_string(),
             self.history[t - 2].clone(),
             self.history[t - 4].clone(),
         ];
