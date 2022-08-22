@@ -76,17 +76,18 @@ impl Chess {
 
     /// Go back one step in history.
     ///
-    /// If the history is empty do nothing.
+    /// If the history is empty, reset the board to it's [`default`][Board::default] value.
     ///
     /// # Examples
     ///
     /// ```
-    /// use chess::{Board, Chess, ChessMove, Square};
+    /// use chess::{Chess, Square};
     /// let mut chess = Chess::default();
-    /// chess.play(Square::E2, Square::E4);
+    /// let expected = Chess::default();
+    /// chess.play(Square::A2, Square::A4);
     /// chess.undo();
     ///
-    /// assert_eq!(chess, Chess::default())
+    /// assert_eq!(chess, expected);
     /// ```
     pub fn undo(&mut self) {
         if let Some(fen) = self.history.pop() {
@@ -113,8 +114,8 @@ impl Chess {
     pub fn play(&mut self, from: Square, to: Square) {
         let m = ChessMove::new(from, to);
         if self.board.is_legal(m) {
-            self.board.update(m);
             self.history.push(self.board.to_string());
+            self.board.update(m);
         }
         self.square_focused = None;
     }
