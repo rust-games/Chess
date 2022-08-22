@@ -3,15 +3,6 @@ use std::str::FromStr;
 use crate::{Board, ChessMove, Color, Square};
 
 /// The Result of the game.
-///
-/// # Examples
-///
-/// ```
-/// use chess::{Color, GameState};
-///
-/// let state = GameState::Checkmates(Color::Black);
-/// assert_eq!(Some(Color::White), state.winner())
-/// ```
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub enum GameState {
     /// The game is still ongoing.
