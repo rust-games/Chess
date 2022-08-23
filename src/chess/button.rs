@@ -76,10 +76,7 @@ impl Button {
         let font = graphics::Font::new(ctx, FONT_PATH)?;
         let text = graphics::Text::new((self.text.clone(), font, FONT_SCALE));
         let dest_point = match self.align {
-            Align::Left => glam::Vec2::new(
-                self.rect.x,
-                self.rect.y
-            ),
+            Align::Left => glam::Vec2::new(self.rect.x, self.rect.y),
             Align::Right => glam::Vec2::new(
                 self.rect.x + self.rect.w - text.width(ctx),
                 self.rect.y + self.rect.h - text.height(ctx),

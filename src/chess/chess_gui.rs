@@ -3,7 +3,10 @@ use ggez::{event, graphics, Context, GameError, GameResult};
 use glam::vec2;
 use log::{debug, info, warn};
 
-use crate::{Align, Button, Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE, BOARD_SIZE, SIDE_SCREEN_PX_SIZE, INDEX_THEME, NUM_THEMES, THEMES};
+use crate::{
+    Align, Button, Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE,
+    BOARD_SIZE, INDEX_THEME, NUM_THEMES, SIDE_SCREEN_PX_SIZE, THEMES,
+};
 
 /// A wrapper of [`Chess`] for GUI.
 #[derive(Debug)]
@@ -39,7 +42,7 @@ impl ChessGui {
 
     /// Set the theme to the next one for the GUI.
     pub unsafe fn next_theme(&mut self) {
-        INDEX_THEME = (INDEX_THEME+1) % NUM_THEMES;
+        INDEX_THEME = (INDEX_THEME + 1) % NUM_THEMES;
         self.theme = THEMES[INDEX_THEME % 6];
     }
 
@@ -68,7 +71,12 @@ impl ChessGui {
         ));
         self.buttons.push(Button::new(
             "theme",
-            graphics::Rect::new(BOARD_PX_SIZE.0 + SIDE_SCREEN_PX_SIZE.0 - 70.0, 20.0, 50.0, 50.0),
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + SIDE_SCREEN_PX_SIZE.0 - 70.0,
+                20.0,
+                50.0,
+                50.0,
+            ),
             graphics::Color::new(0.5, 0.5, 0.5, 1.0),
             "Theme",
             Align::Center,
@@ -78,7 +86,12 @@ impl ChessGui {
         ));
         self.buttons.push(Button::new(
             "winner",
-            graphics::Rect::new(BOARD_PX_SIZE.0 + 20.0, 110.0, 320.0, SIDE_SCREEN_PX_SIZE.1 - 250.0 - 110.0),
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 20.0,
+                110.0,
+                320.0,
+                SIDE_SCREEN_PX_SIZE.1 - 250.0 - 110.0,
+            ),
             graphics::Color::new(0.7, 0.7, 0.7, 1.0),
             "<Winner>",
             Align::Center,
@@ -86,7 +99,12 @@ impl ChessGui {
         ));
         self.buttons.push(Button::new(
             "undo",
-            graphics::Rect::new(BOARD_PX_SIZE.0 + 20.0, SIDE_SCREEN_PX_SIZE.1 - 210.0, 150.0, 50.0),
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 20.0,
+                SIDE_SCREEN_PX_SIZE.1 - 210.0,
+                150.0,
+                50.0,
+            ),
             graphics::Color::new(0.0, 0.0, 0.7, 1.0),
             "Undo",
             Align::Center,
@@ -96,7 +114,12 @@ impl ChessGui {
         ));
         self.buttons.push(Button::new(
             "declare-draw",
-            graphics::Rect::new(BOARD_PX_SIZE.0 + 190.0, SIDE_SCREEN_PX_SIZE.1 - 210.0, 150.0, 50.0),
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 190.0,
+                SIDE_SCREEN_PX_SIZE.1 - 210.0,
+                150.0,
+                50.0,
+            ),
             graphics::Color::new(0.7, 0.0, 0.7, 1.0),
             "Declare Draw",
             Align::Center,
@@ -108,7 +131,12 @@ impl ChessGui {
         ));
         self.buttons.push(Button::new(
             "offer-draw",
-            graphics::Rect::new(BOARD_PX_SIZE.0 + 20.0, SIDE_SCREEN_PX_SIZE.1 - 140.0, 150.0, 50.0),
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 20.0,
+                SIDE_SCREEN_PX_SIZE.1 - 140.0,
+                150.0,
+                50.0,
+            ),
             graphics::Color::new(0.7, 0.7, 0.0, 1.0),
             "<Offer Draw>",
             Align::Center,
@@ -116,7 +144,12 @@ impl ChessGui {
         ));
         self.buttons.push(Button::new(
             "accept-draw",
-            graphics::Rect::new(BOARD_PX_SIZE.0 + 190.0, SIDE_SCREEN_PX_SIZE.1 - 140.0, 150.0, 50.0),
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 190.0,
+                SIDE_SCREEN_PX_SIZE.1 - 140.0,
+                150.0,
+                50.0,
+            ),
             graphics::Color::new(0.0, 0.7, 0.0, 1.0),
             "Accept Draw\n<unsafe>",
             Align::Center,
@@ -126,7 +159,12 @@ impl ChessGui {
         ));
         self.buttons.push(Button::new(
             "reset",
-            graphics::Rect::new(BOARD_PX_SIZE.0 + 20.0, SIDE_SCREEN_PX_SIZE.1 - 70.0, 150.0, 50.0),
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 20.0,
+                SIDE_SCREEN_PX_SIZE.1 - 70.0,
+                150.0,
+                50.0,
+            ),
             graphics::Color::new(0.0, 0.0, 0.7, 1.0),
             "Reset",
             Align::Center,
@@ -136,7 +174,12 @@ impl ChessGui {
         ));
         self.buttons.push(Button::new(
             "resign",
-            graphics::Rect::new(BOARD_PX_SIZE.0 + 190.0, SIDE_SCREEN_PX_SIZE.1 - 70.0, 150.0, 50.0),
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 190.0,
+                SIDE_SCREEN_PX_SIZE.1 - 70.0,
+                150.0,
+                50.0,
+            ),
             graphics::Color::new(0.7, 0.0, 0.0, 1.0),
             "Resign",
             Align::Center,
