@@ -3,7 +3,7 @@ use std::str::FromStr;
 use crate::{Error, BOARD_SIZE};
 
 /// Describe a file (column) on a chess board.
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
 pub enum File {
     A,
