@@ -48,6 +48,9 @@ pub use crate::theme::*;
 mod direction;
 pub use crate::direction::*;
 
+mod button;
+pub use crate::button::*;
+
 /// Run the GUI.
 pub fn run(game: ChessGui) {
     let default_conf = ggez::conf::Conf {

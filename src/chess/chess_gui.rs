@@ -1,24 +1,26 @@
 use ggez::event::{KeyCode, KeyMods, MouseButton};
 use ggez::{event, graphics, Context, GameError, GameResult};
 use glam::vec2;
-use log::{debug, info, trace, warn};
+use log::{debug, info, warn};
 
-use crate::{
-    Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE, BOARD_SIZE,
-    SCREEN_PX_SIZE, SIDE_SCREEN_PX_SIZE,
-};
+use crate::{Align, Button, Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE, BOARD_SIZE, SIDE_SCREEN_PX_SIZE, INDEX_THEME, NUM_THEMES, THEMES};
 
 /// A wrapper of [`Chess`] for GUI.
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct ChessGui {
-    chess: Chess,
+    pub(crate) chess: Chess,
     theme: Theme,
+    buttons: Vec<Button>,
 }
 
 impl ChessGui {
     /// Create a new instance of ChessGui.
-    pub fn new(chess: Chess, theme: Theme) -> Self {
-        ChessGui { chess, theme }
+    pub fn new(chess: Chess, theme: Theme, buttons: Vec<Button>) -> Self {
+        ChessGui {
+            chess,
+            theme,
+            buttons,
+        }
     }
 
     /// Set the theme for the GUI.
@@ -33,6 +35,115 @@ impl ChessGui {
     /// ```
     pub fn set_theme(&mut self, theme: Theme) {
         self.theme = theme;
+    }
+
+    /// Set the theme to the next one for the GUI.
+    pub unsafe fn next_theme(&mut self) {
+        INDEX_THEME = (INDEX_THEME+1) % NUM_THEMES;
+        self.theme = THEMES[INDEX_THEME % 6];
+    }
+
+    /// Add a button in the GUI.
+    pub fn add_button(&mut self, button: Button) {
+        self.buttons.push(button);
+    }
+
+    /// Set all the buttons in the GUI.
+    fn init_buttons(&mut self) {
+        self.buttons.push(Button::new(
+            "white-timer",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 20.0, 20.0, 115.0, 50.0),
+            graphics::Color::new(0.5, 0.5, 0.5, 1.0),
+            "<White Timer>\n00:00",
+            Align::Left,
+            None,
+        ));
+        self.buttons.push(Button::new(
+            "black-timer",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 155.0, 20.0, 115.0, 50.0),
+            graphics::Color::new(0.5, 0.5, 0.5, 1.0),
+            "<Black Timer>\n00:00",
+            Align::Left,
+            None,
+        ));
+        self.buttons.push(Button::new(
+            "theme",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + SIDE_SCREEN_PX_SIZE.0 - 70.0, 20.0, 50.0, 50.0),
+            graphics::Color::new(0.5, 0.5, 0.5, 1.0),
+            "Theme",
+            Align::Center,
+            Some(|chess_gui| unsafe {
+                chess_gui.next_theme();
+            }),
+        ));
+        self.buttons.push(Button::new(
+            "winner",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 20.0, 110.0, 320.0, SIDE_SCREEN_PX_SIZE.1 - 250.0 - 110.0),
+            graphics::Color::new(0.7, 0.7, 0.7, 1.0),
+            "<Winner>",
+            Align::Center,
+            None,
+        ));
+        self.buttons.push(Button::new(
+            "undo",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 20.0, SIDE_SCREEN_PX_SIZE.1 - 210.0, 150.0, 50.0),
+            graphics::Color::new(0.0, 0.0, 0.7, 1.0),
+            "Undo",
+            Align::Center,
+            Some(|chess_gui| {
+                chess_gui.chess.undo();
+            }),
+        ));
+        self.buttons.push(Button::new(
+            "declare-draw",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 190.0, SIDE_SCREEN_PX_SIZE.1 - 210.0, 150.0, 50.0),
+            graphics::Color::new(0.7, 0.0, 0.7, 1.0),
+            "Declare Draw",
+            Align::Center,
+            Some(|chess_gui| {
+                if chess_gui.chess.can_declare_draw() {
+                    chess_gui.chess.declare_draw();
+                }
+            }),
+        ));
+        self.buttons.push(Button::new(
+            "offer-draw",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 20.0, SIDE_SCREEN_PX_SIZE.1 - 140.0, 150.0, 50.0),
+            graphics::Color::new(0.7, 0.7, 0.0, 1.0),
+            "<Offer Draw>",
+            Align::Center,
+            None,
+        ));
+        self.buttons.push(Button::new(
+            "accept-draw",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 190.0, SIDE_SCREEN_PX_SIZE.1 - 140.0, 150.0, 50.0),
+            graphics::Color::new(0.0, 0.7, 0.0, 1.0),
+            "Accept Draw\n<unsafe>",
+            Align::Center,
+            Some(|chess_gui| {
+                chess_gui.chess.accept_draw();
+            }),
+        ));
+        self.buttons.push(Button::new(
+            "reset",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 20.0, SIDE_SCREEN_PX_SIZE.1 - 70.0, 150.0, 50.0),
+            graphics::Color::new(0.0, 0.0, 0.7, 1.0),
+            "Reset",
+            Align::Center,
+            Some(|chess_gui| {
+                chess_gui.chess.reset();
+            }),
+        ));
+        self.buttons.push(Button::new(
+            "resign",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 190.0, SIDE_SCREEN_PX_SIZE.1 - 70.0, 150.0, 50.0),
+            graphics::Color::new(0.7, 0.0, 0.0, 1.0),
+            "Resign",
+            Align::Center,
+            Some(|chess_gui| {
+                chess_gui.chess.resign(chess_gui.chess.board.side_to_move());
+            }),
+        ));
     }
 
     /// Base function to call when a user click on the screen.
@@ -67,9 +178,14 @@ impl ChessGui {
     /// React when the user click on the side screen.
     ///
     /// It is the callers responsibility to ensure the coordinate is in the side.
-    fn click_on_side(&self, x: f32, y: f32) {
-        // todo
-        info!("Click at: ({x},{y}) -> on the side screen")
+    fn click_on_side(&mut self, x: f32, y: f32) {
+        info!("Click at: ({x},{y}) -> on the side screen");
+        let buttons = self.buttons.clone();
+        for button in buttons.iter() {
+            if button.contains(x, y) {
+                button.clicked(self);
+            }
+        }
     }
 
     /// Draw all of the board side.
@@ -187,124 +303,11 @@ impl ChessGui {
     }
 
     /// Draw all the side screen.
-    ///
-    /// TODO: according to the state, print some features
-    ///     - timer (print real timer)
     fn draw_side(&self, ctx: &mut Context) -> GameResult {
-        // button White timer
-        let bounds = graphics::Rect::new(20.0, 20.0, 115.0, 50.0);
-        let color = graphics::Color::new(0.5, 0.5, 0.5, 1.0);
-        self.draw_button(ctx, bounds, color, "White Timer\n00:00")?;
-
-        // button Black timer
-        let bounds = graphics::Rect::new(155.0, 20.0, 115.0, 50.0);
-        let color = graphics::Color::new(0.5, 0.5, 0.5, 1.0);
-        self.draw_button(ctx, bounds, color, "Black Timer\n00:00")?;
-
-        // button theme
-        let bounds = graphics::Rect::new(SIDE_SCREEN_PX_SIZE.0 - 70.0, 20.0, 50.0, 50.0);
-        let color = graphics::Color::new(0.5, 0.5, 0.5, 1.0);
-        self.draw_button(ctx, bounds, color, "T")?;
-
-        // line
-        let mesh = graphics::MeshBuilder::new()
-            .line(
-                &[vec2(BOARD_PX_SIZE.0, 90.0), vec2(SCREEN_PX_SIZE.0, 90.0)],
-                1.0,
-                graphics::Color::WHITE,
-            )?
-            .build(ctx)?;
-        graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
-
-        // button winner
-        let bounds = graphics::Rect::new(20.0, 110.0, 320.0, SIDE_SCREEN_PX_SIZE.1 - 250.0 - 110.0);
-        let color = graphics::Color::from_rgb(200, 200, 200);
-        self.draw_button(ctx, bounds, color, "Winner")?;
-
-        // line
-        let mesh = graphics::MeshBuilder::new()
-            .line(
-                &[
-                    vec2(BOARD_PX_SIZE.0, SIDE_SCREEN_PX_SIZE.1 - 230.0),
-                    vec2(SCREEN_PX_SIZE.0, SIDE_SCREEN_PX_SIZE.1 - 230.0),
-                ],
-                1.0,
-                graphics::Color::WHITE,
-            )?
-            .build(ctx)?;
-        graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
-
-        // button undo
-        let bounds = graphics::Rect::new(20.0, SIDE_SCREEN_PX_SIZE.1 - 210.0, 150.0, 50.0);
-        let color = (0.0, 0.0, 0.7);
-        self.draw_button(ctx, bounds, color, "Undo")?;
-
-        // button declare draw - conditional draw
-        let bounds = graphics::Rect::new(190.0, SIDE_SCREEN_PX_SIZE.1 - 210.0, 150.0, 50.0);
-        let color = (0.7, 0.0, 0.7);
-        self.draw_button(ctx, bounds, color, "Declare Draw")?;
-
-        // button offer draw
-        let bounds = graphics::Rect::new(20.0, SIDE_SCREEN_PX_SIZE.1 - 140.0, 150.0, 50.0);
-        let color = (0.7, 0.7, 0.0);
-        self.draw_button(ctx, bounds, color, "Offer Draw")?;
-
-        // button accept draw - conditional draw
-        let bounds = graphics::Rect::new(190.0, SIDE_SCREEN_PX_SIZE.1 - 140.0, 150.0, 50.0);
-        let color = (0.0, 0.7, 0.0);
-        self.draw_button(ctx, bounds, color, "Accept Draw")?;
-
-        // button reset
-        let bounds = graphics::Rect::new(20.0, SIDE_SCREEN_PX_SIZE.1 - 70.0, 150.0, 50.0);
-        let color = (0.0, 0.0, 0.7);
-        self.draw_button(ctx, bounds, color, "Reset")?;
-
-        // button resign
-        let bounds = graphics::Rect::new(190.0, SIDE_SCREEN_PX_SIZE.1 - 70.0, 150.0, 50.0);
-        let color = (0.7, 0.0, 0.0);
-        self.draw_button(ctx, bounds, color, "Resign")?;
-
-        Ok(())
-    }
-
-    /// Draw a button.
-    ///
-    /// > Add the BOARD_PX_SIZE.x to the bound for being in the side panel.
-    fn draw_button<C>(
-        &self,
-        ctx: &mut Context,
-        bounds: graphics::Rect,
-        color: C,
-        text: &str,
-    ) -> GameResult
-    where
-        C: Into<graphics::Color>,
-    {
-        let bounds = graphics::Rect {
-            x: BOARD_PX_SIZE.0 + bounds.x,
-            ..bounds
-        };
-        let mesh = graphics::MeshBuilder::new()
-            .rectangle(graphics::DrawMode::fill(), bounds, color.into())?
-            .build(ctx)?;
-        graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
-
-        // Set and draw the text in the popup
-        let font = graphics::Font::new(ctx, self.theme.font_path)?;
-        let text = graphics::Text::new((text, font, self.theme.font_scale));
-        let dest_point = glam::Vec2::new(
-            bounds.x + (bounds.w - text.width(ctx)) / 2.0,
-            bounds.y + (bounds.h - text.height(ctx)) / 2.0,
-        );
-        graphics::draw(ctx, &text, (dest_point,))?;
-
-        Ok(())
-    }
-
-    /// Draw a window with winner, score?, stats?
-    fn draw_winner(&self, _ctx: &mut Context, game_state: GameState) -> GameResult {
-        warn!("NotImplementedYet: draw_winner()");
-        trace!("GameState: {:?}", game_state);
+        let buttons = self.buttons.clone();
+        for button in buttons.iter() {
+            button.draw(ctx)?;
+        }
         Ok(())
     }
 }
@@ -326,7 +329,8 @@ impl event::EventHandler<GameError> for ChessGui {
                 self.draw_board(ctx)?;
                 self.draw_side(ctx)?;
             }
-            game_state => self.draw_winner(ctx, game_state)?,
+            //game_state => self.draw_winner(ctx, game_state)?,
+            _ => warn!("chessGui::draw() draw winner"),
         }
 
         // Finally we call graphics::present to cycle the gpu's framebuffer and display
@@ -362,5 +366,13 @@ impl event::EventHandler<GameError> for ChessGui {
             KeyCode::Z if keymod == KeyMods::CTRL => self.chess.undo(),
             _ => {}
         };
+    }
+}
+
+impl Default for ChessGui {
+    fn default() -> Self {
+        let mut chess_gui = ChessGui::new(Default::default(), Default::default(), vec![]);
+        chess_gui.init_buttons();
+        chess_gui
     }
 }
