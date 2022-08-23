@@ -75,6 +75,17 @@ pub const THEME_SANDCASTLE: Theme = Theme {
     ..THEME_DUST
 };
 
+pub static mut INDEX_THEME: usize = 0;
+pub const NUM_THEMES: usize = 6;
+pub const THEMES: [Theme; NUM_THEMES] = [
+    THEME_DUST,
+    THEME_CORAL,
+    THEME_MARINE,
+    THEME_WHEAT,
+    THEME_EMERALD,
+    THEME_SANDCASTLE,
+];
+
 /// Describe the theme of the chess game (GUI).
 ///
 /// RootPath is `resources/` (changed by [`ggez::ContextBuilder::add_resource_path`]).
