@@ -1,11 +1,11 @@
-use ggez::event::{EventHandler, KeyCode, KeyMods, MouseButton};
+use ggez::event::{KeyCode, KeyMods, MouseButton};
 use ggez::{event, graphics, Context, GameError, GameResult};
-use ggez::graphics::Mesh;
-use glam::Vec2;
+use glam::vec2;
 use log::{debug, info, trace, warn};
 
 use crate::{
     Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE, BOARD_SIZE,
+    SCREEN_PX_SIZE, SIDE_SCREEN_PX_SIZE,
 };
 
 /// A wrapper of [`Chess`] for GUI.
@@ -37,7 +37,7 @@ impl ChessGui {
 
     /// Base function to call when a user click on the screen.
     fn click(&mut self, x: f32, y: f32) {
-        if x < BOARD_PX_SIZE.0 as f32 {
+        if x < BOARD_PX_SIZE.0 {
             self.click_on_board(x, y);
         } else {
             self.click_on_side(x, y);
@@ -94,10 +94,10 @@ impl ChessGui {
                     .rectangle(
                         graphics::DrawMode::fill(),
                         graphics::Rect::new(
-                            (x * BOARD_CELL_PX_SIZE.0) as f32,
-                            (y * BOARD_CELL_PX_SIZE.1) as f32,
-                            BOARD_CELL_PX_SIZE.0 as f32,
-                            BOARD_CELL_PX_SIZE.1 as f32,
+                            x as f32 * BOARD_CELL_PX_SIZE.0,
+                            y as f32 * BOARD_CELL_PX_SIZE.1,
+                            BOARD_CELL_PX_SIZE.0,
+                            BOARD_CELL_PX_SIZE.1,
                         ),
                         self.theme.board_color[color_index],
                     )?
@@ -117,8 +117,8 @@ impl ChessGui {
                 path = self.theme.piece_path[color.to_index()][piece.to_index()];
                 image = graphics::Image::new(ctx, path).expect("Image load error");
                 let (x, y) = square.to_screen();
-                let dest_point = Vec2::new(x, y);
-                let image_scale = Vec2::new(0.5, 0.5);
+                let dest_point = vec2(x, y);
+                let image_scale = vec2(0.5, 0.5);
                 let dp = graphics::DrawParam::new()
                     .dest(dest_point)
                     .scale(image_scale);
@@ -137,12 +137,7 @@ impl ChessGui {
                     let mesh = graphics::MeshBuilder::new()
                         .rectangle(
                             graphics::DrawMode::fill(),
-                            graphics::Rect::new(
-                                x,
-                                y,
-                                BOARD_CELL_PX_SIZE.0 as f32,
-                                BOARD_CELL_PX_SIZE.1 as f32,
-                            ),
+                            graphics::Rect::new(x, y, BOARD_CELL_PX_SIZE.0, BOARD_CELL_PX_SIZE.1),
                             self.theme.valid_moves_color.unwrap(),
                         )?
                         .build(ctx)?;
@@ -162,13 +157,13 @@ impl ChessGui {
                 path = self.theme.piece_pinned_path.unwrap();
                 image = graphics::Image::new(ctx, path).expect("Image load error");
                 let (x, y) = square.to_screen();
-                let dest_point = Vec2::new(x, y);
+                let dest_point = vec2(x, y);
                 // We set the scale at 1.0 because we want the same size
                 // for the image and a Board_cell
                 const SCALE: f32 = 1.0;
-                let image_scale = Vec2::new(
-                    SCALE * (BOARD_CELL_PX_SIZE.0 as u16 / image.width()) as f32,
-                    SCALE * (BOARD_CELL_PX_SIZE.1 as u16 / image.height()) as f32,
+                let image_scale = vec2(
+                    SCALE * (BOARD_CELL_PX_SIZE.0 / image.width() as f32),
+                    SCALE * (BOARD_CELL_PX_SIZE.1 / image.height() as f32),
                 );
                 let dp = graphics::DrawParam::new()
                     .dest(dest_point)
@@ -181,12 +176,7 @@ impl ChessGui {
                 let mesh = graphics::MeshBuilder::new()
                     .rectangle(
                         graphics::DrawMode::fill(),
-                        graphics::Rect::new(
-                            x,
-                            y,
-                            BOARD_CELL_PX_SIZE.0 as f32,
-                            BOARD_CELL_PX_SIZE.1 as f32,
-                        ),
+                        graphics::Rect::new(x, y, BOARD_CELL_PX_SIZE.0, BOARD_CELL_PX_SIZE.1),
                         self.theme.piece_pinned_color.unwrap(),
                     )?
                     .build(ctx)?;
@@ -199,13 +189,7 @@ impl ChessGui {
     /// Draw all the side screen.
     ///
     /// TODO: according to the state, print some features
-    ///     - button offer/accept draw
-    ///     - button declare draw
-    ///     - button resign
-    ///     - button undo
-    ///     - timer
-    ///     - winner
-    ///     - button for changing the theme (un bouton qui fait rouler les thème au début)
+    ///     - timer (print real timer)
     fn draw_side(&self, ctx: &mut Context) -> GameResult {
         // todo
         let bounds = graphics::Rect::new(

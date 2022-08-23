@@ -30,9 +30,9 @@ pub const THEME_DUST: Theme = Theme {
     valid_moves_color: Some(Color::new(0.25, 0.75, 0.25, 0.5)),
     piece_pinned_color: Some(Color::new(0.75, 0.25, 0.25, 0.5)),
     piece_pinned_path: Some("/images/pin.png"),
-    background_color: Color::new(0.0, 0.0, 0.0, 1.0),
+    background_color: Color::BLACK,
     font_path: "/fonts/LiberationMono-Regular.ttf",
-    font_scale: 15.0,
+    font_scale: 20.0,
 };
 
 pub const THEME_CORAL: Theme = Theme {

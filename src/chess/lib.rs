@@ -52,7 +52,7 @@ pub use crate::direction::*;
 pub fn run(game: ChessGui) {
     let default_conf = ggez::conf::Conf {
         window_mode: ggez::conf::WindowMode::default()
-            .dimensions(SCREEN_PX_SIZE.0 as f32, SCREEN_PX_SIZE.1 as f32),
+            .dimensions(SCREEN_PX_SIZE.0, SCREEN_PX_SIZE.1),
         window_setup: ggez::conf::WindowSetup::default()
             .title("Chess")
             .icon("/images/icon.png"),
