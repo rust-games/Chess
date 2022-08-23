@@ -20,6 +20,15 @@ pub enum GameState {
     Resigns(Color),
 }
 
+impl GameState {
+    pub fn winner(&self) -> Option<Color> {
+        match *self {
+            GameState::Checkmates(color) | GameState::Resigns(color) => Some(color),
+            _ => None,
+        }
+    }
+}
+
 /// A Standard Chess game.
 ///
 /// TODO: Add a timer for each player.
