@@ -191,28 +191,113 @@ impl ChessGui {
     /// TODO: according to the state, print some features
     ///     - timer (print real timer)
     fn draw_side(&self, ctx: &mut Context) -> GameResult {
-        // todo
-        let bounds = graphics::Rect::new(
-            (800 + 20) as f32,
-            90 as f32,
-            150 as f32,
-            50 as f32,
-        );
+        // button White timer
+        let bounds = graphics::Rect::new(20.0, 20.0, 115.0, 50.0);
         let color = graphics::Color::new(0.5, 0.5, 0.5, 1.0);
-        self.draw_button(bounds, color)?;
+        self.draw_button(ctx, bounds, color, "White Timer\n00:00")?;
+
+        // button Black timer
+        let bounds = graphics::Rect::new(155.0, 20.0, 115.0, 50.0);
+        let color = graphics::Color::new(0.5, 0.5, 0.5, 1.0);
+        self.draw_button(ctx, bounds, color, "Black Timer\n00:00")?;
+
+        // button theme
+        let bounds = graphics::Rect::new(SIDE_SCREEN_PX_SIZE.0 - 70.0, 20.0, 50.0, 50.0);
+        let color = graphics::Color::new(0.5, 0.5, 0.5, 1.0);
+        self.draw_button(ctx, bounds, color, "T")?;
+
+        // line
+        let mesh = graphics::MeshBuilder::new()
+            .line(
+                &[vec2(BOARD_PX_SIZE.0, 90.0), vec2(SCREEN_PX_SIZE.0, 90.0)],
+                1.0,
+                graphics::Color::WHITE,
+            )?
+            .build(ctx)?;
+        graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
+
+        // button winner
+        let bounds = graphics::Rect::new(20.0, 110.0, 320.0, SIDE_SCREEN_PX_SIZE.1 - 250.0 - 110.0);
+        let color = graphics::Color::from_rgb(200, 200, 200);
+        self.draw_button(ctx, bounds, color, "Winner")?;
+
+        // line
+        let mesh = graphics::MeshBuilder::new()
+            .line(
+                &[
+                    vec2(BOARD_PX_SIZE.0, SIDE_SCREEN_PX_SIZE.1 - 230.0),
+                    vec2(SCREEN_PX_SIZE.0, SIDE_SCREEN_PX_SIZE.1 - 230.0),
+                ],
+                1.0,
+                graphics::Color::WHITE,
+            )?
+            .build(ctx)?;
+        graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
+
+        // button undo
+        let bounds = graphics::Rect::new(20.0, SIDE_SCREEN_PX_SIZE.1 - 210.0, 150.0, 50.0);
+        let color = (0.0, 0.0, 0.7);
+        self.draw_button(ctx, bounds, color, "Undo")?;
+
+        // button declare draw - conditional draw
+        let bounds = graphics::Rect::new(190.0, SIDE_SCREEN_PX_SIZE.1 - 210.0, 150.0, 50.0);
+        let color = (0.7, 0.0, 0.7);
+        self.draw_button(ctx, bounds, color, "Declare Draw")?;
+
+        // button offer draw
+        let bounds = graphics::Rect::new(20.0, SIDE_SCREEN_PX_SIZE.1 - 140.0, 150.0, 50.0);
+        let color = (0.7, 0.7, 0.0);
+        self.draw_button(ctx, bounds, color, "Offer Draw")?;
+
+        // button accept draw - conditional draw
+        let bounds = graphics::Rect::new(190.0, SIDE_SCREEN_PX_SIZE.1 - 140.0, 150.0, 50.0);
+        let color = (0.0, 0.7, 0.0);
+        self.draw_button(ctx, bounds, color, "Accept Draw")?;
+
+        // button reset
+        let bounds = graphics::Rect::new(20.0, SIDE_SCREEN_PX_SIZE.1 - 70.0, 150.0, 50.0);
+        let color = (0.0, 0.0, 0.7);
+        self.draw_button(ctx, bounds, color, "Reset")?;
+
+        // button resign
+        let bounds = graphics::Rect::new(190.0, SIDE_SCREEN_PX_SIZE.1 - 70.0, 150.0, 50.0);
+        let color = (0.7, 0.0, 0.0);
+        self.draw_button(ctx, bounds, color, "Resign")?;
+
         Ok(())
     }
 
     /// Draw a button.
-    fn draw_button(&self, bounds: graphics::Rect, color: graphics::Color) -> GameResult {
+    ///
+    /// > Add the BOARD_PX_SIZE.x to the bound for being in the side panel.
+    fn draw_button<C>(
+        &self,
+        ctx: &mut Context,
+        bounds: graphics::Rect,
+        color: C,
+        text: &str,
+    ) -> GameResult
+    where
+        C: Into<graphics::Color>,
+    {
+        let bounds = graphics::Rect {
+            x: BOARD_PX_SIZE.0 + bounds.x,
+            ..bounds
+        };
         let mesh = graphics::MeshBuilder::new()
-            .rectangle(
-                graphics::DrawMode::fill(),
-                bounds,
-                color,
-            )?
+            .rectangle(graphics::DrawMode::fill(), bounds, color.into())?
             .build(ctx)?;
         graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
+
+        // Set and draw the text in the popup
+        let font = graphics::Font::new(ctx, self.theme.font_path)?;
+        let text = graphics::Text::new((text, font, self.theme.font_scale));
+        let dest_point = glam::Vec2::new(
+            bounds.x + (bounds.w - text.width(ctx)) / 2.0,
+            bounds.y + (bounds.h - text.height(ctx)) / 2.0,
+        );
+        graphics::draw(ctx, &text, (dest_point,))?;
+
         Ok(())
     }
 
