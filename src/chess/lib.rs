@@ -4,7 +4,7 @@
 //!
 //! ## Examples
 //!
-//! ```
+//! ```no_run
 //! use chess::{run, ChessGui};
 //!
 //! fn main() {
