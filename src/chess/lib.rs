@@ -1,10 +1,17 @@
 //! # Rust Chess Library
 //!
-//! This is a chess library for rust.
+//! This is a chess library for rust with Gui.
 //!
 //! ## Examples
 //!
-//! see [`main.rs`]()
+//! ```
+//! use chess::{run, ChessGui};
+//!
+//! fn main() {
+//!     // Create and run the Gui game
+//!     run(ChessGui::default());
+//! }
+//! ```
 
 #![deny(
     // missing_docs, // This lint ask to document all variants/fields of enum/struct.
@@ -25,9 +32,6 @@ pub use crate::board::*;
 
 mod chess;
 pub use crate::chess::*;
-
-mod chess_gui;
-pub use crate::chess_gui::*;
 
 mod piece;
 pub use crate::piece::*;
@@ -56,14 +60,21 @@ pub use crate::rank::*;
 mod chess_move;
 pub use crate::chess_move::*;
 
-mod theme;
-pub use crate::theme::*;
-
 mod direction;
 pub use crate::direction::*;
 
+// Gui
+
+mod chess_gui;
+pub use crate::chess_gui::*;
+
 mod button;
 pub use crate::button::*;
+
+mod theme;
+pub use crate::theme::*;
+
+// Function
 
 /// Run the GUI.
 pub fn run(game: ChessGui) {
