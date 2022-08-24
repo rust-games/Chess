@@ -6,6 +6,20 @@
 //!
 //! see [`main.rs`]()
 
+#![deny(
+    // missing_docs, // This lint ask to document all variants/fields of enum/struct.
+    missing_debug_implementations,
+    missing_copy_implementations,
+    trivial_casts,
+    trivial_numeric_casts,
+    // unsafe_code,
+    unstable_features,
+    unused_import_braces,
+    unused_qualifications
+)]
+
+// Core
+
 mod board;
 pub use crate::board::*;
 
