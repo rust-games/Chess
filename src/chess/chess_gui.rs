@@ -1,6 +1,5 @@
 use ggez::event::{KeyCode, KeyMods, MouseButton};
 use ggez::{event, graphics, Context, GameError, GameResult};
-use glam::vec2;
 use log::{debug, info, warn};
 
 use crate::{
@@ -276,8 +275,8 @@ impl ChessGui {
                 path = self.theme.piece_path[color.to_index()][piece.to_index()];
                 image = graphics::Image::new(ctx, path).expect("Image load error");
                 let (x, y) = square.to_screen();
-                let dest_point = vec2(x, y);
-                let image_scale = vec2(0.5, 0.5);
+                let dest_point = [x, y];
+                let image_scale = [0.5, 0.5];
                 let dp = graphics::DrawParam::new()
                     .dest(dest_point)
                     .scale(image_scale);
@@ -316,14 +315,14 @@ impl ChessGui {
                 path = self.theme.piece_pinned_path.unwrap();
                 image = graphics::Image::new(ctx, path).expect("Image load error");
                 let (x, y) = square.to_screen();
-                let dest_point = vec2(x, y);
+                let dest_point = [x, y];
                 // We set the scale at 1.0 because we want the same size
                 // for the image and a Board_cell
                 const SCALE: f32 = 1.0;
-                let image_scale = vec2(
+                let image_scale = [
                     SCALE * (BOARD_CELL_PX_SIZE.0 / image.width() as f32),
                     SCALE * (BOARD_CELL_PX_SIZE.1 / image.height() as f32),
-                );
+                ];
                 let dp = graphics::DrawParam::new()
                     .dest(dest_point)
                     .scale(image_scale);
