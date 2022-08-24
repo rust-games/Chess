@@ -113,7 +113,6 @@ pub const THEMES: [Theme; NUM_THEMES] = [
 /// ```
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Theme {
-    // Board
     pub board_color: [Color; NUM_COLORS],
     pub piece_path: [[&'static str; NUM_PIECES]; NUM_COLORS],
     pub valid_moves_color: Option<Color>,
