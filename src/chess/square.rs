@@ -88,8 +88,8 @@ impl Square {
     #[inline]
     pub fn from_screen(x: f32, y: f32) -> Square {
         // Transpose to grid space
-        let x = x / BOARD_CELL_PX_SIZE.0 as f32;
-        let y = y / BOARD_CELL_PX_SIZE.1 as f32;
+        let x = x / BOARD_CELL_PX_SIZE.0;
+        let y = y / BOARD_CELL_PX_SIZE.1;
 
         // transpose to Square (return the y-axis)
         let y = BOARD_SIZE.1 - y as i16 - 1;
@@ -111,8 +111,8 @@ impl Square {
         let y = (BOARD_SIZE.1 as usize - self.rank().to_index() - 1) as f32;
 
         // Transpose to screen space
-        let x = x * BOARD_CELL_PX_SIZE.0 as f32;
-        let y = y * BOARD_CELL_PX_SIZE.1 as f32;
+        let x = x * BOARD_CELL_PX_SIZE.0;
+        let y = y * BOARD_CELL_PX_SIZE.1;
         (x, y)
     }
 

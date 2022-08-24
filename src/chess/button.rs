@@ -1,5 +1,4 @@
 use std::fmt;
-use std::fmt::Formatter;
 
 use ggez::{graphics, Context, GameResult};
 
@@ -15,7 +14,7 @@ pub enum Align {
 }
 
 /// A struct of button for interact with the GUI.
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Button {
     /// The id is not unique, it's just a name to identify it.
     pub id: &'static str,
@@ -104,7 +103,7 @@ impl fmt::Display for Button {
 }
 
 impl fmt::Debug for Button {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.id)
     }
 }
