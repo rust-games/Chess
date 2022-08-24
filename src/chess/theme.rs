@@ -4,6 +4,7 @@ use ggez::graphics::Color;
 
 use crate::{NUM_COLORS, NUM_PIECES};
 
+/// Dust theme.
 pub const THEME_DUST: Theme = Theme {
     board_color: [
         Color::new(0.7969, 0.7148, 0.6797, 1.0),
@@ -35,6 +36,7 @@ pub const THEME_DUST: Theme = Theme {
     font_scale: 20.0,
 };
 
+/// Coral theme.
 pub const THEME_CORAL: Theme = Theme {
     board_color: [
         Color::new(177.0 / 256.0, 228.0 / 256.0, 185.0 / 256.0, 1.0),
@@ -43,6 +45,7 @@ pub const THEME_CORAL: Theme = Theme {
     ..THEME_DUST
 };
 
+/// Marine theme.
 pub const THEME_MARINE: Theme = Theme {
     board_color: [
         Color::new(157.0 / 256.0, 172.0 / 256.0, 255.0 / 256.0, 1.0),
@@ -51,6 +54,7 @@ pub const THEME_MARINE: Theme = Theme {
     ..THEME_DUST
 };
 
+/// Wheat theme.
 pub const THEME_WHEAT: Theme = Theme {
     board_color: [
         Color::new(234.0 / 256.0, 240.0 / 256.0, 206.0 / 256.0, 1.0),
@@ -59,6 +63,7 @@ pub const THEME_WHEAT: Theme = Theme {
     ..THEME_DUST
 };
 
+/// Emerald theme.
 pub const THEME_EMERALD: Theme = Theme {
     board_color: [
         Color::new(173.0 / 256.0, 189.0 / 256.0, 143.0 / 256.0, 1.0),
@@ -67,6 +72,7 @@ pub const THEME_EMERALD: Theme = Theme {
     ..THEME_DUST
 };
 
+/// Sandcastle theme.
 pub const THEME_SANDCASTLE: Theme = Theme {
     board_color: [
         Color::new(227.0 / 256.0, 193.0 / 256.0, 111.0 / 256.0, 1.0),
@@ -75,8 +81,13 @@ pub const THEME_SANDCASTLE: Theme = Theme {
     ..THEME_DUST
 };
 
-pub static mut INDEX_THEME: usize = 0;
+/// Index of the current theme if using roll theme.
+pub(crate) static mut INDEX_THEME: usize = 0;
+
+/// Numbers of [`Theme`].
 pub const NUM_THEMES: usize = 6;
+
+/// Enumerate all [`Theme`].
 pub const THEMES: [Theme; NUM_THEMES] = [
     THEME_DUST,
     THEME_CORAL,
