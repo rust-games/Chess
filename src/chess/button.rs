@@ -2,7 +2,7 @@ use std::fmt;
 
 use ggez::{graphics, Context, GameResult};
 
-use crate::{ChessGui, THEME_DUST};
+use crate::ChessGui;
 
 /// Indicate how align the text.
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
@@ -24,9 +24,6 @@ pub struct Button {
     align: Align,
     func: Option<fn(&mut ChessGui)>,
 }
-
-pub static FONT_PATH: &str = THEME_DUST.font_path;
-pub static FONT_SCALE: f32 = THEME_DUST.font_scale;
 
 impl Button {
     /// Create a new [`Button`].
@@ -54,9 +51,9 @@ impl Button {
     }
 
     /// Draw the button in the [`Context`].
-    pub fn draw(&self, ctx: &mut Context) -> GameResult {
+    pub fn draw(&self, ctx: &mut Context, font_path: &str, font_scale: f32) -> GameResult {
         self.draw_rect(ctx)?;
-        self.draw_text(ctx)?;
+        self.draw_text(ctx, font_path, font_scale)?;
         Ok(())
     }
 
@@ -70,9 +67,9 @@ impl Button {
     }
 
     /// Draw the text of the button.
-    fn draw_text(&self, ctx: &mut Context) -> GameResult {
-        let font = graphics::Font::new(ctx, FONT_PATH)?;
-        let text = graphics::Text::new((self.text.clone(), font, FONT_SCALE));
+    fn draw_text(&self, ctx: &mut Context, font_path: &str, font_scale: f32) -> GameResult {
+        let font = graphics::Font::new(ctx, font_path)?;
+        let text = graphics::Text::new((self.text.clone(), font, font_scale));
         let dest_point = match self.align {
             Align::Left => [self.rect.x, self.rect.y],
             Align::Right => [

@@ -348,7 +348,7 @@ impl ChessGui {
     fn draw_side(&self, ctx: &mut Context) -> GameResult {
         let buttons = self.buttons.clone();
         for button in buttons.iter() {
-            button.draw(ctx)?;
+            button.draw(ctx, self.theme.font_path, self.theme.font_scale)?;
         }
         Ok(())
     }
