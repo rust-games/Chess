@@ -268,50 +268,32 @@ impl Board {
 
     /// Get the [`Piece`] at a given [`Square`].
     pub fn piece_on(&self, square: Square) -> Option<Piece> {
-        match self.squares[square.to_index()] {
-            Some((piece, _)) => Some(piece),
-            None => None,
-        }
+        self.squares[square.to_index()].map(|(piece, _)| piece)
     }
 
     /// Verify if the [`Square`] is occupied by the given [`Piece`].
     pub fn piece_on_is(&self, square: Square, piece: Piece) -> bool {
-        match self.piece_on(square) {
-            Some(real_piece) if real_piece == piece => true,
-            _ => false,
-        }
+        matches!(self.piece_on(square), Some(real_piece) if real_piece == piece)
     }
 
     /// Get the [`Color`] at a given [`Square`].
     pub fn color_on(&self, square: Square) -> Option<Color> {
-        match self.squares[square.to_index()] {
-            Some((_, color)) => Some(color),
-            None => None,
-        }
+        self.squares[square.to_index()].map(|(_, color)| color)
     }
 
     /// Verify if the [`Square`] is occupied by the given [`Color`].
     pub fn color_on_is(&self, square: Square, color: Color) -> bool {
-        match self.color_on(square) {
-            Some(real_color) if real_color == color => true,
-            _ => false,
-        }
+        matches!(self.color_on(square), Some(real_color) if real_color == color)
     }
 
     /// Get the [`Color`] at a given [`Square`].
     pub fn on(&self, square: Square) -> Option<(Piece, Color)> {
-        match self.squares[square.to_index()] {
-            Some((piece, color)) => Some((piece, color)),
-            None => None,
-        }
+        self.squares[square.to_index()].map(|(piece, color)| (piece, color))
     }
 
     /// Verify if the [`Square`] is occupied by the given [`Piece`] and [`Color`].
     pub fn on_is(&self, square: Square, (piece, color): (Piece, Color)) -> bool {
-        match self.on(square) {
-            Some((real_piece, real_color)) if real_color == color && real_piece == piece => true,
-            _ => false,
-        }
+        matches!(self.on(square), Some((real_piece, real_color)) if real_color == color && real_piece == piece)
     }
 
     /// Verify if the given [`Square`] is pinned for the current side.
@@ -368,7 +350,7 @@ impl Board {
     ///
     /// FIXME: A player should move if the only threat can be killed
     fn is_exposing_move(&self, m: ChessMove) -> bool {
-        let mut next_board = self.clone();
+        let mut next_board = *self;
         let side = self.side_to_move;
         let enemy_side = !side;
         next_board.update(m);
@@ -407,14 +389,14 @@ impl Board {
     ///
     /// > **Note**: The legality is not verify, if you want to: use [`has_legal_move`][Board::has_legal_move].
     pub fn has_valid_move(&self, square: Square) -> bool {
-        self.get_valid_moves(square).len() > 0
+        !self.get_valid_moves(square).is_empty()
     }
 
     /// Verify if the [`Piece`] on the [`Square`] has one or more legal moves.
     ///
     /// If no [`Piece`] exist on the [`Square`] then return false.
     pub fn has_legal_move(&self, square: Square) -> bool {
-        self.get_legal_moves(square).len() > 0
+        !self.get_legal_moves(square).is_empty()
     }
 
     /// Verify if the player has one or more legal moves in all the [`Board`].
@@ -1001,28 +983,28 @@ impl FromStr for Board {
         }
 
         // Castling Rights
-        if castles.contains("K") && castles.contains("Q") {
+        if castles.contains('K') && castles.contains('Q') {
             board.castle_rights[Color::White.to_index()] = CastleRights::Both;
-        } else if castles.contains("K") {
+        } else if castles.contains('K') {
             board.castle_rights[Color::White.to_index()] = CastleRights::KingSide;
-        } else if castles.contains("Q") {
+        } else if castles.contains('Q') {
             board.castle_rights[Color::White.to_index()] = CastleRights::QueenSide;
         } else {
             board.castle_rights[Color::White.to_index()] = CastleRights::NoRights;
         }
 
-        if castles.contains("k") && castles.contains("q") {
+        if castles.contains('k') && castles.contains('q') {
             board.castle_rights[Color::Black.to_index()] = CastleRights::Both;
-        } else if castles.contains("k") {
+        } else if castles.contains('k') {
             board.castle_rights[Color::Black.to_index()] = CastleRights::KingSide;
-        } else if castles.contains("q") {
+        } else if castles.contains('q') {
             board.castle_rights[Color::Black.to_index()] = CastleRights::QueenSide;
         } else {
             board.castle_rights[Color::Black.to_index()] = CastleRights::NoRights;
         }
 
         // Possible En Passant Targets
-        if let Ok(square) = Square::from_str(&ep) {
+        if let Ok(square) = Square::from_str(ep) {
             board.en_passant = Some(square);
         }
 

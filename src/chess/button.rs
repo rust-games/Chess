@@ -69,7 +69,7 @@ impl Button {
     /// Draw the text of the button.
     fn draw_text(&self, ctx: &mut Context, font_path: &str, font_scale: f32) -> GameResult {
         let font = graphics::Font::new(ctx, font_path)?;
-        let text = graphics::Text::new((self.text.clone(), font, font_scale));
+        let text = graphics::Text::new((self.text, font, font_scale));
         let dest_point = match self.align {
             Align::Left => [self.rect.x, self.rect.y],
             Align::Right => [

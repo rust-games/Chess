@@ -13,6 +13,7 @@
 //! }
 //! ```
 
+#![allow(clippy::needless_doctest_main, clippy::collapsible_if)]
 #![deny(
     // missing_docs, // This lint ask to document all variants/fields of enum/struct.
     missing_debug_implementations,
