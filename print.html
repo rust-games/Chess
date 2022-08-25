@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Template for Rust project</title>
+        <title>Chess Game with GUI</title>
         <meta name="robots" content="noindex" />
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -105,13 +105,13 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Template for Rust project</h1>
+                    <h1 class="menu-title">Chess Game with GUI</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        <a href="https://github.com/ValentinColin/rust-template-project" title="Git repository" aria-label="Git repository">
+                        <a href="https://github.com/rust-games/rg-chess" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                     </div>
@@ -138,7 +138,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <p>This is a book that describe our game chess.</p>
+                        <p>This is a book that describe our game chess with a GUI.</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="system-requirement"><a class="header" href="#system-requirement">System requirement</a></h2>
 <ol>
 <li>Any system with basic configuration.</li>
@@ -148,15 +148,18 @@
 <ol>
 <li>Cargo/Rust installed (If not download it <a href="https://doc.rust-lang.org/cargo/getting-started/installation.html">here</a>).</li>
 </ol>
+<h2 id="cargo-installation"><a class="header" href="#cargo-installation">Cargo installation</a></h2>
+<pre><code class="language-bash">cargo install rg-chess
+</code></pre>
 <h2 id="manual-installation"><a class="header" href="#manual-installation">Manual installation</a></h2>
 <pre><code class="language-bash"># clone https
-git clone https://github.com/ValentinColin/rust-template-project.git
+git clone https://github.com/rust-games/rg-chess.git
 # or
 # clone ssh
-git clone git@github.com:ValentinColin/rust-template-project.git
+git clone git@github.com:rust-games/rg-chess.git
 
-# Build a release version
-cargo build --release
+# Build
+cargo build
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="tests"><a class="header" href="#tests">Tests</a></h2>
 <pre><code class="language-bash">cargo test
@@ -164,6 +167,9 @@ cargo build --release
 <h2 id="run"><a class="header" href="#run">Run</a></h2>
 <pre><code class="language-bash">cargo run --release
 </code></pre>
+<blockquote>
+<p><strong>Note</strong>: if you don't build in <code>release</code>, the game may be slow.</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><blockquote>
 <p>Use this page in order to help users to configure your project.</p>
 </blockquote>
@@ -483,7 +489,7 @@ Also, a small increment of time may be added for each move made. </p>
 <p>see <a href="https://www.chess.com/terms/fen-chess">here</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="standard-algebraic-notation-san"><a class="header" href="#standard-algebraic-notation-san">Standard Algebraic Notation (SAN)</a></h1>
 <p>see <a href="https://www.chess.com/article/view/chess-notation">here</a></p>
-<div style="break-before: page; page-break-before: always;"></div><p>Here is a list of the contributors who have helped improving this project. Big shout-out to them!</p>
+<div style="break-before: page; page-break-before: always;"></div><p>Here is a list of the contributors who have helped to improve this project. Big shout-out to them!</p>
 <ul>
 <li><a href="https://github.com/ValentinColin">Valentin Colin</a></li>
 <li><a href="https://github.com/MarcPartensky">Marc Partensky</a></li>
