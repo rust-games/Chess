@@ -1,5 +1,5 @@
 [book]
-title = "Template for Rust project"
+title = "Chess Game with GUI"
 description = "Book, Wiki, Docs for the project"
 authors = ["Valentin Colin"]
 language = "en"
