@@ -43,10 +43,10 @@ A simple game of chess write in [Rust](https://www.rust-lang.org/fr/).
 
 ```bash
 # https
-git clone https://github.com/rust-games/chess.git
+git clone https://github.com/rust-games/rg-chess.git
 # or 
 # ssh
-git clone git@github.com:rust-games/chess.git
+git clone git@github.com:rust-games/rg-chess.git
 
 cargo build --release
 ```
