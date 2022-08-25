@@ -3,9 +3,9 @@ name: Push to dockerhub
 on:
   push:
     branches:
-      - 'master' # only push master to dockerhub
+      - master
     tags:
-      - v*
+      - '*.*.*'
 
 jobs:
   build:
