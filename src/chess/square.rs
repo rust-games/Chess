@@ -93,8 +93,7 @@ impl Square {
 
         // transpose to Square (return the y-axis)
         let y = BOARD_SIZE.1 - y as i16 - 1;
-        let square = Square::make_square(File::new(x as usize), Rank::new(y as usize));
-        square
+        Square::make_square(File::new(x as usize), Rank::new(y as usize))
     }
 
     /// Transform a [`Square`] into a screen coordinate.
@@ -512,8 +511,8 @@ impl fmt::Display for Square {
         write!(
             f,
             "{}{}",
-            (('a' as u8) + (self.file() as u8)) as char,
-            (('1' as u8) + (self.rank() as u8)) as char
+            (b'a' + (self.file() as u8)) as char,
+            (b'1' + (self.rank() as u8)) as char
         )
     }
 }

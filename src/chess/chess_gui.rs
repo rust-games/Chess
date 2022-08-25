@@ -40,6 +40,10 @@ impl ChessGui {
     }
 
     /// Set the theme to the next one for the GUI.
+    ///
+    /// # Safety
+    ///
+    /// This function use/set a static variable.
     pub unsafe fn next_theme(&mut self) {
         INDEX_THEME = (INDEX_THEME + 1) % NUM_THEMES;
         self.theme = THEMES[INDEX_THEME % 6];
