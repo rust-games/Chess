@@ -390,8 +390,15 @@ impl event::EventHandler<GameError> for ChessGui {
         }
     }
 
-    /// Called every time a key gets pressed
-    /// Inputs are managed here
+    /// Called every time a key gets pressed.
+    ///
+    /// # Keys
+    ///
+    /// |  Keys  |     Actions     |
+    /// |--------|-----------------|
+    /// | Escape | Quit the game   |
+    /// | R      | Reset the game  |
+    /// | CTRL+Z | Undo            |
     fn key_down_event(
         &mut self,
         ctx: &mut Context,
