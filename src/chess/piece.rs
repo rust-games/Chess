@@ -13,7 +13,7 @@ pub enum Piece {
     King,
 }
 
-/// Numbers of [`Piece`]
+/// Numbers of [`Piece`].
 pub const NUM_PIECES: usize = 6;
 
 /// An array representing each [`Piece`] type, in order of ascending value.
@@ -26,11 +26,11 @@ pub const ALL_PIECES: [Piece; NUM_PIECES] = [
     Piece::King,
 ];
 
-// /// How many ways can I promote?
+// /// Number of promotion.
 // pub const NUM_PROMOTION_PIECES: usize = 4;
 
-// /// What pieces can I promote to?
-// pub const PROMOTION_PIECES: [Piece; 4] = [Piece::Queen, Piece::Knight, Piece::Rook, Piece::Bishop];
+// /// Enumerate all [`Piece`] in which a [`Piece::Pawn`] can be promoted.
+// pub const PROMOTION_PIECES: [Piece; 4] = [Piece::Queen, Piece::Rook, Piece::Bishop, Piece::Knight];
 
 impl Piece {
     /// Convert the [`Piece`] to a [`usize`] for table lookups.
@@ -73,5 +73,47 @@ impl fmt::Display for Piece {
                 Piece::King => "k",
             }
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn to_index() {
+        assert_eq!(Piece::Pawn.to_index(), 0);
+        assert_eq!(Piece::Knight.to_index(), 1);
+        assert_eq!(Piece::Bishop.to_index(), 2);
+        assert_eq!(Piece::Rook.to_index(), 3);
+        assert_eq!(Piece::Queen.to_index(), 4);
+        assert_eq!(Piece::King.to_index(), 5);
+    }
+
+    #[test]
+    fn to_string_per_color() {
+        assert_eq!(Piece::Pawn.to_string(Color::White), "P");
+        assert_eq!(Piece::Knight.to_string(Color::White), "N");
+        assert_eq!(Piece::Bishop.to_string(Color::White), "B");
+        assert_eq!(Piece::Rook.to_string(Color::White), "R");
+        assert_eq!(Piece::Queen.to_string(Color::White), "Q");
+        assert_eq!(Piece::King.to_string(Color::White), "K");
+
+        assert_eq!(Piece::Pawn.to_string(Color::Black), "p");
+        assert_eq!(Piece::Knight.to_string(Color::Black), "n");
+        assert_eq!(Piece::Bishop.to_string(Color::Black), "b");
+        assert_eq!(Piece::Rook.to_string(Color::Black), "r");
+        assert_eq!(Piece::Queen.to_string(Color::Black), "q");
+        assert_eq!(Piece::King.to_string(Color::Black), "k");
+    }
+
+    #[test]
+    fn fmt() {
+        assert_eq!(format!("{}", Piece::Pawn), "p".to_string());
+        assert_eq!(format!("{}", Piece::Knight), "n".to_string());
+        assert_eq!(format!("{}", Piece::Bishop), "b".to_string());
+        assert_eq!(format!("{}", Piece::Rook), "r".to_string());
+        assert_eq!(format!("{}", Piece::Queen), "q".to_string());
+        assert_eq!(format!("{}", Piece::King), "k".to_string());
     }
 }

@@ -31,7 +31,6 @@
     <option name="redirectInputPath" value="" />
     <method v="2">
       <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      <option name="LaunchBrowser.Before.Run" />
     </method>
   </configuration>
 </component>

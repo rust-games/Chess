@@ -6,12 +6,14 @@ on:
       - gh-pages
     paths-ignore:
       - '.github/**'
+      - '.run/**'
       - 'docs/**'
   pull_request:
     branches-ignore:
       - gh-pages
     paths-ignore:
       - '.github/**'
+      - '.run/**'
       - 'docs/**'
 
 env:
@@ -25,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Install rust
+      - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -33,8 +35,8 @@ jobs:
           profile: minimal
           override: true
 
-      - name: cargo fmt -- --check
-        run: cargo fmt --all -- --check
+      - name: cargo fmt --all --check
+        run: cargo fmt --all --check
 
   test:
     name: Test

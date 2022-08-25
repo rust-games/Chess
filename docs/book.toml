@@ -1,15 +1,15 @@
 [book]
-title = "Template for Rust project"
+title = "Chess Game with GUI"
 description = "Book, Wiki, Docs for the project"
 authors = ["Valentin Colin"]
 language = "en"
 
 [output.html]
 default-theme = "navy"
-git-repository-url = "https://github.com/ValentinColin/rust-template-project"
-edit-url-template = "https://github.com/ValentinColin/rust-template-project/edit/master/{path}"
+git-repository-url = "https://github.com/rust-games/rg-chess"
+edit-url-template = "https://github.com/rust-games/rg-chess/edit/master/docs/{path}"
+site-url = "/rg-chess/" # required to ensure navigation links and script/css imports in the 404 file work correctly
 mathjax-support = false
-site-url = "/rust-template-project/" # required to ensure navigation links and script/css imports in the 404 file work correctly
 
 [output.html.playground]
 # If the option "editable" is set to "true", the "line-numbers" should also be set to "true" for editable blocks.

@@ -1,0 +1,431 @@
+use ggez::event::{KeyCode, KeyMods, MouseButton};
+use ggez::{event, graphics, Context, GameError, GameResult};
+use log::{debug, info, warn};
+
+use crate::{
+    Align, Button, Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE,
+    BOARD_SIZE, INDEX_THEME, NUM_THEMES, SIDE_SCREEN_PX_SIZE, THEMES,
+};
+
+/// A wrapper of [`Chess`] for GUI.
+#[derive(Debug)]
+pub struct ChessGui {
+    pub(crate) chess: Chess,
+    theme: Theme,
+    buttons: Vec<Button>,
+}
+
+impl ChessGui {
+    /// Create a new instance of ChessGui.
+    pub fn new(chess: Chess, theme: Theme, buttons: Vec<Button>) -> Self {
+        ChessGui {
+            chess,
+            theme,
+            buttons,
+        }
+    }
+
+    /// Set the theme for the GUI.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{ChessGui, THEME_SANDCASTLE};
+    ///
+    /// let mut game = ChessGui::default();
+    /// game.set_theme(THEME_SANDCASTLE);
+    /// ```
+    pub fn set_theme(&mut self, theme: Theme) {
+        self.theme = theme;
+    }
+
+    /// Set the theme to the next one for the GUI.
+    ///
+    /// # Safety
+    ///
+    /// This function use/set a static variable.
+    pub unsafe fn next_theme(&mut self) {
+        INDEX_THEME = (INDEX_THEME + 1) % NUM_THEMES;
+        self.theme = THEMES[INDEX_THEME % 6];
+    }
+
+    /// Add a button in the GUI.
+    pub fn add_button(&mut self, button: Button) {
+        self.buttons.push(button);
+    }
+
+    /// Set all the buttons in the GUI.
+    fn init_buttons(&mut self) {
+        self.buttons.push(Button::new(
+            "white-timer",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 20.0, 20.0, 115.0, 50.0),
+            graphics::Color::new(0.5, 0.5, 0.5, 1.0),
+            "<White Timer>\n00:00",
+            Align::Left,
+            None,
+        ));
+        self.buttons.push(Button::new(
+            "black-timer",
+            graphics::Rect::new(BOARD_PX_SIZE.0 + 155.0, 20.0, 115.0, 50.0),
+            graphics::Color::new(0.5, 0.5, 0.5, 1.0),
+            "<Black Timer>\n00:00",
+            Align::Left,
+            None,
+        ));
+        self.buttons.push(Button::new(
+            "theme",
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + SIDE_SCREEN_PX_SIZE.0 - 70.0,
+                20.0,
+                50.0,
+                50.0,
+            ),
+            graphics::Color::new(0.5, 0.5, 0.5, 1.0),
+            "Theme",
+            Align::Center,
+            Some(|chess_gui| unsafe {
+                chess_gui.next_theme();
+            }),
+        ));
+        self.buttons.push(Button::new(
+            "winner",
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 20.0,
+                110.0,
+                320.0,
+                SIDE_SCREEN_PX_SIZE.1 - 250.0 - 110.0,
+            ),
+            graphics::Color::new(0.7, 0.7, 0.7, 1.0),
+            "<Winner>",
+            Align::Center,
+            None,
+        ));
+        self.buttons.push(Button::new(
+            "undo",
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 20.0,
+                SIDE_SCREEN_PX_SIZE.1 - 210.0,
+                150.0,
+                50.0,
+            ),
+            graphics::Color::new(0.0, 0.0, 0.7, 1.0),
+            "Undo",
+            Align::Center,
+            Some(|chess_gui| {
+                chess_gui.chess.undo();
+            }),
+        ));
+        self.buttons.push(Button::new(
+            "declare-draw",
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 190.0,
+                SIDE_SCREEN_PX_SIZE.1 - 210.0,
+                150.0,
+                50.0,
+            ),
+            graphics::Color::new(0.7, 0.0, 0.7, 1.0),
+            "Declare Draw",
+            Align::Center,
+            Some(|chess_gui| {
+                if chess_gui.chess.can_declare_draw() {
+                    chess_gui.chess.declare_draw();
+                }
+            }),
+        ));
+        self.buttons.push(Button::new(
+            "offer-draw",
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 20.0,
+                SIDE_SCREEN_PX_SIZE.1 - 140.0,
+                150.0,
+                50.0,
+            ),
+            graphics::Color::new(0.7, 0.7, 0.0, 1.0),
+            "<Offer Draw>",
+            Align::Center,
+            None,
+        ));
+        self.buttons.push(Button::new(
+            "accept-draw",
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 190.0,
+                SIDE_SCREEN_PX_SIZE.1 - 140.0,
+                150.0,
+                50.0,
+            ),
+            graphics::Color::new(0.0, 0.7, 0.0, 1.0),
+            "Accept Draw\n<unsafe>",
+            Align::Center,
+            Some(|chess_gui| {
+                chess_gui.chess.accept_draw();
+            }),
+        ));
+        self.buttons.push(Button::new(
+            "reset",
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 20.0,
+                SIDE_SCREEN_PX_SIZE.1 - 70.0,
+                150.0,
+                50.0,
+            ),
+            graphics::Color::new(0.0, 0.0, 0.7, 1.0),
+            "Reset",
+            Align::Center,
+            Some(|chess_gui| {
+                chess_gui.chess.reset();
+            }),
+        ));
+        self.buttons.push(Button::new(
+            "resign",
+            graphics::Rect::new(
+                BOARD_PX_SIZE.0 + 190.0,
+                SIDE_SCREEN_PX_SIZE.1 - 70.0,
+                150.0,
+                50.0,
+            ),
+            graphics::Color::new(0.7, 0.0, 0.0, 1.0),
+            "Resign",
+            Align::Center,
+            Some(|chess_gui| {
+                chess_gui.chess.resign(chess_gui.chess.board.side_to_move());
+            }),
+        ));
+    }
+
+    /// Base function to call when a user click on the screen.
+    fn click(&mut self, x: f32, y: f32) {
+        if x < BOARD_PX_SIZE.0 {
+            self.click_on_board(x, y);
+        } else {
+            self.click_on_side(x, y);
+        }
+    }
+
+    /// React when the user click on the board screen.
+    ///
+    /// It is the callers responsibility to ensure the coordinate is in the board.
+    fn click_on_board(&mut self, x: f32, y: f32) {
+        let current_square = Square::from_screen(x, y);
+        debug!("Click at: ({x},{y}) -> on the square: {current_square}");
+        match self.chess.square_focused {
+            Some(square_selected) => self.chess.play(square_selected, current_square),
+            None => {
+                if self
+                    .chess
+                    .board
+                    .color_on_is(current_square, self.chess.board.side_to_move())
+                {
+                    self.chess.square_focused = Some(current_square);
+                }
+            }
+        }
+    }
+
+    /// React when the user click on the side screen.
+    ///
+    /// It is the callers responsibility to ensure the coordinate is in the side.
+    fn click_on_side(&mut self, x: f32, y: f32) {
+        info!("Click at: ({x},{y}) -> on the side screen");
+        let buttons = self.buttons.clone();
+        for button in buttons.iter() {
+            if button.contains(x, y) {
+                button.clicked(self);
+            }
+        }
+    }
+
+    /// Draw all of the board side.
+    fn draw_board(&self, ctx: &mut Context) -> GameResult {
+        self.draw_empty_board(ctx)?;
+        self.draw_legal_moves(ctx)?;
+        self.draw_pinned_piece(ctx)?;
+        self.draw_content_board(ctx)?;
+        Ok(())
+    }
+
+    /// Draw the empty chess board (without pieces).
+    fn draw_empty_board(&self, ctx: &mut Context) -> GameResult {
+        for y in 0..BOARD_SIZE.1 {
+            for x in 0..BOARD_SIZE.0 {
+                let color_index = if (x % 2 == 1 && y % 2 == 1) || (x % 2 == 0 && y % 2 == 0) {
+                    0
+                } else {
+                    1
+                };
+                let mesh = graphics::MeshBuilder::new()
+                    .rectangle(
+                        graphics::DrawMode::fill(),
+                        graphics::Rect::new(
+                            x as f32 * BOARD_CELL_PX_SIZE.0,
+                            y as f32 * BOARD_CELL_PX_SIZE.1,
+                            BOARD_CELL_PX_SIZE.0,
+                            BOARD_CELL_PX_SIZE.1,
+                        ),
+                        self.theme.board_color[color_index],
+                    )?
+                    .build(ctx)?;
+                graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
+            }
+        }
+        Ok(())
+    }
+
+    /// Draw pieces on the board.
+    fn draw_content_board(&self, ctx: &mut Context) -> GameResult {
+        let mut path;
+        let mut image;
+        for square in ALL_SQUARES {
+            if let Some((piece, color)) = self.chess.board.on(square) {
+                path = self.theme.piece_path[color.to_index()][piece.to_index()];
+                image = graphics::Image::new(ctx, path).expect("Image load error");
+                let (x, y) = square.to_screen();
+                let dest_point = [x, y];
+                let image_scale = [0.5, 0.5];
+                let dp = graphics::DrawParam::new()
+                    .dest(dest_point)
+                    .scale(image_scale);
+                graphics::draw(ctx, &image, dp)?;
+            }
+        }
+        Ok(())
+    }
+
+    /// Draw all the possible destination of the selected piece.
+    fn draw_legal_moves(&self, ctx: &mut Context) -> GameResult {
+        if self.theme.valid_moves_color.is_some() {
+            if let Some(square) = self.chess.square_focused {
+                for dest in self.chess.board.get_legal_moves(square) {
+                    let (x, y) = dest.to_screen();
+                    let mesh = graphics::MeshBuilder::new()
+                        .rectangle(
+                            graphics::DrawMode::fill(),
+                            graphics::Rect::new(x, y, BOARD_CELL_PX_SIZE.0, BOARD_CELL_PX_SIZE.1),
+                            self.theme.valid_moves_color.unwrap(),
+                        )?
+                        .build(ctx)?;
+                    graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// Draw the [`Piece`] that are pinned (i.e. can't move).
+    fn draw_pinned_piece(&self, ctx: &mut Context) -> GameResult {
+        if self.theme.piece_pinned_path.is_some() {
+            let mut path;
+            let mut image;
+            for square in self.chess.board.pinned() {
+                path = self.theme.piece_pinned_path.unwrap();
+                image = graphics::Image::new(ctx, path).expect("Image load error");
+                let (x, y) = square.to_screen();
+                let dest_point = [x, y];
+                // We set the scale at 1.0 because we want the same size
+                // for the image and a Board_cell
+                const SCALE: f32 = 1.0;
+                let image_scale = [
+                    SCALE * (BOARD_CELL_PX_SIZE.0 / image.width() as f32),
+                    SCALE * (BOARD_CELL_PX_SIZE.1 / image.height() as f32),
+                ];
+                let dp = graphics::DrawParam::new()
+                    .dest(dest_point)
+                    .scale(image_scale);
+                graphics::draw(ctx, &image, dp)?;
+            }
+        } else if self.theme.piece_pinned_color.is_some() {
+            for piece in self.chess.board.pinned() {
+                let (x, y) = piece.to_screen();
+                let mesh = graphics::MeshBuilder::new()
+                    .rectangle(
+                        graphics::DrawMode::fill(),
+                        graphics::Rect::new(x, y, BOARD_CELL_PX_SIZE.0, BOARD_CELL_PX_SIZE.1),
+                        self.theme.piece_pinned_color.unwrap(),
+                    )?
+                    .build(ctx)?;
+                graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
+            }
+        }
+        Ok(())
+    }
+
+    /// Draw all the side screen.
+    fn draw_side(&self, ctx: &mut Context) -> GameResult {
+        let buttons = self.buttons.clone();
+        for button in buttons.iter() {
+            button.draw(ctx, self.theme.font_path, self.theme.font_scale)?;
+        }
+        Ok(())
+    }
+}
+
+impl event::EventHandler<GameError> for ChessGui {
+    /// Update will happen on every frame before it is drawn.
+    fn update(&mut self, _ctx: &mut Context) -> GameResult {
+        Ok(())
+    }
+
+    /// Render the game's current state.
+    fn draw(&mut self, ctx: &mut Context) -> GameResult {
+        // First we clear the screen and set the background color
+        graphics::clear(ctx, self.theme.background_color);
+
+        // Draw according to the GameState
+        match self.chess.state() {
+            GameState::Ongoing => {
+                self.draw_board(ctx)?;
+                self.draw_side(ctx)?;
+            }
+            //game_state => self.draw_winner(ctx, game_state)?,
+            _ => warn!("chessGui::draw() draw winner"),
+        }
+
+        // Finally we call graphics::present to cycle the gpu's framebuffer and display
+        // the new frame we just drew.
+        graphics::present(ctx)?;
+
+        // And return success.
+        Ok(())
+    }
+
+    /// Called every time a mouse button gets pressed
+    fn mouse_button_down_event(&mut self, _ctx: &mut Context, button: MouseButton, x: f32, y: f32) {
+        if button == MouseButton::Left {
+            self.click(x, y);
+        }
+    }
+
+    /// Called every time a key gets pressed.
+    ///
+    /// # Keys
+    ///
+    /// |  Keys  |     Actions     |
+    /// |--------|-----------------|
+    /// | Escape | Quit the game   |
+    /// | R      | Reset the game  |
+    /// | CTRL+Z | Undo            |
+    fn key_down_event(
+        &mut self,
+        ctx: &mut Context,
+        keycode: KeyCode,
+        keymod: KeyMods,
+        _repeat: bool,
+    ) {
+        match keycode {
+            // Z: Quit the game
+            KeyCode::Escape => event::quit(ctx),
+            // R: Reset the game (new chess game)
+            KeyCode::R => self.chess.reset(),
+            // CTRL+Z: Undo (i.e. go back one step in history)
+            KeyCode::Z if keymod == KeyMods::CTRL => self.chess.undo(),
+            _ => {}
+        };
+    }
+}
+
+impl Default for ChessGui {
+    fn default() -> Self {
+        let mut chess_gui = ChessGui::new(Default::default(), Default::default(), vec![]);
+        chess_gui.init_buttons();
+        chess_gui
+    }
+}

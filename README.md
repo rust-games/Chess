@@ -43,13 +43,15 @@ A simple game of chess write in [Rust](https://www.rust-lang.org/fr/).
 
 ```bash
 # https
-git clone https://github.com/rust-games/chess.git
+git clone https://github.com/rust-games/rg-chess.git
 # or 
 # ssh
-git clone git@github.com:rust-games/chess.git
+git clone git@github.com:rust-games/rg-chess.git
 
 cargo build --release
 ```
+
+> **Note**: if you don't build in `release`, the game may be slow.
 
 ## Tests
 
@@ -63,8 +65,11 @@ cargo test
 cargo run --release
 ```
 
+## Chess book
+### [MdBook](https://rust-games.github.io/chess/)
+
 ## Chess Notation
-### [Forsyth-Edwards Notation (FEN)](https://www.chess.com/terms/fen-chess)
+### [Forsyth-Edwards Notation (FEN)](https://www.chess.com/terms/fen-chess) -> implemented
 
 ### [Standard Algebraic Notation (SAN)](https://www.chess.com/article/view/chess-notation)
 

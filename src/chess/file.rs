@@ -3,7 +3,7 @@ use std::str::FromStr;
 use crate::{Error, BOARD_SIZE};
 
 /// Describe a file (column) on a chess board.
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
 pub enum File {
     A,
@@ -16,7 +16,7 @@ pub enum File {
     H,
 }
 
-/// Numbers of [`File`]
+/// Numbers of [`File`].
 pub const NUM_FILES: usize = BOARD_SIZE.1 as usize;
 
 /// Enumerate all files.
@@ -82,7 +82,7 @@ impl FromStr for File {
 
     /// Only lowercase from a to h (inclusive).
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() < 1 {
+        if s.is_empty() {
             return Err(Error::InvalidFile);
         }
         match s.chars().next().unwrap() {

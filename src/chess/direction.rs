@@ -64,27 +64,14 @@ impl Direction {
     /// assert_eq!(Direction::Up.has(Direction::UpRight), false);
     /// ```
     pub fn has(&self, direction: Direction) -> bool {
+        if *self == direction {
+            return true;
+        }
         match *self {
-            Direction::Up if direction == Direction::Up => true,
-            Direction::UpRight => match direction {
-                Direction::Up | Direction::Right => true,
-                _ => false,
-            },
-            Direction::Right if direction == Direction::Right => true,
-            Direction::DownRight => match direction {
-                Direction::Down | Direction::Right => true,
-                _ => false,
-            },
-            Direction::Down if direction == Direction::Down => true,
-            Direction::DownLeft => match direction {
-                Direction::Down | Direction::Left => true,
-                _ => false,
-            },
-            Direction::Left if direction == Direction::Left => true,
-            Direction::UpLeft => match direction {
-                Direction::Up | Direction::Left => true,
-                _ => false,
-            },
+            Direction::UpRight => matches!(direction, Direction::Up | Direction::Right),
+            Direction::DownRight => matches!(direction, Direction::Down | Direction::Right),
+            Direction::DownLeft => matches!(direction, Direction::Down | Direction::Left),
+            Direction::UpLeft => matches!(direction, Direction::Up | Direction::Left),
             _ => false,
         }
     }

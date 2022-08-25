@@ -3,7 +3,7 @@ use std::str::FromStr;
 use crate::{Error, BOARD_SIZE};
 
 /// Describe a rank (row) on a chess board.
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
 #[repr(u8)]
 pub enum Rank {
     First,
@@ -16,7 +16,7 @@ pub enum Rank {
     Eighth,
 }
 
-/// Numbers of [`Rank`]
+/// Numbers of [`Rank`].
 pub const NUM_RANKS: usize = BOARD_SIZE.1 as usize;
 
 /// Enumerate all ranks.
@@ -85,7 +85,7 @@ impl FromStr for Rank {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() < 1 {
+        if s.is_empty() {
             return Err(Error::InvalidRank);
         }
         match s.chars().next().unwrap() {
