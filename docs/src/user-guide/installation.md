@@ -11,10 +11,10 @@
 
 ```bash
 # clone https
-git clone https://github.com/ValentinColin/rust-template-project.git
+git clone https://github.com/rust-games/rg-chess.git
 # or
 # clone ssh
-git clone git@github.com:ValentinColin/rust-template-project.git
+git clone git@github.com:rust-games/rg-chess.git
 
 # Build a release version
 cargo build --release

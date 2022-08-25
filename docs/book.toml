@@ -6,9 +6,9 @@ language = "en"
 
 [output.html]
 default-theme = "navy"
-git-repository-url = "https://github.com/rust-games/chess"
-edit-url-template = "https://github.com/rust-games/chess/edit/master/docs/{path}"
-site-url = "/chess/" # required to ensure navigation links and script/css imports in the 404 file work correctly
+git-repository-url = "https://github.com/rust-games/rg-chess"
+edit-url-template = "https://github.com/rust-games/rg-chess/edit/master/docs/{path}"
+site-url = "/rg-chess/" # required to ensure navigation links and script/css imports in the 404 file work correctly
 mathjax-support = false
 
 [output.html.playground]
