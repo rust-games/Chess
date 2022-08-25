@@ -118,21 +118,23 @@ impl Chess {
     /// Verify if a player can legally declare a draw by 3-fold repetition or 50-move rule.
     pub fn can_declare_draw(&self) -> bool {
         let t = self.history.len();
-        let fen_boards = [
-            self.board
-                .to_string()
-                .split(' ')
-                .next()
-                .unwrap()
-                .to_string(),
-            self.history[t - 2].clone(),
-            self.history[t - 4].clone(),
-        ];
-        if fen_boards[0] == fen_boards[1] && fen_boards[1] == fen_boards[2] {
-            return true;
-        }
-        if self.board.halfmoves() >= 100 {
-            return true;
+        if t >= 8 {
+            let fen_boards = [
+                self.board
+                    .to_string()
+                    .split_once(' ')
+                    .unwrap()
+                    .0
+                    .to_string(),
+                self.history[t - 4].split_once(' ').unwrap().0.to_string(),
+                self.history[t - 8].split_once(' ').unwrap().0.to_string(),
+            ];
+            if fen_boards[0] == fen_boards[1] && fen_boards[1] == fen_boards[2] {
+                return true;
+            }
+            if self.board.halfmoves() >= 100 {
+                return true;
+            }
         }
         false
     }
