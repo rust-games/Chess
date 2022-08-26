@@ -2,19 +2,13 @@ name: Cargo Build & Test
 
 on:
   push:
-    branches-ignore:
-      - gh-pages
-    paths-ignore:
-      - '.github/**'
-      - '.run/**'
-      - 'docs/**'
+    branches:
+      - master
   pull_request:
-    branches-ignore:
-      - gh-pages
-    paths-ignore:
-      - '.github/**'
-      - '.run/**'
-      - 'docs/**'
+    paths:
+      - 'src/**'
+      - 'resources/**'
+      - 'Cargo.toml'
 
 env:
   CARGO_TERM_COLOR: always
