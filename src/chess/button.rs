@@ -4,7 +4,7 @@ use ggez::{graphics, Context, GameResult};
 
 use crate::ChessGui;
 
-/// Indicate how align the text.
+/// Indicate how align the text (GUI).
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub enum Align {
     Left,
@@ -27,6 +27,7 @@ pub struct Button {
 
 impl Button {
     /// Create a new [`Button`].
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         id: &'static str,
         rect: graphics::Rect,

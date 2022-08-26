@@ -1,13 +1,13 @@
 use ggez::event::{KeyCode, KeyMods, MouseButton};
 use ggez::{event, graphics, Context, GameError, GameResult};
-use log::{debug, info, warn};
+use log::{debug, info};
 
 use crate::{
     Align, Button, Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE,
     BOARD_SIZE, INDEX_THEME, NUM_THEMES, SIDE_SCREEN_PX_SIZE, THEMES,
 };
 
-/// A wrapper of [`Chess`] for GUI.
+/// GUI for the [`Chess`] game.
 #[derive(Debug)]
 pub struct ChessGui {
     pub(crate) chess: Chess,
@@ -310,7 +310,7 @@ impl ChessGui {
         Ok(())
     }
 
-    /// Draw the [`Piece`] that are pinned (i.e. can't move).
+    /// Draw a cross on [`Square`] that are pinned (i.e. can't move).
     fn draw_pinned_piece(&self, ctx: &mut Context) -> GameResult {
         if self.theme.piece_pinned_path.is_some() {
             let mut path;
@@ -398,11 +398,11 @@ impl event::EventHandler<GameError> for ChessGui {
     ///
     /// # Keys
     ///
-    /// |  Keys  |     Actions     |
-    /// |--------|-----------------|
-    /// | Escape | Quit the game   |
-    /// | R      | Reset the game  |
-    /// | CTRL+Z | Undo            |
+    /// |  Keys  |          Actions           |
+    /// |--------|----------------------------|
+    /// | Escape | Quit the game              |
+    /// | R      | Reset the game and buttons |
+    /// | CTRL+Z | Undo                       |
     fn key_down_event(
         &mut self,
         ctx: &mut Context,
