@@ -57,7 +57,7 @@ impl Square {
         ALL_SQUARES[index]
     }
 
-    /// Convert this [`Square`] into a [`usize`] from 0 to 63 inclusive.
+    /// Convert this [`Square`] into a [`usize`].
     #[inline]
     pub fn to_index(&self) -> usize {
         *self as usize

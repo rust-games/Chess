@@ -5,7 +5,7 @@
 //! | foo.0     | x-axes |
 //! | foo.1     | y-axes |
 
-/// The pixel-size of the board only (the board has a square form).
+/// The pixel-size of the board only (the board have a square form).
 pub const BOARD_PX_SIZE: (f32, f32) = (800.0, 800.0);
 
 /// The pixel-size of the side screen.

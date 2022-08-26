@@ -10,7 +10,7 @@ pub enum Color {
 /// Numbers of [`Color`] in chess game.
 pub const NUM_COLORS: usize = 2;
 
-/// List all [`colors`][Color].
+/// Enumerate all [`colors`][Color].
 pub const ALL_COLORS: [Color; NUM_COLORS] = [Color::White, Color::Black];
 
 impl Color {

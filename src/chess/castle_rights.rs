@@ -16,16 +16,11 @@ pub enum CastleRights {
 }
 
 impl CastleRights {
-    /// Convert [`CastleRights`] to [`usize`] for table lookups.
-    pub fn to_index(&self) -> usize {
-        *self as usize
-    }
-
     /// Convert [`usize`] to [`CastleRights`].
     ///
     /// # Panics
     ///
-    /// Panic if invalid number.
+    /// Panic if index is not in range 0..=3.
     pub fn from_index(index: usize) -> CastleRights {
         match index {
             0 => CastleRights::NoRights,
@@ -36,12 +31,17 @@ impl CastleRights {
         }
     }
 
-    /// Can I castle kingside?
+    /// Convert [`CastleRights`] to [`usize`].
+    pub fn to_index(&self) -> usize {
+        *self as usize
+    }
+
+    /// Check the castling on the king side.
     pub fn has_kingside(&self) -> bool {
         self.to_index() & 1 == 1
     }
 
-    /// Can I castle queenside?
+    /// Check the castling on the queen side.
     pub fn has_queenside(&self) -> bool {
         self.to_index() & 2 == 2
     }
