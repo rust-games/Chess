@@ -2,12 +2,8 @@ name: Cargo Build & Test
 
 on:
   push:
-    branches-ignore:
-      - gh-pages
-    paths:
-      - 'src/**'
-      - 'resources/**'
-      - 'Cargo.toml'
+    branches:
+      - master
   pull_request:
     paths:
       - 'src/**'
