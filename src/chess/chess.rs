@@ -21,11 +21,14 @@ pub enum GameState {
 }
 
 impl GameState {
-    pub fn winner(&self) -> Option<Color> {
-        match *self {
-            GameState::Checkmates(color) | GameState::Resigns(color) => Some(color),
-            _ => None,
-        }
+    /// Verify if the state is ongoing.
+    pub fn is_ongoing(&self) -> bool {
+        matches!(self, GameState::Ongoing)
+    }
+
+    /// Verify if the game is finish.
+    pub fn is_finish(&self) -> bool {
+        !matches!(self, GameState::Ongoing)
     }
 }
 
@@ -36,6 +39,7 @@ impl GameState {
 pub struct Chess {
     pub(crate) board: Board,
     pub(crate) square_focused: Option<Square>,
+    pub(crate) offer_draw: bool,
     pub(crate) history: Vec<String>,
     pub(crate) state: GameState,
 }
@@ -46,6 +50,7 @@ impl Chess {
         Chess {
             board,
             square_focused: None,
+            offer_draw: false,
             history: vec![],
             state: GameState::Ongoing,
         }
@@ -82,6 +87,7 @@ impl Chess {
     /// Reset the Game (board and history).
     pub fn reset(&mut self) {
         self.board = Board::default();
+        self.offer_draw = false;
         self.square_focused = None;
         self.history = vec![];
         self.state = GameState::Ongoing;
@@ -98,19 +104,22 @@ impl Chess {
         if self.board.is_legal(m) {
             self.history.push(self.board.to_string());
             self.board.update(m);
+            if self.offer_draw {
+                self.offer_draw = false;
+            }
             self.state = self.board.state();
         }
         self.square_focused = None;
     }
 
-    /// [`Color`] offer a draw.
-    #[cfg(any())]
-    pub fn offer_draw(&mut self, color: Color) {}
-
-    /// [`Color`] accept the draw. Assumes that a draw is offered.
+    /// The current player offer a draw.
     ///
-    /// > **Caution**: This crate don't implement the offer_draw() method.
-    ///   You need to react yourself to this action.
+    /// The offer is cancel when the player play.
+    pub fn offer_draw(&mut self) {
+        self.offer_draw = true;
+    }
+
+    /// Accept the draw. Assumes that a draw is offered.
     pub fn accept_draw(&mut self) {
         self.state = GameState::DrawAccepted;
     }
