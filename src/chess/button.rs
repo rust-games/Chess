@@ -4,7 +4,7 @@ use ggez::{graphics, Context, GameResult};
 
 use crate::ChessGui;
 
-/// Indicate how align the text.
+/// Indicate how align the text (GUI).
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub enum Align {
     Left,
@@ -18,7 +18,9 @@ pub enum Align {
 pub struct Button {
     /// The id is not unique, it's just a name to identify it.
     pub id: &'static str,
+    enable: bool,
     rect: graphics::Rect,
+    image_path: Option<&'static str>,
     color: graphics::Color,
     text: &'static str,
     align: Align,
@@ -27,8 +29,10 @@ pub struct Button {
 
 impl Button {
     /// Create a new [`Button`].
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         id: &'static str,
+        enable: bool,
         rect: graphics::Rect,
         color: graphics::Color,
         text: &'static str,
@@ -37,12 +41,35 @@ impl Button {
     ) -> Self {
         Button {
             id,
+            enable,
             rect,
+            image_path: None,
             color,
             text,
             align,
             func,
         }
+    }
+
+    /// Verify if the button is enable.
+    pub fn is_enable(&self) -> bool {
+        self.enable
+    }
+
+    /// Enable the button.
+    pub fn enable(&mut self) {
+        self.enable = true;
+    }
+
+    /// Disable the button.
+    pub fn disable(&mut self) {
+        self.enable = false;
+    }
+
+    /// Draw the image at the given path rather than a rectangle.
+    pub fn set_image(&mut self, path: Option<&'static str>) -> Self {
+        self.image_path = path;
+        *self
     }
 
     /// Verify if a coordinate is in the button.
@@ -52,15 +79,21 @@ impl Button {
 
     /// Draw the button in the [`Context`].
     pub fn draw(&self, ctx: &mut Context, font_path: &str, font_scale: f32) -> GameResult {
-        self.draw_rect(ctx)?;
-        self.draw_text(ctx, font_path, font_scale)?;
+        if self.enable {
+            if self.image_path.is_some() {
+                self.draw_image(ctx)?;
+            } else {
+                self.draw_rect(ctx)?;
+                self.draw_text(ctx, font_path, font_scale)?;
+            }
+        }
         Ok(())
     }
 
     /// Draw the button without text.
     fn draw_rect(&self, ctx: &mut Context) -> GameResult {
         let mesh = graphics::MeshBuilder::new()
-            .rectangle(graphics::DrawMode::fill(), self.rect, self.color)?
+            .rectangle(graphics::DrawMode::stroke(3.0), self.rect, self.color)?
             .build(ctx)?;
         graphics::draw(ctx, &mesh, graphics::DrawParam::default())?;
         Ok(())
@@ -81,14 +114,30 @@ impl Button {
                 self.rect.y + (self.rect.h - text.height(ctx)) / 2.0,
             ],
         };
-        graphics::draw(ctx, &text, (dest_point,))?;
+        graphics::draw(ctx, &text, (dest_point, self.color))?;
+        Ok(())
+    }
+
+    /// Draw the button without text.
+    fn draw_image(&self, ctx: &mut Context) -> GameResult {
+        let image = graphics::Image::new(ctx, self.image_path.unwrap()).expect("Image load error");
+        let image_scale = [
+            self.rect.w / image.width() as f32,
+            self.rect.h / image.height() as f32,
+        ];
+        let dp = graphics::DrawParam::new()
+            .dest(self.rect.point())
+            .scale(image_scale);
+        graphics::draw(ctx, &image, dp)?;
         Ok(())
     }
 
     /// Call the func when the button is clicked.
     pub fn clicked(&self, chess_gui: &mut ChessGui) {
-        if let Some(func) = self.func {
-            func(chess_gui);
+        if self.enable {
+            if let Some(func) = self.func {
+                func(chess_gui);
+            }
         }
     }
 }
