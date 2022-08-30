@@ -80,7 +80,7 @@ impl Square {
 
     /// Transform a screen coordinate into a [`Square`].
     ///
-    /// > **Reciprocal**: see [`to_screen`]
+    /// > **Reciprocal**: see [`Square::to_screen`].
     ///
     /// The result depend of:
     /// - [`BOARD_SIZE`]
@@ -88,18 +88,17 @@ impl Square {
     #[inline]
     pub fn from_screen(x: f32, y: f32) -> Square {
         // Transpose to grid space
-        let x = x / BOARD_CELL_PX_SIZE.0 as f32;
-        let y = y / BOARD_CELL_PX_SIZE.1 as f32;
+        let x = x / BOARD_CELL_PX_SIZE.0;
+        let y = y / BOARD_CELL_PX_SIZE.1;
 
         // transpose to Square (return the y-axis)
         let y = BOARD_SIZE.1 - y as i16 - 1;
-        let square = Square::make_square(File::new(x as usize), Rank::new(y as usize));
-        square
+        Square::make_square(File::new(x as usize), Rank::new(y as usize))
     }
 
     /// Transform a [`Square`] into a screen coordinate.
     ///
-    /// > **Reciprocal**: see [`from_screen`]
+    /// > **Reciprocal**: see [`Square::from_screen`].
     ///
     /// The result depend of:
     /// - [`BOARD_SIZE`]
@@ -111,8 +110,8 @@ impl Square {
         let y = (BOARD_SIZE.1 as usize - self.rank().to_index() - 1) as f32;
 
         // Transpose to screen space
-        let x = x * BOARD_CELL_PX_SIZE.0 as f32;
-        let y = y * BOARD_CELL_PX_SIZE.1 as f32;
+        let x = x * BOARD_CELL_PX_SIZE.0;
+        let y = y * BOARD_CELL_PX_SIZE.1;
         (x, y)
     }
 
@@ -130,6 +129,25 @@ impl Square {
     #[inline]
     pub fn file(&self) -> File {
         File::new(self.to_index() % NUM_FILES)
+    }
+
+    /// Return the "relative" [`File`] of this square according the side.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use chess::{Color, File, Square};
+    ///
+    /// assert_eq!(Square::A1.file_for(Color::White), File::A);
+    /// assert_eq!(Square::A1.file_for(Color::Black), File::H);
+    /// ```
+    #[inline]
+    pub fn file_for(&self, color: Color) -> File {
+        let file = self.file();
+        match color {
+            Color::White => file,
+            Color::Black => File::new(NUM_FILES - file.to_index() - 1),
+        }
     }
 
     /// Return the [`Rank`] of this square.
@@ -493,8 +511,8 @@ impl fmt::Display for Square {
         write!(
             f,
             "{}{}",
-            (('a' as u8) + (self.file() as u8)) as char,
-            (('1' as u8) + (self.rank() as u8)) as char
+            (b'a' + (self.file() as u8)) as char,
+            (b'1' + (self.rank() as u8)) as char
         )
     }
 }

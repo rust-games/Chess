@@ -9,3 +9,5 @@ cargo test
 ```bash
 cargo run --release
 ```
+
+> **Note**: if you don't build in `release`, the game may be slow.

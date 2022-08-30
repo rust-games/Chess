@@ -1,20 +1,18 @@
 [package]
-name = "chess"
-version = "0.1.0"
+name = "rg-chess"
+version = "0.2.2"
 authors = ["Valentin Colin <valentin.colin78@gmail.com>", "Marc Partensky <marc.partensky@gmail.com>"]
 edition = "2021"
-description = "Game Chess with graphical interface"
-homepage = "https://github.com/rust-games/chess.git"
-repository = "https://github.com/rust-games/chess.git"
+description = "Chess Game with graphical interface."
+homepage = "https://rust-games.github.io/rg-chess"
+repository = "https://github.com/rust-games/rg-chess"
+documentation = "https://docs.rs/rg-chess/latest/chess"
 license = "MIT"
 # licence-file = "LICENSE"
-keywords = ["game"]
+keywords = ["chess", "game", "gui"]
 
 [dependencies]
 ggez = "0.7.0"
-grid = "0.6.0"
-glam = { version = "0.20", features = ["mint"] }
-# Has to be the same version of mint that our math lib uses here.
 mint = "0.5"
 log = "0.4.17"
 env_logger = "0.9.0"
@@ -24,3 +22,13 @@ thiserror = "1.0.32"
 name = "chess"
 path = "src/chess/lib.rs"
 
+[profile.release]
+opt-level = 3
+debug = false
+
+[profile.dev]
+opt-level = 3
+debug = true
+
+[profile.test]
+opt-level = 3

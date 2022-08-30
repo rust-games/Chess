@@ -7,15 +7,21 @@
 
 1. Cargo/Rust installed (If not download it [here](https://doc.rust-lang.org/cargo/getting-started/installation.html)).
 
+## Cargo installation
+
+```bash
+cargo install rg-chess
+```
+
 ## Manual installation
 
 ```bash
 # clone https
-git clone https://github.com/ValentinColin/rust-template-project.git
+git clone https://github.com/rust-games/rg-chess.git
 # or
 # clone ssh
-git clone git@github.com:ValentinColin/rust-template-project.git
+git clone git@github.com:rust-games/rg-chess.git
 
-# Build a release version
-cargo build --release
+# Build
+cargo build
 ```
