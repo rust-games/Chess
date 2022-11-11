@@ -1,5 +1,9 @@
 # TODO
 
+## Lib dependencies
+
+[ ] Update to ggez version 0.8
+
 ## Timer (importance moyenne)
 
 [ ] Timer simple ascendant
@@ -10,7 +14,7 @@
 ## Gui
 
 [ ] Ajouter un bouton pour reset le thème (très faible importance)
-[ ] Afficher dans le cadre latéral centrale qui doit joué (importance moyenne)
+[ ] Afficher dans le cadre latéral central qui doit jouer (importance moyenne)
     [ ] Ajouter des emoji (joueur en cours,  vainqueur) (ne semble pas fonctionner)
 
 
@@ -18,11 +22,11 @@
 
 [x] Mouvement des pièces selon les règles
 [x] Règle des 50 coups
-[x] Coup spéciaux:
+[x] Coup spéciaux :
     [x] Castle (petit et grand)
     [x] Premier coup (pions)
     [x] prise en passant
-    [x] Répétition 3 coups identique (=> match nul)
+    [x] Répétition 3 coups identique (→ match nul)
 [x] Fin de partie
     [x] Abandon
     [x] match nul (pat, draw, ...)
