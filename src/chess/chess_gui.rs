@@ -1,8 +1,8 @@
 use std::cmp::max;
 
-use log::{debug, info};
 use ggez::event::{KeyCode, KeyMods, MouseButton};
 use ggez::{event, graphics, Context, GameError, GameResult};
+use log::{debug, info};
 use unicode_segmentation::UnicodeSegmentation;
 
 use crate::{
