@@ -414,7 +414,7 @@ impl ChessGui {
         let text = match self.chess.state {
             GameState::Ongoing => {
                 let line1 = "Ongoing:".to_string();
-                let line2 = format!("{:?} turn oula!", self.chess.board.side_to_move());
+                let line2 = format!("{:?} turn", self.chess.board.side_to_move());
                 let line1_size = line1.graphemes(true).count();
                 let line2_size = line2.graphemes(true).count();
                 let max_size = max(line1_size, line2_size);
