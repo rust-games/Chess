@@ -420,7 +420,6 @@ impl ChessGui {
                 let max_size = max(line1_size, line2_size);
                 format!("{: ^max_size$}\n{}", line1, line2)
             }
-            //GameState::Ongoing => "Ongoing".to_string(),
             GameState::Checkmates(color) => {
                 format!("{:?} is checkmate\n\n    {:?} win !", color, !color)
             }
