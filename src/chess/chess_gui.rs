@@ -1,6 +1,9 @@
+use std::cmp::max;
+
+use log::{debug, info};
 use ggez::event::{KeyCode, KeyMods, MouseButton};
 use ggez::{event, graphics, Context, GameError, GameResult};
-use log::{debug, info};
+use unicode_segmentation::UnicodeSegmentation;
 
 use crate::{
     Align, Button, Chess, GameState, Square, Theme, ALL_SQUARES, BOARD_CELL_PX_SIZE, BOARD_PX_SIZE,
@@ -407,9 +410,17 @@ impl ChessGui {
             .build(ctx)?;
         graphics::draw(ctx, &background_mesh, graphics::DrawParam::default())?;
 
-        // Draw the text
+        // Draw the text (9 caractères max avec une font_scale de 20.0)
         let text = match self.chess.state {
-            GameState::Ongoing => "Ongoing".to_string(),
+            GameState::Ongoing => {
+                let line1 = "Ongoing:".to_string();
+                let line2 = format!("{:?} turn oula!", self.chess.board.side_to_move());
+                let line1_size = line1.graphemes(true).count();
+                let line2_size = line2.graphemes(true).count();
+                let max_size = max(line1_size, line2_size);
+                format!("{: ^max_size$}\n{}", line1, line2)
+            }
+            //GameState::Ongoing => "Ongoing".to_string(),
             GameState::Checkmates(color) => {
                 format!("{:?} is checkmate\n\n    {:?} win !", color, !color)
             }
