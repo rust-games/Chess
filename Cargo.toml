@@ -1,6 +1,6 @@
 [package]
 name = "rg-chess"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Valentin Colin <valentin.colin78@gmail.com>", "Marc Partensky <marc.partensky@gmail.com>"]
 edition = "2021"
 description = "Chess Game with graphical interface."
