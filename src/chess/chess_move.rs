@@ -2,10 +2,12 @@ use std::fmt;
 
 use crate::Square;
 
-/// Represent a ChessMove in memory.
+/// Represent a ChessMove.
 #[derive(Clone, Copy, Eq, PartialEq, Debug)]
 pub struct ChessMove {
+    /// The [`Square`] where the [`Piece`] comes from.
     pub from: Square,
+    /// The [`Square`] where the [`Piece`] is going to.
     pub to: Square,
 }
 

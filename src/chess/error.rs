@@ -2,7 +2,7 @@ use thiserror::Error;
 
 use crate::{Board, ChessMove};
 
-/// Sometimes, bad stuff happens.
+/// Error that can happen during the game.
 ///
 /// derive from PartialEq for UnitTest
 #[derive(Error, Clone, PartialEq, Eq, Debug)]

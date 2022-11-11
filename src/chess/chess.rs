@@ -21,7 +21,7 @@ pub enum GameState {
 }
 
 impl GameState {
-    /// Verify if the state is ongoing.
+    /// Verify if the game is ongoing.
     pub fn is_ongoing(&self) -> bool {
         matches!(self, GameState::Ongoing)
     }
@@ -40,8 +40,8 @@ pub struct Chess {
     pub(crate) board: Board,
     pub(crate) square_focused: Option<Square>,
     pub(crate) offer_draw: bool,
-    pub(crate) history: Vec<String>,
     pub(crate) state: GameState,
+    pub(crate) history: Vec<String>,
 }
 
 impl Chess {

@@ -385,7 +385,7 @@ impl Board {
 
     /// Verify if the [`Piece`] on the [`Square`] has one or more valid moves.
     ///
-    /// If no [`Piece`] exist on the [`Square`] then return false.
+    /// If no [`Piece`] exist on the [`Square`], then return false.
     ///
     /// > **Note**: The legality is not verify, if you want to: use [`has_legal_move`][Board::has_legal_move].
     pub fn has_valid_move(&self, square: Square) -> bool {
@@ -394,14 +394,14 @@ impl Board {
 
     /// Verify if the [`Piece`] on the [`Square`] has one or more legal moves.
     ///
-    /// If no [`Piece`] exist on the [`Square`] then return false.
+    /// If no [`Piece`] exist on the [`Square`], then return false.
     pub fn has_legal_move(&self, square: Square) -> bool {
         !self.get_legal_moves(square).is_empty()
     }
 
     /// Verify if the player has one or more legal moves in all the [`Board`].
     ///
-    /// If no [`Piece`] exist on the [`Square`] then return false.
+    /// If no [`Piece`] exist on the [`Square`], then return false.
     pub fn has_any_move(&self) -> bool {
         for from_square in ALL_SQUARES {
             if self.color_on_is(from_square, self.side_to_move) {
@@ -415,7 +415,7 @@ impl Board {
 
     /// Compute and return all the valid moves for a [`Piece`] (if exist) at a given [`Square`].
     ///
-    /// If no [`Piece`] exist on the [`Square`] then return an empty [`Vec`].
+    /// If no [`Piece`] exist on the [`Square`], then return an empty [`Vec`].
     ///
     /// > **Note**: The legality is not verify, if you want to: use [`get_legal_moves`][Board::get_legal_moves].
     pub fn get_valid_moves(&self, from: Square) -> Vec<Square> {
@@ -594,7 +594,7 @@ impl Board {
 
     /// Compute and return all the legal moves for a [`Piece`] (if exist) at a given [`Square`].
     ///
-    /// If no [`Piece`] exist on the [`Square`] then return an empty [`Vec`].
+    /// If no [`Piece`] exist on the [`Square`], then return an empty [`Vec`].
     pub fn get_legal_moves(&self, from: Square) -> Vec<Square> {
         let mut valid_moves = Vec::new();
         if let Some((piece_from, side)) = self.on(from) {

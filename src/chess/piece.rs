@@ -2,7 +2,7 @@ use std::fmt;
 
 use super::Color;
 
-/// Represent a chess piece as a very simple enum.
+/// Represent a chess piece.
 #[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Debug)]
 pub enum Piece {
     Pawn,
@@ -33,7 +33,7 @@ pub const ALL_PIECES: [Piece; NUM_PIECES] = [
 // pub const PROMOTION_PIECES: [Piece; 4] = [Piece::Queen, Piece::Rook, Piece::Bishop, Piece::Knight];
 
 impl Piece {
-    /// Convert the [`Piece`] to a [`usize`] for table lookups.
+    /// Convert the [`Piece`] to a [`usize`].
     #[inline]
     pub fn to_index(&self) -> usize {
         *self as usize
