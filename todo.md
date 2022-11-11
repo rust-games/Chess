@@ -6,6 +6,7 @@
 [ ] Timer descendant (sans conséquence une fois terminer)
 [ ] Timer descendant (qui met fin à la partie dans le cas où l'horloge tombe à zero)
 
+
 ## Gui
 
 [ ] Ajouter un bouton pour reset le thème (très faible importance)
@@ -26,3 +27,9 @@
     [x] Abandon
     [x] match nul (pat, draw, ...)
     [x] Proposition de match nul
+
+
+## Test unitaire
+
+[x] Test sur les fonctionnalités de bases
+[ ] Test sur les fonctionnalités avancées
